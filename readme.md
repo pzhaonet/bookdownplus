@@ -36,7 +36,7 @@ bookdown for details. Additionall, if you want to produce a poster, phython must
 Installation:
 
 ```
-devtools::install_github("dapengde/bookdownplus")
+devtools::install_github("pzhaonet/bookdownplus")
 ```
 
 Run the following codes, and you will get some files (e.g. `index.Rmd` and `body.Rmd`) and folders in your working directory.
@@ -60,71 +60,71 @@ Still being developed.  Feel free to give your feedback to me!
 - article
 
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+article.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+article.jpg)
 
 - article_mdpi1
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+article_mdpi.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+article_mdpi.jpg)
 
 - article_zh
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+article_zh.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+article_zh.jpg)
 
 - calendar
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+calendar.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+calendar.jpg)
 
 - chemistry
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+chemistry.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+chemistry.jpg)
 
 - guitar
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+guitar.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+guitar.jpg)
 
 - journal
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+journal.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+journal.jpg)
 
 - mail
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+mail.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+mail.jpg)
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+mail2.png)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+mail2.png)
 
 - poem
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+poem.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+poem.jpg)
 
 - thesis_classic
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+thesis_classic.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+thesis_classic.jpg)
 
 - thesis_ubt
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+thesis_ubt.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+thesis_ubt.jpg)
 
 - thesis_zju
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+thesis_zju.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+thesis_zju.jpg)
 
 - yihui_demo
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+yihui_demo.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+yihui_demo.jpg)
 
 - yihui_mini
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+yihui_mini.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+yihui_mini.jpg)
 
 - yihui_zh
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+yihui_zh.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+yihui_zh.jpg)
 
 - poster
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+poster_ocean.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+poster_ocean.jpg)
 
-![](https://raw.githubusercontent.com/dapengde/bookdown-plus/master/showcase/bookdown+poster_eco.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+poster_eco.jpg)
 
 ## Updates
 
@@ -135,4 +135,4 @@ Still being developed.  Feel free to give your feedback to me!
 
 Copyright 2017 [Peng Zhao](http://pzhao.org).
 
-Released under the [MIT](https://github.com/dapengde/bookdown-plus/blob/master/LICENSE.md) license.
+Released under the [MIT](https://github.com/pzhaonet/bookdown-plus/blob/master/LICENSE.md) license.

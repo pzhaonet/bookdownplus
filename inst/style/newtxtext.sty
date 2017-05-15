@@ -1,0 +1,255 @@
+\NeedsTeXFormat{LaTeX2e}
+
+\def\fileversion{1.521}
+\def\filedate{2017/03/11}
+\ProvidesPackage{newtxtext}[\filedate\space v\fileversion]
+
+\message{`newtxtext' v\fileversion, \filedate\space Text macros taking advantage of TeX-Gyre Termes fonts (msharpe)}
+\RequirePackage{fontaxes}% so we can have [bold] italic small caps
+
+\let\orig@footnote=\thefootnote
+\let\orig@makefnmark=\@makefnmark
+\newdimen\ntx@fs
+\RequirePackage{xkeyval,etoolbox}
+\renewcommand*{\rmdefault}{ntxtlf} % always TLF for math
+\renewcommand*{\familydefault}{\rmdefault}
+\def\useosf{\edef\ntx@figurestyle{osf}}
+\@onlypreamble\useosf
+\def\useproportional{\edef\ntx@figurealign{}}
+\@onlypreamble\useproportional
+
+\def\ntx@figurestyle{lf}% default is lining figure style
+\def\ntx@figurealign{t}% default is tabular figure alignment
+\newif\ifntx@defaultsups
+\newif\ifntx@adobesc
+\newif\ifntx@scosf
+\newif\ifntx@largesc
+%\newif\ifntx@babel
+%\ifdefined\bbl@version \ntx@babeltrue\fi
+\define@boolkey{ntx}{defaultsups}[true]{%
+\csname ntx@defaultsups#1\endcsname}
+\define@boolkey{ntx}{largesc}[true]{%
+\csname ntx@largesc#1\endcsname}
+\define@boolkey{ntx}{adobesc}[true]{%
+\csname ntx@adobesc#1\endcsname}
+\define@key{ntx}{babel}[true]{\relax}% keep, though no effect
+%\csname ntx@babel#1\endcsname}
+\newif\ifntx@thrm
+\define@key{ntx}{helvratio}[0.9]{\def\ntx@helvratio{#1}}
+\define@key{ntx}{scaled}[1.0]{\def\ntx@scaled{s*[#1]}%
+\def\ntx@scale{#1}\def\LGCscale{#1}}
+\setkeys{ntx}{helvratio} % set this first, at least to default 0.9
+\setkeys{ntx}{scaled} % get at least default
+
+\def\ntx@spc{.25em}
+\def\ntx@stretch{.2em}
+\def\ntx@shrink{.1em}
+\define@key{ntx}{spacing}[.25em]{\gdef\ntx@spc{#1}}
+\define@key{ntx}{stretch}[.2em]{\gdef\ntx@stretch{#1}}
+\define@key{ntx}{shrink}[.1em]{\gdef\ntx@shrink{#1}}
+
+
+\DeclareOption{lining}{\edef\ntx@figurestyle{lf}}
+\DeclareOption{lf}{\edef\ntx@figurestyle{lf}}
+\DeclareOption{theoremfont}{\ntx@thrmtrue}
+\DeclareOption{oldstyle}{\useosf}
+\DeclareOption{osf}{\useosf}
+\DeclareOption{tabular}{\edef\ntx@figurealign{t}}
+\DeclareOption{p}{\useproportional}
+\DeclareOption{proportional}{\useproportional}
+%\DeclareOption{sups}{\ntx@defaultsupsfalse}
+\DeclareOption{scosf}{\ntx@scosftrue}
+\DeclareOption{tighter}{%
+\gdef\ntx@spc{.25em}\gdef\ntx@stretch{.15em}\gdef\ntx@shrink{.06em}}
+\DeclareOption{looser}{%
+\gdef\ntx@spc{.3em}\gdef\ntx@stretch{.2em}\gdef\ntx@shrink{.15em}
+}
+\ExecuteOptions{lining,tabular}
+
+\DeclareOption*{%
+  \begingroup
+  \edef\x{\endgroup
+    \noexpand\setkeys{ntx}{\CurrentOption}}%
+  \x}
+
+\ProcessOptions*
+\def\ntx@spacing{%
+	\fontdimen2\font=\ntx@spc
+	\fontdimen3\font=\ntx@stretch
+	\fontdimen4\font=\ntx@shrink
+}
+
+\@tempdima=\ntx@scale\p@\@tempdima=\ntx@helvratio\@tempdima%
+\edef\qhv@scale{\strip@pt\@tempdima}
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[full]{textcomp}
+\DeclareRobustCommand{\sustyle}{%
+  \not@math@alphabet\sustyle\relax
+  \fontfamily{ntxsups}\selectfont}
+
+\ifntx@scosf %
+\DeclareRobustCommand{\textsc}[1]{%
+{\fontfamily{ntx\ntx@figurealign osf}\scshape\selectfont #1}%
+}\fi% use OsF in small caps
+
+\DeclareRobustCommand{\lfstyle}{%
+  \not@math@alphabet\lfstyle\relax
+  \fontfamily{ntxlf}\selectfont %
+}% to get lf
+\DeclareRobustCommand{\tlfstyle}{%
+  \not@math@alphabet\tlfstyle\relax
+  \fontfamily{ntxtlf}\selectfont %
+}% to get tlf
+\DeclareRobustCommand{\osfstyle}{%
+  \not@math@alphabet\osfstyle\relax
+  \fontfamily{ntxosf}\selectfont %
+}% to get osf
+\DeclareRobustCommand{\tosfstyle}{%
+  \not@math@alphabet\tosfstyle\relax
+  \fontfamily{ntxtosf}\selectfont %
+}% to get tosf
+\DeclareRobustCommand{\textlf}[1]{%
+  {\lfstyle #1}%
+}% to get lf
+\DeclareRobustCommand{\texttlf}[1]{%
+  {\tlfstyle #1}%
+}% to get tlf
+\DeclareRobustCommand{\textosf}[1]{%
+  {\osfstyle #1}%
+}% to get osf
+\DeclareRobustCommand{\texttosf}[1]{%
+  {\tosfstyle #1}%
+}% to get tosf
+\DeclareRobustCommand{\textsu}[1]{%
+  {\sustyle #1}%
+}% to get sup style
+
+\ifntx@thrm
+	%\RequirePackage{amsmath,amsthm} % in case of theoremfont
+	\ifdefined\newtheoremstyle %amsthm and ntheorem, not theorem.sty
+		\@ifpackageloaded{ntheorem}\relax{%
+		\newtheoremstyle{plain}
+		{\medskipamount}   % ABOVESPACE, was \topsep
+    	{\medskipamount}   % BELOWSPACE, was \topsep
+    	{\slshape}  % BODYFONT--\slshape is defined to be \itshape with upright figures and punctuation
+    	{}       % INDENT (empty value is the same as 0pt)
+    	{\bfseries} % HEADFONT--you may want to add \tlfstyle so the number is tab lining, regardless of text figure selection
+    	{.}         % HEADPUNCT
+    	{5pt plus 1pt minus 1pt} % HEADSPACE
+    	{}          % CUSTOM-HEAD-SPEC\newtheorem{thm}{Theorem}[section]
+    	} % end @ifpackageloaded
+    \fi%
+\fi
+%\DeclareTextFontCommand{\textsu}{\sustyle}
+%\def\@makefnmark{\ifx \thefootnote\orig@footnote \hbox{\sustyle\hspace*{.04em}\@thefnmark}\else\orig@makefnmark\fi}
+\ifntx@defaultsups %
+\else
+  \def\f@@tn@te{footnote}
+  \def\@makefnmark{%
+    \ifx\@mpfn\f@@tn@te% footnote not in a minipage
+      \ifx\thefootnote\orig@footnote%
+        \hbox{\sustyle\hspace*{.04em}\@thefnmark\hspace*{.03em}}%
+      \else%
+        \orig@makefnmark%
+      \fi
+    \else% footnote in a minipage
+%      \ntx@fs=\f@size\p@
+%      \ntx@fs=1.05\ntx@fs
+%\hbox{{\itshape\sustyle\fontsize{\strip@pt\ntx@fs}{12}\selectfont \@thefnmark\hspace*{.1em}}}%
+      \orig@makefnmark%
+    \fi}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%
+% Text Serif (Times) %
+%%%%%%%%%%%%%%%%%%%%%%
+
+%\renewcommand*{\rmdefault}{ntxr\ntx@style}
+
+%\DeclareSymbolFont{operators}{OT1}{txr}{m}{n}
+%\SetSymbolFont{operators}{bold}{OT1}{txr}{bx}{n}
+%\def\operator@font{\mathgroup\symoperators}
+%
+%\DeclareSymbolFont{italic}{OT1}{txr}{m}{it}
+%\SetSymbolFont{italic}{bold}{OT1}{txr}{bx}{it}
+%
+%\DeclareSymbolFontAlphabet{\mathrm}{operators}
+%\DeclareMathAlphabet{\mathbf}{OT1}{txr}{bx}{n}
+%\DeclareMathAlphabet{\mathit}{OT1}{txr}{m}{it}
+%\SetMathAlphabet{\mathit}{bold}{OT1}{txr}{bx}{it}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Text Sans Serif (based on Helvetica) %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\renewcommand*{\sfdefault}{qhv}
+
+%\DeclareMathAlphabet{\mathsf}{OT1}{txss}{m}{n}
+%\SetMathAlphabet{\mathsf}{bold}{OT1}{txss}{b}{n}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Text (Monospaced) Typewriter %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\ttdefault}{ntxtt}
+
+%\DeclareMathAlphabet{\mathtt}{OT1}{txtt}{m}{n}
+%\SetMathAlphabet{\mathtt}{bold}{OT1}{txtt}{b}{n}
+
+
+
+\def\re@DeclareTextSymbol#1#2#3{%
+   \let#1=\undefined
+   \DeclareTextSymbol{#1}{#2}{#3}}
+   
+\def\re@DeclareMathSymbol#1#2#3#4{%
+    \let#1=\undefined
+    \DeclareMathSymbol{#1}{#2}{#3}{#4}}
+
+\re@DeclareTextSymbol{\L}{OT1}{138}
+\re@DeclareTextSymbol{\l}{OT1}{170}
+\re@DeclareTextSymbol{\textdollar}{OT1}{36}
+\re@DeclareTextSymbol{\textsterling}{OT1}{163}
+\re@DeclareMathSymbol{\mathsterling}{\mathord}{operators}{163}
+
+\DeclareTextComposite{\r}{OT1}{A}{197}
+\DeclareTextComposite{\r}{OT1}{a}{229}
+
+\re@DeclareTextSymbol{\textcent}{OT1}{162}
+\re@DeclareMathSymbol{\mathcent}{\mathord}{operators}{162}
+
+%%% Modification of T1 and LY1 encoding related stuff
+%%%
+
+\def\T@n@@nc@d@ng{T1}
+\def\T@n@@nc@d@ngM@cr@M@d{%
+\DeclareTextCommand{\k}{T1}[1]{{\ooalign{\hidewidth\char12\crcr##1}}}%
+}
+
+\def\LY@n@@nc@d@ng{LY1}
+\def\LY@n@@nc@d@ngM@cr@M@d{%
+\DeclareTextCommand{\k}{LY1}[1]{{\ooalign{\hidewidth\char7\crcr##1}}}%
+}
+
+\AtBeginDocument{%
+\ifx\encodingdefault\T@n@@nc@d@ng\T@n@@nc@d@ngM@cr@M@d\fi%
+\ifx\encodingdefault\LY@n@@nc@d@ng\LY@n@@nc@d@ngM@cr@M@d\fi%
+}
+
+%\ifntx@babel
+%    \renewcommand*{\rmdefault}{ntx\ntx@figurealign%
+%	\ntx@figurestyle}
+%	\normalfont
+%\else
+    \AtEndPreamble{%
+\renewcommand*{\rmdefault}{ntx\ntx@figurealign%
+\ntx@figurestyle}
+\normalfont}
+%\fi
+
+
+\endinput

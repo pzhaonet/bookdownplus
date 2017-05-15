@@ -1,0 +1,19 @@
+--- 
+title: "A Minimal Book Example"
+author: "Yihui Xie"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: 
+  bookdown::pdf_book:
+    includes:
+      in_header: tex/template_yihui_demo.tex
+    latex_engine: xelatex
+    citation_package: natbib
+    keep_tex: yes
+documentclass: book
+bibliography: [bib/bib.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+---

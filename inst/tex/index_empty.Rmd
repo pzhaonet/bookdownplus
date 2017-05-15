@@ -1,0 +1,106 @@
+---
+title: ""
+author: ""
+email: ""
+institute: ""
+longinstitute: ""
+web: ""
+logo: ""
+backimg: ""
+bibliofiles: ""
+posteroptions: width=90,height=110,scale=1.2 #,grid # portrait
+headerheight: 13cm
+colorstyle:
+# large, Large, LARGE, huge, Huge, veryHuge, VeryHuge, VERYHuge
+titlefont: size=\veryHuge,series=\bfseries
+authorfont: size=\huge
+institutefont: size=\Large
+knit: (function(input, encoding, make = TRUE) { source('tex/makefile-renderer.R', local = TRUE) })
+---
+
+%% smart
+%% to=latex
+%% template=tex/poster.tex
+%% filter=tex/poster-filters.py
+%% biblatex
+
+```{r packages-and-options, cache=FALSE}
+library('ggplot2')
+library('knitr')
+theme_set(theme_grey(base_size=10))
+knitr::opts_chunk$set(fig.width = 16, fig.height = 4)
+```
+
+[columns=2]
+
+[column]
+
+# Syntax help
+
+### List:
+
+- `citation` [@R-bdp]
+- **bold**, _italic_, ` code`
+- [Hyperlink](https://github.com/dapengde/bookdown-plus/archive/master.zip) and footnote^[This is a footnote].
+
+### Numbered list:
+
+- Units like \pps{900}
+- Standard abreviations \\eg and \\ie for \eg and \ie
+- \LaTeX
+- vertical and horizontal blanks: \hfill1.5cm \vskip1.5cm
+
+### Figures:
+
+```{r co2, cache = TRUE, echo = FALSE, fig.cap='Carbon dioxide concentration, observed at Mauna Loa.'}
+plot(co2)
+```
+
+### Tables:
+
+header x  header y
+--------- ----------
+x1        y1
+x2        y2
+
+
+```{r tab1, tidy=FALSE, echo=FALSE}
+knitr::kable(
+  head(iris, 3), caption = 'IRIS data as an example.',
+  booktabs = TRUE
+)
+```
+
+### Invisible parts
+
+<!--
+comments
+-->
+
+
+[column]
+
+# Introduction
+
+### Motivation
+
+### Objectives
+
+
+# Methods
+
+# Results
+
+
+# Conclusions
+
+
+# Take-home message
+
+# Acknowledgements
+
+# Bibliography
+
+\printbibliography
+
+[/columns]

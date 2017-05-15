@@ -1,0 +1,19 @@
+---
+title: "A Book"
+author: "Frida Gomam"
+site: bookdown::bookdown_site
+documentclass: article
+output:
+  bookdown::pdf_book: 
+    includes:
+      in_header: tex/template_yihui_mini.tex
+    latex_engine: xelatex
+    citation_package: natbib
+    keep_tex: yes
+biblio-style: apalike
+link-citations: yes
+colorlinks: no
+lot: yes
+lof: yes
+geometry: [b5paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
+---

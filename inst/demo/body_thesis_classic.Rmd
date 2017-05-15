@@ -1,0 +1,104 @@
+# Introduction
+
+`bookdown+`? Hmm...sounds like something related to the R[@R-base] package `bookdown` [@R-bookdown]? 
+
+\graffito{You can put some additional information here}
+
+Yes, you **_R_** right. Everyone knows that `bookdown` is an excellent package for authoring books on programming languages. But it is only one side of the coin.  It can do more than expected. `bookdown` smells like a tasty cake. I have been expecting someone to cut it. Now I am helping myself. Therefore I am developing `bookdown+`.
+
+`bookdown+` is an extension of `bookdown`. It is a collection of multiple templates, which I collected years ago on the basis of \LaTeX, and have been tailoring them so that I can work happily under the umbrella of `bookdown`. `bookdown+` shows you the other side of the coin, which helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
+
+I believe some official bookdown templates will be available in the near future, but I cannot wait. Can you?
+
+With `bookdown+` you can
+
+- record guitar chords,
+
+- write a mail in an elegant layout,
+
+- write a laboratory journal, or a personal diary,
+
+- draw a monthly or weekly or conference calendar,
+
+- and, of course, write academic articles in your favourite way,
+
+- with chemical molecular formulae and equations,
+
+- even in Chinese,
+
+- and more wonders will come soon.
+
+`bookdown+` is developed on the basis of the following outstanding work:
+
+- R bookdown package [@R-bookdown]
+
+- Two minimal book examples using bookdown by Yihui Xie ^[https://github.com/yihui/bookdown-minimal] ^[https://github.com/rstudio/bookdown-demo]
+
+- gchords, a LaTeX package for typesetting guitar chord diagrams by Kasper Peeters ^[http://kasper.phi-sci.com/gchords/]
+
+- Copernicus Publications LaTeX Package ^[http://publications.copernicus.org/for_authors/latex_instructions.html]
+
+If I miss something that I should cite, please let me know.
+
+# Quick start
+
+## Step 0. Preparation
+
+Before starting, you have to install R, RStudio, bookdown package, and other software and packages (i.e. `Pandoc`, \LaTeX, `rmarkdown`, `rticle`, `knitr`, etc.) which bookdown depends on. See the official manual of bookdown ^[https://bookdown.org/yihui/bookdown/] for details.
+
+If you are ready, [download `bookdown+`](https://github.com/dapengde/bookdown-plus/archive/master.zip) package as a zip file from Github. Unzip it to a folder in your PC. You will find a file named `_start.Rproj`. Double click it, and it will be opened by RStudio.
+
+OK, now you can see a `_runme.R` file as well. Open it and run the script, or follow my explanation as follows,
+
+## Step 1. Title and author
+
+Specify the title and the author of your book, article, guitar book, or whatever.
+
+## Step 2: Template
+
+Choose a template out of the available templates. Here I choose the 8th.
+
+
+Run `fun/build.R`.
+
+## Step 3: Write and Build
+
+Now you can press `ctrl+shift+b` to build a demo book, which you can find in `book/`.
+
+Write your own text in `body.Rmd`, and build your own lovely book. 
+
+Have fun!
+
+
+## Models
+
+Eq. \@ref(eq:mc2) is an equation.
+
+\begin{equation} 
+E = mc^2
+  (\#eq:mc2)
+\end{equation} 
+
+It can be written as $E = mc^2$.
+
+
+# Results
+Fig. \@ref(fig:fig1) psum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+
+```{r fig1, fig.cap='caption', out.width='80%', fig.align='center', echo=FALSE}
+plot(cars)
+```
+
+
+Tab. \@ref(tab:tab1) psum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+
+```{r tab1, tidy=FALSE, echo=FALSE}
+knitr::kable(
+  head(iris, 20), caption = 'Here is a nice table!',
+  booktabs = TRUE
+)
+```
+
+# Conclusions
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum

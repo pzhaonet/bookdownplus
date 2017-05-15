@@ -1,0 +1,55 @@
+\documentclass[titlepage]{octavo}
+\usepackage[lmargin=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{lettrine} % It produces a dropped capital <letter> (2 lines high), followed by typeset in small caps, and the rest of the paragraph is wrapped around the dropped capital.
+%\usepackage{calligra} % font 2 handwriting
+\usepackage{tgchorus} % font 1
+
+\usepackage[T1]{fontenc}
+\usepackage{niceframe}
+\usepackage{parselines}
+\usepackage{xcolor}
+\definecolorseries{verso}{rgb}{last}{blue!40!black}{magenta!40!black}
+\resetcolorseries[30]{verso}
+
+%\usepackage{verbatim}% http://ctan.org/pkg/verbatim
+%\makeatletter
+%\def\verbatim@font{\calligra}
+%\makeatother
+
+\renewenvironment{verbatim}{\pagebreak[3]\begin{parse lines}[\parindent=1em\noindent]{\color{verso!!+}\hspace{\row\parindent}##1\newline\color{black}}}{\end{parse lines}}
+
+%\renewenvironment{verbatim}{\pagebreak[3]\begin{parse lines}[\parindent=1em\noindent]{\color{verso!!+}\hspace{\row\parindent}##1\newline\color{black}\calligra}}{\end{parse lines}} % tried a lot. still do not know how to change the font of the first line. Maybe just leave the first line blank.
+
+
+\newcommand{\bb}[1]{\makebox[.6em][c]{\lettrine{#1}{}}}
+
+\title{My \LaTeX{} \emph{poetry}}
+\author{by $author$ (that's me)}
+\date{}
+
+\pagestyle{empty}
+\setcounter{secnumdepth}{-1}
+\setcounter{tocdepth}{1}
+
+\DeclareRobustCommand{\normalfont}{\calligra}
+%\AtBeginDocument{\normalfont}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+\vfill 
+
+\Huge \fontsize{75}{60}\selectfont
+\artdecoframe{$title$}
+\vfill 
+\large\emph{$author$ \ldots} 
+\vfill  
+\end{center}
+\end{titlepage}
+
+\curlyframe{\vspace{-8ex}\tableofcontents\vspace{8ex}}
+
+$body$
+\end{document}

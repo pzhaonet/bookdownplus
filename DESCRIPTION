@@ -1,0 +1,20 @@
+Package: bookdownplus
+Version: 0.0.0
+Date: 2017-05-15
+Title: Generage varied books and documents with R bookdown
+Author: Peng Zhao
+Maintainer: Peng Zhao <pzhao@pzhao.net>
+Depends: R (>= 3.1.0)
+Imports:
+    knitr (>= 1.15),
+    bookdown (>= 0.3.17),
+    yaml (>= 2.1.14)
+Suggests:
+Description: Generage books with R bookkdown
+License: GPL
+URL: https://github.com/dapengde/bookdownplus
+BugReports: https://github.com/dapengde/bookdownplus/issues
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
+NeedsCompilation: no
+Packaged: 2017-05-15 09:53:27 UTC; c7701105

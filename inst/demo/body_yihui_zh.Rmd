@@ -1,0 +1,53 @@
+
+# 前言 {-}
+
+你好，世界。我写了一本书。这本书是这样的，第 \@ref(intro) 章介绍了啥啥，然后是啥啥……
+
+我用了两个 R 包编译这本书，分别是 **knitr**\index{knitr} [@xie2015] 和 **bookdown**\index{bookdown} [@R-bookdown]。以下是我的 R 进程信息：
+
+```{r}
+sessionInfo()
+```
+
+## 致谢 {-}
+
+非常感谢谁谁以及谁谁对我的帮助。艾玛，要不是他们神一样的队友，我两年前就写完这本书了。
+
+```{block2, type='flushright', html.tag='p'}
+张三  
+于 A 村某角落
+```
+
+# 作者简介 {#author .unnumbered}
+
+上不了厅堂，下得了厨房。敲得了代码，逮得住蟑螂。
+
+`\mainmatter`
+
+# 牛刀小试 {#intro}
+
+现在我们可以试试 **bookdown** 的一些初级功能了，例如图表。图 \@ref(fig:hello) 是一幅无趣的散点图，表 \@ref(tab:iris) 是一份枯燥的数据。
+
+```{r hello, fig.cap='雷猴啊，散点图！', out.width='90%'}
+par(mar = c(4, 4, 1, .1))
+plot(cars, pch = 19)
+```
+
+```{r iris}
+knitr::kable(
+  head(iris), caption = '雷猴啊，iris 数据！',
+  booktabs = TRUE
+)
+```
+
+就这样，你可以一直编下去，直到编不下去。
+
+\cleardoublepage 
+
+# (APPENDIX) 附录 {-}
+
+# 余音绕梁 {#sound}
+
+呐，到这里朕的书差不多写完了，但还有几句话要交待，所以开个附录，再啰嗦几句，各位客官稍安勿躁、扶稳坐好。
+
+`r if (knitr:::is_html_output()) '# 参考文献 {#references .unnumbered}'`

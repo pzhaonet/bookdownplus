@@ -1,0 +1,31 @@
+--- 
+title: "Bookdown chemistry"
+author: "Peng Zhao"
+date: "`r Sys.Date()`"
+output:
+  bookdown::pdf_book:
+    keep_tex: yes
+    dev: "cairo_pdf"
+    citation_package: natbib
+    latex_engine: xelatex # for chinese
+    template: tex/template_chemistry_zh.tex # for chinese
+    pandoc_args: --chapters
+    toc_depth: 3
+    toc_unnumbered: no
+    toc_appendix: yes
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+# documentclass: book
+documentclass: ctexbook # for those in Chinese
+bibliography: [bib/bib.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: no
+lot: no
+lof: no
+geometry: [b5paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
+site: bookdown::bookdown_site
+description: "chemistry"
+github-repo: dapengde/bookdown-chemistry
+#cover-image: images/cover.jpg
+---
+

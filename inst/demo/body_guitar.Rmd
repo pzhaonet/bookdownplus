@@ -1,0 +1,79 @@
+
+# Prologue {#prologue .unnumbered} 
+
+```{r, echo=5, out.width='60%'}
+ z <- 2 * volcano        # Exaggerate the relief
+ x <- 10 * (1:nrow(z))   # 10 meter spacing (S to N)
+ y <- 10 * (1:ncol(z))   # 10 meter spacing (E to W)
+ par(mar = c(0,0,0,0))
+ persp(x, y, z, theta = 120, phi = 15, scale = FALSE, 
+       axes = FALSE)
+```
+
+
+\mainmatter
+
+
+
+# Hallelujah {#hallelujah .unnumbered}
+              
+I've \CM heard there was a \Am secret chord, That \CM David played, and it \Am pleased the Lord
+
+But \F you don't really care for music, \CM do you? \GM
+
+It \CM goes like this: The \F fourth, the \GM fifth, The \Am minor fall, the \GM major lift
+
+The \GM baffled king com\Em -posing Halle\Am -lujah Halle\F -lujah, Halle\CM -lujah Halle\F -lujah, Halle \CM -lu\GM -\CM jah 
+
+Your faith was strong But you needed proof You saw her bathing On the roof
+
+Her beauty and the Moonlight overthrew you
+
+She tied you to a kitchen chair, She broke your throne And she cut your hair
+
+And from your lips She drew the Hallelujah, Hallelujah, Hallelujah, Hallelujah, Hallelujah 
+
+Maybe I've been here before, I know this room I've walked this floor
+
+I used to live alone Before I knew you
+
+I've seen your flag On the marble arch, Love is not a victory march 
+
+It's a cold and It's a broken Hallelujah, Hallelujah, Hallelujah, Hallelujah, Hallelujah 
+
+There was a time You let me know, What's really going on below 
+
+But now you never show It to me, do you?
+
+I remember when I moved in, you, Your holy dark Was moving too
+
+And every breath we drew Was Hallelujah, Hallelujah, Hallelujah Hallelujah, Hallelujah 
+
+Maybe there's a God above, And all I ever Learned from love
+
+Was how to shoot At someone Who outdrew you
+
+It's not a cry You can hear at night, It's not somebody Who's seen the light
+
+It's a cold and It's a broken Hallelujah, Hallelujah, Hallelujah, Hallelujah, Hallelujah 
+
+\cleardoublepage 
+
+# (APPENDIX) Appendix {-} 
+
+# Chords {#toolbox .unnumbered}
+ 
+
+\chords{\iAsevenMaj \iAseven \iA \iAm \iAmfive}
+
+\chords{\iBb \iBmseveN \iBmsevenA \iBmseven \iBm \iBM \iBseven \iBMseven \iBsevenBasDs}
+
+\chords{\iCM \iCssevenLight \iCsthree \iCthree \iCseven \iCm \iCsm}
+
+\chords{\iDmBasB \iDseveN \iDseven \iDsix \iD \iDm}
+
+\chords{\iEb \iE \iEseven \iEseveNNine \iEseveN \iEsevenFour \iEm}
+
+\chords{\iF \iFs \iFsmin \iFsminLight \iFsminBasSeveN \iFsminBasSeven \iFsminSeven}
+
+\chords{\iGM \iGsminseven \iGthree \iGm \iGsm}

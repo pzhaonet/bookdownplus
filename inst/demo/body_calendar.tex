@@ -1,0 +1,172 @@
+
+%----------------------------------------------------------------------------------------
+%	BLANK DAYS BEFORE THE BEGINNING OF THE CALENDAR
+%----------------------------------------------------------------------------------------
+
+% This part is very finicky. It defines the number of blank days at the beginning of the calendar before the first of the month starts. If you need this to be more than 4 (i.e. the first starts on a Friday or Saturday in a 31 day month), then you have two options: 
+% 1) You can uncomment another one or two \BlankDay's below which will make a new week (6 total) which makes the calendar too big for one page, remedy this by decreasing the size of each day by replacing 2.5cm below with a smaller number. 
+% 2) Make the spill-over days start at the top left of the calendar (i.e. the calendar starts with 31 then a few days blank then 1, 2, 3, etc). The second option can be configured by uncommenting the below:
+
+%\setcounter{calendardate}{31} % Begin the count with 31 so the top left day is 31; this can be changed to 29 or 30 as required
+%\day{}{\vspace{2.5cm}} % 31 - add another line identical to this if starting at 30 or earlier
+
+% You will need to comment out the 31 in the NUMBERED DAYS AND CALENDAR CONTENT section below for this as well as commenting out one of the \BlankDay's below. Play around with it and you will get it.
+
+\BlankDay
+\BlankDay
+%\BlankDay
+%\BlankDay
+%\BlankDay
+%\BlankDay
+
+%----------------------------------------------------------------------------------------
+%	NUMBERED DAYS AND CALENDAR CONTENT
+%----------------------------------------------------------------------------------------
+
+% These are the numbered days in the template - if there are less than 31 days simply comment out the bottom lines.
+
+% \vspace{2.5cm} is only there to provide an even look to the calendar where each day is 2.5cm tall, it can be changed or removed to automatically adjust to the day in the week with the most content
+
+\setcounter{calendardate}{1} % Start the date counter at 1
+
+\day{Work}{10am Meeting with Boss \\[6pt] 12pm Meeting with Group} % 1 - Example of content
+\day{}{\vspace{2.5cm}} % 2 
+\day{}{\vspace{2.5cm}} % 3
+
+%----------------------------------------------------------------------------------------
+%	FOURTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{In Transit}{
+\textbf{Depart} (PHL) @ 18:10 EDT\\
+US Airways \# 740\\
+US Airways record locator: EPYTWQ\\
+Airline ticket number(s): 0377186181588-589
+}
+
+%----------------------------------------------------------------------------------------
+%	FIFTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Madrid}{
+\textbf{Arrive} (MAD) @ 07:45 CEST\\\daysep
+Hotel Senator Gran V\'ia\\
+Calle Gran V\'ia, 21\\
+28013 (Centro) MADRID\\
++34 915 31 41 51\\
+Reservation code: 080131-98638\\
+Cancellation code: 9860291\\\daysep
+Palacio Real\\
+Plaza Mayor\\
+Reina Sof\'ia National Museum
+}
+
+%----------------------------------------------------------------------------------------
+%	SIXTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Toledo (Day Trip)}{
+Cathedral\\
+Sinagoga del Transito\\
+Palace Alcazar\\
+Sinagoga del Santa Maria la Blanca
+}
+
+%----------------------------------------------------------------------------------------
+%	SEVENTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Madrid}{
+Real Academic de Bellas Artes\\Templo de Debod\\Museo del Prado\\\daysep
+\textbf{Depart} Madrid @ 22:45 on SNCF 332
+}
+
+%----------------------------------------------------------------------------------------
+%	EIGHTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Lisbon}{
+\textbf{Arrive} in Lisbon @ 08:00\\\daysep
+Hotel Real Pal\'acio\\
+Rua Tom\'as Ribeiro 115\\\ \\
+Elevador de Santa Justa\\
+Solar do Vinho do Porto\\
+Castelo de S\~ao Jorge\\Mosteiro do Geron\'imos\\Torre de Bel\'em
+}
+
+%----------------------------------------------------------------------------------------
+%	NINTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Estoril}{
+\textbf{Arrive} in Estoril\\\daysep
+Hotel Alvorada\\
+Rua de Lisboa, 3\\\daysep
+OptMAS Workshop?\\
+}
+
+%----------------------------------------------------------------------------------------
+%	TENTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Estoril}{
+DCR Workshop
+}
+
+%----------------------------------------------------------------------------------------
+%	ELEVENTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Estoril}{
+FIPA Meeting 11:10--12:10\\
+Poster Session w/``Drinks and Snacks'' 15:00--16:00
+}
+
+%----------------------------------------------------------------------------------------
+%	TWELFTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Estoril}{ 
+AAMAS Demos\\
+Conference Banquet @ 18:30
+}
+
+%----------------------------------------------------------------------------------------
+%	THIRTEENTH DAY
+%----------------------------------------------------------------------------------------
+
+\day{Estoril}{
+\textbf{Depart} (LIS) @ 10:35 WEST\\
+US Airways \#739\\
+\textbf{Arrive} (PHL) @ 13:25 EST
+}
+
+\day{}{\vspace{2.5cm}} % 14
+\day{}{\vspace{2.5cm}} % 15
+\day{}{\vspace{2.5cm}} % 16
+\day{}{\vspace{2.5cm}} % 17
+\day{}{\vspace{2.5cm}} % 18
+\day{}{\vspace{2.5cm}} % 19
+\day{}{\vspace{2.5cm}} % 20 
+\day{}{\vspace{2.5cm}} % 21
+\day{}{\vspace{2.5cm}} % 22
+\day{}{\vspace{2.5cm}} % 23
+\day{}{\vspace{2.5cm}} % 24
+\day{}{\vspace{2.5cm}} % 25
+\day{}{\vspace{2.5cm}} % 26
+\day{}{\vspace{2.5cm}} % 27
+\day{}{\vspace{2.5cm}} % 28
+\day{}{\vspace{2.5cm}} % 29 
+\day{}{\vspace{2.5cm}} % 30 
+\day{}{\vspace{2.5cm}} % 31
+
+% Un-comment the \BlankDay below if the bottom line of the calendar is missing
+%\BlankDay
+
+% Un-comment to start counting again after 31
+%\setcounter{calendardate}{1}
+%\day{}{\vspace{2.5cm}} % 1
+%\day{}{\vspace{2.5cm}} % 2
+%\day{}{\vspace{2.5cm}} % 3
+
+%----------------------------------------------------------------------------------------

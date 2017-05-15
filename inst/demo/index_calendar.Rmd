@@ -1,0 +1,31 @@
+--- 
+title: "An article tempale for conference calendar"
+author: "Peng Zhao"
+date: ""
+output:
+  bookdown::pdf_book:
+    keep_tex: yes
+    dev: "cairo_pdf"
+#    citation_package: natbib
+    latex_engine: xelatex
+    template: tex/template_calendar.tex
+#    pandoc_args: --chapters
+    toc_depth: 3
+    toc_unnumbered: no
+    toc_appendix: yes
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+documentclass: article
+bibliography: [bib/bib.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: no  
+toc: no
+lot: no
+lof: no
+# geometry: [a4paper]
+site: bookdown::bookdown_site
+description: "chemistry"
+github-repo: dapengde/bookdown-chemistry
+#cover-image: images/cover.jpg
+---
+

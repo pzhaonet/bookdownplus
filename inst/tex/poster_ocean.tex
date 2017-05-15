@@ -1,0 +1,250 @@
+% KU Leuven latex poster template
+%
+% © 2015 Michael Hofmann
+%
+% This work is licensed under the Creative Commons Attribution 3.0 Unported License.
+% To view a copy of this license, visit
+% http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
+% Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+
+\documentclass[english,xcolor=table,t
+$if(classoptions)$
+    ,$classoptions$
+$endif$
+]{beamer}
+
+\usepackage[size=custom,width=100,height=100
+$if(posteroptions)$
+    ,$posteroptions$
+$endif$
+]{tex/beamerposter}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage[nolist,nohyperlinks]{acronym}
+\usepackage{babel,lmodern,graphicx,mathptmx,xspace,wasysym,microtype,booktabs,tabularx,relsize,textcomp,longtable,lipsum,colortbl,eurosym,url,multicol,etoolbox,multimedia,pdfpages,fixltx2e,ifluatex,epstopdf}
+\usepackage[olditem,oldenum]{paralist}
+\usepackage[babel=true]{csquotes}
+\usepackage[thinqspace,amssymb,textstyle]{SIunits}
+\usepackage[textsize=tiny]{todonotes}
+\usepackage[symbol]{footmisc}
+\usepackage[notquote]{hanging}
+\usepackage[normalem]{ulem}
+
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+\graphicspath{{figures/}}
+% Fix sort order in case the same file exists with multiple extensions
+\DeclareGraphicsExtensions{.pdf,.png,.jpeg,.jpg,.eps}
+\frenchspacing
+
+\input{tex/definitions.tex}
+
+$if(biblatex)$
+\usepackage[style=authoryear-comp,natbib=true,backend=bibtex]{biblatex}
+\ExecuteBibliographyOptions{
+    bibencoding=ascii,
+    texencoding=utf8,
+    backref=false,
+    dashed=false,                                    % no dash instead of recurring author and editor names
+    maxnames=2,
+    maxbibnames=99,
+    uniquename=init,firstinits=true,terseinits=true, % only care about initials
+    useprefix=true,                                  % sort van Wieringen correctly
+    sortcites=false,                                 % do not sort multiple citations
+    doi=false,
+    url=false,
+$if(biboptions)$
+    ,$biboptions$
+$endif$
+}
+\AtEveryBibitem{\clearfield{month}}
+\DeclareFieldFormat{eprint:pubmed}{\iffootnote{}{\mkbibacro{PMID}\addcolon\space
+  \ifhyperref
+    {\href{http://www.ncbi.nlm.nih.gov/pubmed/#1}{\nolinkurl{#1}}}
+    {\nolinkurl{#1}}}}
+\DeclareFieldFormat{isbn}{\iffootnote{}{\mkbibacro{ISBN}\addcolon\space
+  \ifhyperref{\href{http://amzn.com/#1}{\nolinkurl{#1}}}{\nolinkurl{#1}}}}
+\DeclareFieldFormat{issn}{}
+\setlength\bibhang{2em}
+$endif$
+
+$if(bibliofiles)$
+\addbibresource{$bibliofiles$}
+$endif$
+
+% beamer
+\mode<presentation>
+
+\newbox{\layoutbox}
+\newlength{\headerheight}
+\setlength\headerheight{$if(headerheight)$$headerheight$$else$15cm$endif$}
+\newlength{\logowidth}
+%\setlength\logowidth{\headerheight*\ratio{236px}{661px}}
+\setlength\logowidth{\headerheight}
+
+\definecolor{kuldark}{HTML}{123C75}   % heading background
+\definecolor{kulbgleft}{HTML}{CBE1EC} % background fill gradient left
+\definecolor{kulbgright}{HTML}{C5D9E4} % background fill gradient right
+\definecolor{kulheaderleft}{HTML}{158DB0} % header fill gradient left
+\definecolor{kulheaderright}{HTML}{03708D} % header fill gradient right
+
+% headline colors and fonts
+\setbeamercolor{headline}{fg=white}
+% large, Large, LARGE, huge, Huge, veryHuge, VeryHuge, VERYHuge
+\setbeamerfont{title in headline}{$if(titlefont)$$titlefont$$else$size=\veryHuge,series=\bfseries$endif$}
+\setbeamerfont{author in headline}{$if(authorfont)$$authorfont$$else$size=\Huge$endif$}
+\setbeamerfont{institute in headline}{$if(institutefont)$$institutefont$$else$size=\LARGE$endif$}
+
+% footline colors and fonts
+\setbeamercolor{footline}{fg=white}
+\setbeamerfont{footline}{size=\normalsize}
+
+% body colors, and fonts
+\setbeamercolor*{normal text}{fg=black}
+
+% block environment
+\setbeamercolor*{block body}{bg=white,fg=black}
+\setbeamercolor*{block title}{fg=white,bg=kuldark}
+\setbeamerfont{block title}{size=\large,series=\bfseries}
+
+\setbeamercolor{structure}{fg=kuldark}
+\setbeamerfont{structure}{size=\large}
+\setbeamerfont*{item}{parent=normal text}
+\setbeamerfont{caption}{$captionfont$}
+
+\setbeamertemplate{background canvas}{%
+  \pgfdeclarehorizontalshading{backgroundshading}{\the\paperheight}{color(0cm)=(kulbgleft); color(\the\paperwidth)=(kulbgright)}%
+  \setbox\layoutbox=\hbox{\pgfuseshading{backgroundshading}}%
+  \setbox\layoutbox=\hbox{\lower\paperheight\hbox{\box\layoutbox}}%
+  \wd\layoutbox=0pt\ht\layoutbox=0pt\dp\layoutbox=0pt%
+  \box\layoutbox%
+  \leavevmode
+  \begin{beamercolorbox}[ht=1ex,wd=\paperwidth]{headline}%
+    \begin{columns}[T,totalwidth=\paperwidth]
+      \begin{column}{\paperwidth}
+        \vskip\paperheight
+        \vskip-50cm
+		$if(backimg)$
+        \includegraphics[height=50cm]{$backimg$}
+		$endif$
+      \end{column}
+    \end{columns}
+  \end{beamercolorbox}
+}
+
+% no navigation on a poster
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamertemplate{headline}{%
+  \pgfdeclarehorizontalshading{headlineshading}{\headerheight}{color(0cm)=(kulheaderleft); color(.3*\the\paperwidth)=(kulheaderleft); color(\the\paperwidth)=(kulheaderright)}%
+  \setbox\layoutbox=\hbox{\pgfuseshading{headlineshading}}%
+  \setbox\layoutbox=\hbox{\lower\headerheight\hbox{\box\layoutbox}}%
+  \wd\layoutbox=0pt\ht\layoutbox=0pt\dp\layoutbox=0pt%
+  \box\layoutbox%
+  \leavevmode
+  \begin{beamercolorbox}[ht=1ex,wd=\paperwidth]{headline}%
+    \begin{columns}[T,totalwidth=\paperwidth]
+      \begin{column}{2cm}
+      \end{column}
+      \begin{column}{\paperwidth-4cm-\logowidth}
+        % Change the size and the line skips to fit in the title bar
+        \vskip2cm
+        {\usebeamerfont{title in headline}\inserttitle\\[.5ex]}
+        {\usebeamerfont{author in headline}\insertauthor\\[1ex]}
+        {\usebeamerfont{institute in headline}\insertinstitute}
+      \end{column}
+      \begin{column}{2cm}
+      \end{column}
+      \begin{column}{\logowidth}
+$if(logo)$
+%        \raggedleft\includegraphics[width=\headerheight,angle=-90]{$logo$}
+        \raggedleft\includegraphics[height=\headerheight]{$logo$}
+$endif$
+      \end{column}
+    \end{columns}
+  \end{beamercolorbox}
+  \vskip-1em
+  \vskip-1cm
+}
+
+\setbeamertemplate{footline}{
+  \pgfdeclarehorizontalshading{headlineshading}{4ex}{color(0cm)=(kulheaderleft); color(.3*\the\paperwidth)=(kulheaderright); color(\the\paperwidth)=(kulheaderright)}%
+  \setbox\layoutbox=\hbox{\pgfuseshading{headlineshading}}%
+  \setbox\layoutbox=\hbox{\lower4ex\hbox{\box\layoutbox}}%
+  \wd\layoutbox=0pt\ht\layoutbox=0pt\dp\layoutbox=0pt%
+  \box\layoutbox%
+  \leavevmode%
+  \begin{beamercolorbox}[ht=4ex,leftskip=1cm,rightskip=1cm]{footline}%
+    \url{$web$} \hfill $longinstitute$ \hfill \texttt{$email$}
+    \vskip.8ex
+  \end{beamercolorbox}
+}
+
+\setbeamertemplate{block begin}{%
+  \vskip1cm%
+  \begin{beamercolorbox}[ht=2.7ex,dp=0.9ex,rounded=false,shadow=false,leftskip=1cm]{block title}%
+    \usebeamerfont*{block title}\insertblocktitle
+  \end{beamercolorbox}%
+  {\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
+  \usebeamerfont{block body}%
+  \pgfsetfillopacity{.7}
+  \advance\linewidth by -2cm
+  \begin{beamercolorbox}[rounded=false,shadow=false,leftskip=0cm,sep=1cm,vmode,rightskip=0cm]{block body}%
+    \ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
+    \parskip.4em
+    \pgfsetfillopacity{1}
+}
+
+\setbeamertemplate{block end}{\end{beamercolorbox}}
+
+\setbeamertemplate{structure text begin}{\vskip.4em}
+
+\setbeamertemplate{itemize/enumerate body begin}{\begin{minipage}{\dimexpr\textwidth-2cm\relax}\vskip.4em}
+
+\setbeamertemplate{itemize/enumerate body end}{\end{minipage}}
+
+\setbeamertemplate{itemize items}[triangle]
+
+\setbeamertemplate{bibliography item}{\hskip\dimexpr0.5em+0.8cm\relax}
+
+\setbeamertemplate{caption}{%
+  \parbox{\dimexpr\textwidth-2cm\relax}{%
+  {%
+    \usebeamercolor[fg]{caption name}%
+    \usebeamerfont*{caption name}%
+    \insertcaptionname~\insertcaptionnumber:%
+  }
+  \insertcaption\par
+  }
+}
+
+$if(title)$
+\title{$title$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+\institute{$institute$}
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+\begin{document}
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+\begin{frame}
+
+$body$
+
+\end{frame}
+
+$for(include-after)$
+$include-after$
+$endfor$
+
+\end{document}

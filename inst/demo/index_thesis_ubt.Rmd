@@ -1,0 +1,24 @@
+--- 
+title: "R bookdown+: Authoring Articles, Mails, Guitar Chords, Chemical Molecular Formulae and Equations with R bookdown"
+author: "Peng Zhao, Samwell Tarly and Lyanna Mormont*"
+date: ""
+output:
+  bookdown::pdf_book:
+    template: tex/template_thesis_ubt.tex
+    keep_tex: yes
+    citation_package: natbib
+#    latex_engine: xelatex
+    toc_depth: 3
+    toc_unnumbered: no
+    toc_appendix: yes
+    pandoc_args: --chapters
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+bibliography: [bib/bib.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: no  
+toc: no
+lot: no
+lof: no
+site: bookdown::bookdown_site
+---

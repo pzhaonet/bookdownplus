@@ -1,0 +1,162 @@
+
+# Introduction
+
+# Demos
+
+## Chemical formulae
+
+\ce{H2O}, \ce{Sb2O3}
+
+\ce{H+}, \ce{CrO4^2-},  \ce{[AgCl2]-}, \ce{Y^99+}, \ce{Y^{99+}}
+
+\ce{Fe^{II}Fe^{III}2O4},  \ce{2H2O}, \ce{2 H2O}, \ce{0.5H2O}, \ce{1/2H2O}, \ce{(1/2)H2O} , \ce{$n$H2O}
+
+\ce{^{227}_{90}Th+}, \ce{^227_90Th+}, \ce{^{0}_{-1}n^{-}}, \ce{^0_-1n-}
+
+\ce{H{}^3HO}, \ce{H^3HO}
+
+\ce{(NH4)2S}, \ce{[\{(X2)3\}2]^3+}
+
+\ce{H2(aq)}, \ce{CO3^2-{}_{(aq)}}, \ce{NaOH(aq,$\infty$)}
+
+\ce{OCO^{.-}}, \ce{NO^{(2.)-}}
+
+$\ce{NO_x}$, `\sffamily\bfseries\ce{NO_x}`, $\ce{Fe^n+}$, `\sffamily\bfseries\ce{Fe^n+}`
+
+`\ce{\mu-Cl}, \ce{[Pt(\eta^2-C2H4)Cl3]-}`
+
+\ce{KCr(SO4)2*12H2O}, \ce{KCr(SO4)2.12H2O}, \ce{KCr(SO4)2 * 12 H2O}
+
+\ce{C6H5-CHO}, \ce{A-B=C#D}, `\sffamily\bfseries\ce{A-B=C#D}`
+
+\ce{A\bond{-}B\bond{=}C\bond{#}D},  \ce{A\bond{~}B\bond{~-}C}, \ce{A\bond{~--}B\bond{~=}C\bond{-~-}D}, \ce{A\bond{...}B\bond{....}C}, \ce{A\bond{->}B\bond{<-}C}
+
+## Chemical equations
+
+\ce{A -> B}
+
+\ce{A <- B}
+
+\ce{A <-> B}
+
+\ce{A <--> B}
+
+\ce{A <=> B}
+
+\ce{A <=>> B}
+
+\ce{A <<=> B}
+
+\ce{A ->[\ce{H2O}] B}
+
+
+\ce{A ->[{text above}][{text below}] B}
+
+\ce{A ->[x][x_i] B}
+
+\ce{A ->[x] B}
+
+\ce{A + B}
+
+\ce{A - B}
+
+\ce{A = B}
+
+\ce{A \pm B}
+
+
+\ce{SO4^2- + Ba^2+ -> BaSO4 v}
+  
+\ce{A v B (v) -> B ^ B (^)}
+
+
+$\ce{CH4} + 2\left( \ce{O2 + 79/21 N2} \right)$
+
+$\ce{x Na(NH4)HPO4 ->[\Delta] (NaPO3)_x + x NH3 ^ + x H2O}$
+
+\ce{CO2 + C -> 2 CO}
+
+\ce{Hg^2+ ->[I-] HgI2
+            ->[I-] [Hg^{II}I4]^2-}
+            
+\ce{Zn^2+ ->[\ce{+ 2OH-}][\ce{+ 2H+}] Zn(OH)2 v <=>[\ce{+ 2OH-}][\ce{+ 2H+}] [Zn(OH)4]^2-}
+
+$K = \frac{[\ce{Hg^2+}][\ce{Hg}]}{[\ce{Hg2^2+}]}$
+
+$K = \ce{\frac{[Hg^2+][Hg]}{[Hg2^2+]}}$
+
+
+## Structural formulae
+
+\bzdrh{1==Br;4==Br} \bzdrv{1==Br;4==Br}
+\bzdrv[l]{1==Br;4==Br} \bzdrv[c]{1==Br;4==Br}
+
+\bzdrv[pa]{1D==O;4D==%
+\lmoiety{CH$_{3}$SO$_{2}$--N};%
+2==CH$_{3}$}
+\bzdrv[pa]{1D==O;4D==%
+\rmoiety{N--SO$_{2}$CH$_{3}$};%
+2==CH$_{3}$}
+
+\cyclohexanev{1==1;%
+2d==2D;%
+3A==3A;%
+4B==4B;%
+5Sa==5Sa;5Sb==5Sb;%
+6Sa==6Sa;6Sb==6Sb} 
+
+\cyclohexaneh
+[bdf]{1==Br;4==Br}
+\cyclohexanev
+[A]{1==Br;4==Br} 
+
+\sixheterov[eb]{1==N}
+{1D==0;
+4SA==MeO;4SB==OMe;
+5==C1;
+6==Cl}
+\threehetero[H]{2==C}
+{2Sa==COOH;2Sb==COOH}
+
+\pyrazinev[l{1+}{4+}]
+{1==H;4==H;2==Cl;6==Cl} 
+
+\cyclohexanev
+{1D==O;2Sa==F;2Sb==F}
+\cyclohexaneh[c]
+{1==Cl;4==F;2==CH$_{3}$}
+
+\naphdrv[ob]
+{1Sb==Br;1Sa==Br;3D==O}
+\naphdrh[A]
+{1==Cl;4==F;2==CH$_{3}$} 
+
+\decaheterov[af]{4==O}
+{1==CH$_3$;6==H$_3$C;9A==H;%
+{{10}A}==\lmoiety{HOCH$_2$}}
+\nonaheterov[bjge]{1==S;2==N}{3==Cl}
+
+\chair{1D==O;%
+2Se==H$_3$C;2Sa==CH$_3$;%
+6Se==CH$_3$;6Sa==CH$_3$}
+
+\tetrahedral{0==C;1D==O;2==Cl;%
+4==Cl}
+\qquad
+\tetrahedral[{0+}]{0==N;%
+1==H;2==CH$_3$;3==H;4==H}
+
+\rtrigonal{0==C;1D==O;2==Cl;3==F}
+\qquad
+\ltrigonal{0==C;1D==O;2==Cl;3==F}
+\utrigonal{0==C;1D==O;2==Cl;3==F}
+\Utrigonal{0==C;1D==O;2==Cl;3==F}
+\dtrigonal{0==C;1D==O;2==Cl;3==F}
+\qquad
+\Dtrigonal{0==C;1D==O;2==Cl;3==F}
+
+\ethylene{1==C;2==C}
+{1==F;2==Cl;3==H;4==Br}
+\qquad
+\ethylenev[t{2+}]{1==C;2==N}
+{1==H$_3$C;2==CH$_3$;3==H} 

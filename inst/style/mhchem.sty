@@ -1,0 +1,3434 @@
+%% mhchem.sty
+%% Copyright 2004-2017 Martin Hensel
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License version 1.3c
+% which is included as lppl-1-3c.txt.
+%
+% This work has the LPPL maintenance status "maintained".
+% The Current Maintainer of this work is Martin Hensel.
+%
+% ( In order to fight spam, the maintainer's contact      )
+% ( information is "encrypted" with ROT13.                )
+% ( If you do not know ROT13 yet and have no tool for     )
+% ( decryption, simply do an Internet search for "ROT13". )
+%
+% ,---[ ROT 13 ]---
+% | Gur Pheerag Znvagnvare bs guvf jbex vf Znegva Urafry
+% |   jub pna or pbagnpgrq ivn
+% |     zupurz@ZnegvaUrafry.qr
+% |   be ivn znvy
+% |     Znegva Urafry
+% |     Cbfgfge. 20
+% |     09232 Unegznaafqbes
+% |     Treznal
+% `----------
+%
+% This work consists of all files listed in manifest.txt.
+%
+%
+\ProvidesPackage{mhchem}[2017/01/16 v4.06 for typesetting chemical formulae]
+\RequirePackage{expl3}
+\RequirePackage{l3keys2e}
+\RequirePackage{l3regex}
+\RequirePackage{calc}[1998/07/07]
+\RequirePackage{amsmath}
+\RequirePackage{chemgreek}[2016/02/10]
+\RequirePackage{graphics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   misc   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\DeclareMathSymbol{\mhchem@hyphen}{0}{operators}{45}
+\def\mhchem@macro{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   global helpers   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ExplSyntaxOn
+
+\cs_generate_variant:Nn \str_if_eq:nnTF { Vn }
+\cs_generate_variant:Nn \str_case:nnF { VnF }
+\cs_generate_variant:Nn \regex_match:NnTF { NV }
+\cs_generate_variant:Nn \regex_match:NnTF { No }
+\cs_new_protected:Npn \__mhchem_regex_peek_compile:Nn #1#2
+  {
+    \regex_const:Nn #1 { \A the\ (character|letter)\ (#2) \Z }
+  }
+
+\cs_new_protected:Npn \__mhchem_regex_peek:NTF #1#2#3
+  {
+    \peek_catcode:NTF ##
+      {#3}
+      {
+        \regex_match:NoTF
+          #1
+          { \token_to_meaning:N \l_peek_token } {#2} {#3}
+      }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   RegExp helpers   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\regex_const:Nn \l__mhchem_regex_oneLowercaseLetter_regex { [a-z] }
+\regex_const:Nn \l__mhchem_regex_hyphen_regex { - }
+\regex_const:Nn \l__mhchem_regex_letters_regex { [a-zA-Z]+ }
+\regex_const:Nn \l__mhchem_regex_spaces_regex { [\ ]+ }
+
+\regex_const:Nn \l__mhchem_regex_digits_fregex { \A [0-9]+ \Z}
+\regex_const:Nn \l__mhchem_regex_stateOfAggregationAtEnd_fregex { \A (.+) (\([a-z]{1,3}\)) \Z }
+\regex_const:Nn \l__mhchem_regex_oneLowercaseLetter_fregex { \A [a-z] \Z }
+\regex_const:Nn \l__mhchem_regex_oneLowercaseLetterPlus_fregex
+  { \A ( (\c{__mhchem_cg_withinMathTokens:n}\cB.)? ([a-z]|\c{alpha|beta|gamma|delta|epsilon|zeta|eta|theta|iota|kappa|lambda|mu|nu|xi|omicron|pi|rho|sigma|tau|upsilon|phi|chi|psi|omega}) (\cE.)? | \(?[0-9]+ | \(?[0-9]+\/[0-9]+ ) \Z }
+\regex_const:Nn \l__mhchem_regex_romanNumeral_fregex { \A [IVX]+ \Z }
+\regex_const:Nn \l__mhchem_regex_bracedGroup_fregex { \A \cB. [^\cE.]* \cE. \Z }
+\regex_const:Nn \l__mhchem_regex_oneGreekLetter_fregex
+  { \A \c{alpha|beta|gamma|delta|epsilon|zeta|eta|theta|iota|kappa|lambda|mu|nu|xi|omicron|pi|rho|sigma|tau|upsilon|phi|chi|psi|omega|Alpha|Beta|Gamma|Delta|Epsilon|Zeta|Eta|Theta|Iota|Kappa|Lambda|Mu|Nu|Xi|Omicron|Pi|Rho|Sigma|Tau|Upsilon|Phi|Chi|Psi|Omega} \Z }
+\regex_const:Nn \l__mhchem_regex_digitOrLetterOrGreek_fregex
+  { \A [1-9a-zA-Z\ \~\+\-\,\.\(\)\c{alpha|beta|gamma|delta|epsilon|zeta|eta|theta|iota|kappa|lambda|mu|nu|xi|omicron|pi|rho|sigma|tau|upsilon|phi|chi|psi|omega|Alpha|Beta|Gamma|Delta|Epsilon|Zeta|Eta|Theta|Iota|Kappa|Lambda|Mu|Nu|Xi|Omicron|Pi|Rho|Sigma|Tau|Upsilon|Phi|Chi|Psi|Omega}]+ \Z }
+\regex_const:Nn \l__mhchem_regex_nonFormula_fregex { \A \( [a-z]+ \) \Z }
+\regex_const:Nn \l__mhchem_regex_formula_fregex
+  { \A (  [a-z]  |  ([0-9\ \+\-\,\.\(\)]+ [a-z])+ [0-9\ \+\-\,\.\(\)]*  |  ([a-z][0-9\ \+\-\,\.\(\)]+)+[a-z]?  ) \Z }
+\regex_const:Nn \l__mhchem_regex_formulaAmount_fregex
+  { \A \c{__mhchem_cg_withinMathTokens:n}\cB. (([0-9]*[a-z]? [\+\-])? [a-z] ([\+\-] [0-9]+[a-z]?)?) \cE. \Z }
+\regex_const:Nn \l__mhchem_regex_fraction_fregex
+  { \A ([0-9]+)\/([0-9]+) \Z }
+\regex_const:Nn \l__mhchem_regex_fracMacro_fregex { \A \c{frac} \Z }
+\regex_const:Nn \l__mhchem_regex_ceOperator_fregex { \A ( \+ | - | = | \c{pm} | \$\c{pm}\$ | \(v\) | v | \(\^\) | \^ | \. | \* ) \Z }
+
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_digit_pregex { [0-9] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_digitOrPlus_pregex { [0-9 \+] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_digitOrMinus_pregex { [0-9 \-] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_digitOrDot_pregex { [0-9 .] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_digitOrSlash_pregex { [0-9 \/] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_digitOrDotPlus_pregex { [0-9 \) \. \/] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_dotOrAsterisk_pregex { [\. \*] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_letter_pregex { [a-zA-Z] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_uppercaseLetterOrParenthesis_pregex { [ A-Z \( \[ ] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_openingBracket_pregex { [ \( \[ ] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_closingBracket_pregex { [ \) \] \/ ] }
+\__mhchem_regex_peek_compile:Nn \l__mhchem_regex_oneLowercaseLetter_pregex { [a-z] }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   loop helpers   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_new_protected:Npn \__mhchem_loopHelper_appendNextToken:NNn #1#2#3
+  {
+    \tl_put_right:Nn #1 {#3}
+    #2
+  }
+\cs_new_protected:Npn \__mhchem_loopHelper_appendNextGroup:NNn #1#2#3
+  {
+    \tl_put_right:Nn #1 { { #3 } }
+    #2
+  }
+\cs_new_protected:Npn \__mhchem_loopHelper_appendNextGroupAsCe:NNn #1#2#3
+  {
+    \tl_put_right:Nn #1 { { \ce{#3} } }
+    #2
+  }
+\cs_new_protected:Npn \__mhchem_loopHelper_appendNextGroup_prefix_doIfEmpty:NnnNn #1#2#3#4#5
+  {
+    \tl_if_empty:nTF {#5}
+      { #3 }
+      { \tl_put_right:Nn #1 { #2 { #5 } } }
+    #4
+  }
+
+\cs_new_protected:Npn \__mhchem_loopHelper_appendMathA:NNw #1#2#3$
+  {
+    \tl_put_right:Nn #1 { $ #3 $ }
+    #2
+  }
+\cs_new_protected:Npn \__mhchem_loopHelper_appendMathAAsGroup:NNw #1#2#3$
+  {
+    \tl_put_right:Nn #1 { $ { #3 } $ }
+    #2
+  }
+\cs_new_protected:Npn \__mhchem_loopHelper_appendWithinMathTokens:nn #1#2
+  {
+    \peek_catcode:NTF \c_group_begin_token
+      { \__mhchem_loopHelper_appendWithinMathTokens_aux_group:ccw {#1} {#2} }
+      { \__mhchem_loopHelper_appendWithinMathTokens_aux:ccw {#1} {#2} }
+  }
+\cs_new_protected:Npn \__mhchem_loopHelper_appendWithinMathTokens_aux:NNw #1#2#3$
+  {
+    \tl_put_right:Nn #1 { \__mhchem_cg_withinMathTokens:n {#3} }
+    #2
+  }
+\cs_generate_variant:Nn \__mhchem_loopHelper_appendWithinMathTokens_aux:NNw {ccw}
+\cs_new_protected:Npn \__mhchem_loopHelper_appendWithinMathTokens_aux_group:NNw #1#2#3$
+  {
+    \tl_put_right:Nn #1 { \__mhchem_cg_withinMathTokens:n { {#3} } }
+    #2
+  }
+\cs_generate_variant:Nn \__mhchem_loopHelper_appendWithinMathTokens_aux_group:NNw {ccw}
+
+\cs_new_protected:Npn \__mhchem_loopHelper_ignoreNextToken:Nn #1#2
+  { #1 }
+
+\cs_new_protected:Npn \__mhchem_loopHelper_breakLoop:w #1#2\q_recursion_stop
+  { #1 }
+
+\ExplSyntaxOff
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   \ce   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% \/ %%% Prevent argument from expanding when written to .aux
+%%%%%%%%%% Solution by Heiko Oberdiek
+%%%%%%%%%% http://tex.stackexchange.com/questions/160306/prevent-caption-from-expanding-argument-too-early
+\newcommand*{\ce}{%
+  \ifx\protect\@typeset@protect
+    \csname ce \expandafter\endcsname
+  \else
+    \ifx\protect\@unexpandable@protect
+      \protect@unexpand@cmd@arg\ce
+    \else
+      \ifx\protect\string
+        \protect@string@cmd@arg\ce
+      \else
+        \expandafter\protect@unknown@cmd@arg
+        \csname ce \endcsname
+      \fi
+    \fi
+  \fi
+}
+\expandafter\newcommand\csname ce \endcsname[1]{%
+  \mhchem@cee{#1}%
+}
+% unexpanded protect
+\def\protect@unexpand@cmd@arg#1\else#2\fi\fi\fi#3{%
+  \fi\fi
+  \ifx\thepage\relax
+    \detokenize
+  \else
+    \unexpanded
+  \fi
+  {#1{#3}}%
+}
+% display protect
+\def\protect@string@cmd@arg#1\else#2\fi\fi\fi#3{%
+  \fi\fi\fi
+  \detokenize{#1{#3}}%
+}
+% unknown protect
+\def\protect@unknown@cmd@arg#1\fi\fi\fi{%
+  \fi\fi\fi
+  \protect#1%
+}
+%%%%%%%%%%
+%%% /\ %%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   \cesplit   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ExplSyntaxOn
+
+\cs_generate_variant:Nn \regex_replace_all:nnN { VnN }
+\bool_new:N \l__mhchem_cesplit_odd_bool
+
+\tl_new:N \l__mhchem_cesplit_tmpa_tl
+\newcommand*\cesplit[2]
+  {
+    \bool_set_true:N \l__mhchem_cesplit_odd_bool
+    \tl_set:Nn \l__mhchem_cesplit_tmpa_tl { \__mhchem_ce:n {#2} }
+
+    \tl_map_inline:nn {#1}
+      {
+        \bool_if:NTF \l__mhchem_cesplit_odd_bool
+          {
+            \tl_set:Nn \__mhchem_cesplit_key_tl {##1}
+            \bool_set_false:N \l__mhchem_cesplit_odd_bool
+          }
+        % else
+          {
+            \regex_replace_all:VnN
+              \__mhchem_cesplit_key_tl
+              { \cE] ##1 \c{__mhchem_ce:n}\cB[ }
+              \l__mhchem_cesplit_tmpa_tl
+            \bool_set_true:N \l__mhchem_cesplit_odd_bool
+          }
+      }
+    \tl_use:N \l__mhchem_cesplit_tmpa_tl
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   \cee   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_new_protected:Npn \mhchem@cee #1  % \__mhchem_cee:n
+  {
+    \cesplit
+      {
+        { \c{\\}(\[.*?\])? } { \0 }
+        { \& } { \0 }
+      }
+      {#1}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   \__mhchem_ce:n   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\msg_new:nnn { mhchem } { ce / unexpected-state }
+  {
+    Assertion~failed:~Unexpected~internal~state~'#1' (ce).~
+    You~found~a~bug.~Please~contact~the~package~author.
+  }
+\bool_new:N \l__mhchem_ce_ceActive_bool
+\bool_set_false:N \l__mhchem_ce_ceActive_bool
+\tl_new:N \l__mhchem_ce_state_tl
+\int_new:N \l__mhchem_ce_distanceFromLastComma_int
+\tl_new:N \l__mhchem_ce_result_tl
+\tl_new:N \l__mhchem_ce_part_tl
+\tl_new:N \l__mhchem_ce_arrowName_tl
+\tl_new:N \l__mhchem_ce_arrowTypeOne_tl
+\tl_new:N \l__mhchem_ce_arrowTextOne_tl
+\tl_new:N \l__mhchem_ce_arrowTypeTwo_tl
+\tl_new:N \l__mhchem_ce_arrowTextTwo_tl
+
+\cs_new_protected:Npn \__mhchem_ce:n #1
+  {
+    \group_begin:
+    \mhchem@hook@beforeCe
+    \bool_if:NF \l__mhchem_ce_ceActive_bool
+      {
+        \bool_set_true:N \l__mhchem_ce_ceActive_bool
+        \__mhchem_output_defMathOrText:
+        \def\hyphen{\mhchem@hyphen}%
+        \cs_set_eq:NN \__mhchem_output_greek_orig_alpha \alpha
+        \cs_set_eq:NN \__mhchem_output_greek_orig_beta \beta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_gamma \gamma
+        \cs_set_eq:NN \__mhchem_output_greek_orig_delta \delta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_epsilon \epsilon
+        \cs_set_eq:NN \__mhchem_output_greek_orig_zeta \zeta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_eta \eta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_theta \theta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_iota \iota
+        \cs_set_eq:NN \__mhchem_output_greek_orig_kappa \kappa
+        \cs_set_eq:NN \__mhchem_output_greek_orig_lambda \lambda
+        \cs_set_eq:NN \__mhchem_output_greek_orig_mu \mu
+        \cs_set_eq:NN \__mhchem_output_greek_orig_nu \nu
+        \cs_set_eq:NN \__mhchem_output_greek_orig_xi \xi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_omicron \omicron
+        \cs_set_eq:NN \__mhchem_output_greek_orig_pi \pi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_rho \rho
+        \cs_set_eq:NN \__mhchem_output_greek_orig_sigma \sigma
+        \cs_set_eq:NN \__mhchem_output_greek_orig_tau \tau
+        \cs_set_eq:NN \__mhchem_output_greek_orig_upsilon \upsilon
+        \cs_set_eq:NN \__mhchem_output_greek_orig_phi \phi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_chi \chi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_psi \psi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_omega \omega
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Alpha \Alpha
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Beta \Beta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Gamma \Gamma
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Delta \Delta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Epsilon \Epsilon
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Zeta \Zeta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Eta \Eta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Theta \Theta
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Iota \Iota
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Kappa \Kappa
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Lambda \Lambda
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Mu \Mu
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Nu \Nu
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Xi \Xi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Omicron \Omicron
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Pi \Pi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Rho \Rho
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Sigma \Sigma
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Tau \Tau
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Upsilon \Upsilon
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Phi \Phi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Chi \Chi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Psi \Psi
+        \cs_set_eq:NN \__mhchem_output_greek_orig_Omega \Omega
+        \cs_set_protected:Npn \alpha { \__mhchem_output_greek:n { alpha } }
+        \cs_set_protected:Npn \beta { \__mhchem_output_greek:n { beta } }
+        \cs_set_protected:Npn \gamma { \__mhchem_output_greek:n { gamma } }
+        \cs_set_protected:Npn \delta { \__mhchem_output_greek:n { delta } }
+        \cs_set_protected:Npn \epsilon { \__mhchem_output_greek:n { epsilon } }
+        \cs_set_protected:Npn \zeta { \__mhchem_output_greek:n { zeta } }
+        \cs_set_protected:Npn \eta { \__mhchem_output_greek:n { eta } }
+        \cs_set_protected:Npn \theta { \__mhchem_output_greek:n { theta } }
+        \cs_set_protected:Npn \iota { \__mhchem_output_greek:n { iota } }
+        \cs_set_protected:Npn \kappa { \__mhchem_output_greek:n { kappa } }
+        \cs_set_protected:Npn \lambda { \__mhchem_output_greek:n { lambda } }
+        \cs_set_protected:Npn \mu { \__mhchem_output_greek:n { mu } }
+        \cs_set_protected:Npn \nu { \__mhchem_output_greek:n { nu } }
+        \cs_set_protected:Npn \xi { \__mhchem_output_greek:n { xi } }
+        \cs_set_protected:Npn \omicron { \__mhchem_output_greek:n { omicron } }
+        \cs_set_protected:Npn \pi { \__mhchem_output_greek:n { pi } }
+        \cs_set_protected:Npn \rho { \__mhchem_output_greek:n { rho } }
+        \cs_set_protected:Npn \sigma { \__mhchem_output_greek:n { sigma } }
+        \cs_set_protected:Npn \tau { \__mhchem_output_greek:n { tau } }
+        \cs_set_protected:Npn \upsilon { \__mhchem_output_greek:n { upsilon } }
+        \cs_set_protected:Npn \phi { \__mhchem_output_greek:n { phi } }
+        \cs_set_protected:Npn \chi { \__mhchem_output_greek:n { chi } }
+        \cs_set_protected:Npn \psi { \__mhchem_output_greek:n { psi } }
+        \cs_set_protected:Npn \omega { \__mhchem_output_greek:n { omega } }
+        \cs_set_protected:Npn \Alpha { \__mhchem_output_greek:n { Alpha } }
+        \cs_set_protected:Npn \Beta { \__mhchem_output_greek:n { Beta } }
+        \cs_set_protected:Npn \Gamma { \__mhchem_output_greek:n { Gamma } }
+        \cs_set_protected:Npn \Delta { \__mhchem_output_greek:n { Delta } }
+        \cs_set_protected:Npn \Epsilon { \__mhchem_output_greek:n { Epsilon } }
+        \cs_set_protected:Npn \Zeta { \__mhchem_output_greek:n { Zeta } }
+        \cs_set_protected:Npn \Eta { \__mhchem_output_greek:n { Eta } }
+        \cs_set_protected:Npn \Theta { \__mhchem_output_greek:n { Theta } }
+        \cs_set_protected:Npn \Iota { \__mhchem_output_greek:n { Iota } }
+        \cs_set_protected:Npn \Kappa { \__mhchem_output_greek:n { Kappa } }
+        \cs_set_protected:Npn \Lambda { \__mhchem_output_greek:n { Lambda } }
+        \cs_set_protected:Npn \Mu { \__mhchem_output_greek:n { Mu } }
+        \cs_set_protected:Npn \Nu { \__mhchem_output_greek:n { Nu } }
+        \cs_set_protected:Npn \Xi { \__mhchem_output_greek:n { Xi } }
+        \cs_set_protected:Npn \Omicron { \__mhchem_output_greek:n { Omicron } }
+        \cs_set_protected:Npn \Pi { \__mhchem_output_greek:n { Pi } }
+        \cs_set_protected:Npn \Rho { \__mhchem_output_greek:n { Rho } }
+        \cs_set_protected:Npn \Sigma { \__mhchem_output_greek:n { Sigma } }
+        \cs_set_protected:Npn \Tau { \__mhchem_output_greek:n { Tau } }
+        \cs_set_protected:Npn \Upsilon { \__mhchem_output_greek:n { Upsilon } }
+        \cs_set_protected:Npn \Phi { \__mhchem_output_greek:n { Phi } }
+        \cs_set_protected:Npn \Chi { \__mhchem_output_greek:n { Chi } }
+        \cs_set_protected:Npn \Psi { \__mhchem_output_greek:n { Psi } }
+        \cs_set_protected:Npn \Omega { \__mhchem_output_greek:n { Omega } }
+      }
+    \tl_clear:N \l__mhchem_ce_result_tl
+    \tl_clear:N \l__mhchem_ce_part_tl
+    \tl_set:Nn \l__mhchem_ce_state_tl { c }
+    \int_set:Nn \l__mhchem_ce_distanceFromLastComma_int { 9 }
+    \tl_clear:N \l__mhchem_cf_lastNonIsotopeElement_tl
+    \__mhchem_ce_loop: #1 \q_recursion_stop
+    \int_compare:nTF { \l__mhchem_option_version_int > 1 }
+      { \tl_use:N \l__mhchem_ce_result_tl }
+      { \ensuremath{\tl_use:N \l__mhchem_ce_result_tl} }
+    \mhchem@hook@afterCe
+    \group_end:
+  }
+\cs_new_protected:Npn \__mhchem_ce_loop:
+  {
+    \int_incr:N \l__mhchem_ce_distanceFromLastComma_int
+    \str_case:VnF \l__mhchem_ce_state_tl
+      {
+        { c }
+          {
+            \str_case:VnF \l__mhchem_ce_part_tl
+              {
+                { + }
+                  { \__mhchem_ce_output:nn { 0 } { 0 } }
+                { \pm }
+                  { \__mhchem_ce_output:nn { 0 } { 0 } }
+                { -> }
+                  {
+                    \tl_set:Nn \l__mhchem_ce_arrowName_tl { yields }
+                    \__mhchem_ce_loop_startArrow:
+                  }
+                { <- }
+                  {
+                    \tl_set:Nn \l__mhchem_ce_arrowName_tl { yieldsLeft }
+                    \__mhchem_ce_loop_startArrow:
+                  }
+                { <--> }
+                  {
+                    \tl_set:Nn \l__mhchem_ce_arrowName_tl { yieldsLeftRight }
+                    \__mhchem_ce_loop_startArrow:
+                  }
+                { <-> }
+                  {
+                    \tl_set:Nn \l__mhchem_ce_arrowName_tl { mesomerism }
+                    \__mhchem_ce_loop_startArrow:
+                  }
+                { <=> }
+                  {
+                    \tl_set:Nn \l__mhchem_ce_arrowName_tl { equilibrium }
+                    \__mhchem_ce_loop_startArrow:
+                  }
+                { <<=> }
+                  {
+                    \tl_set:Nn \l__mhchem_ce_arrowName_tl { equilibriumLeft }
+                    \__mhchem_ce_loop_startArrow:
+                  }
+                { <=>> }
+                  {
+                    \tl_set:Nn \l__mhchem_ce_arrowName_tl { equilibriumRight }
+                    \__mhchem_ce_loop_startArrow:
+                  }
+              }
+              {}
+          }
+      }
+      {}
+    \peek_meaning_remove:NTF \q_recursion_stop
+      {
+        \__mhchem_ce_output:nn { 1 } { 0 }
+      }{
+    \str_case:VnF \l__mhchem_ce_state_tl
+      {
+        { c }
+          {
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \peek_catcode:NTF \c_group_begin_token
+                  {
+                    \__mhchem_loopHelper_appendMathAAsGroup:NNw
+                      \l__mhchem_ce_part_tl
+                      \__mhchem_ce_loop:
+                  }
+                  {
+                    \__mhchem_loopHelper_appendMathA:NNw
+                      \l__mhchem_ce_part_tl
+                      \__mhchem_ce_loop:
+                  }
+              }{
+            \peek_catcode:NTF \c_group_begin_token
+              {
+                \__mhchem_loopHelper_appendNextGroup:NNn
+                  \l__mhchem_ce_part_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_charcode_remove:NTF \c_space_token
+              {
+                \int_compare:nTF { \l__mhchem_ce_distanceFromLastComma_int = 1 }
+                  {
+                    \__mhchem_ce_output:nn { 1 } { 0 }
+                  }
+                  {
+                    \__mhchem_ce_output:nn { 1 } { 1 }
+                  }
+                \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF ,
+              {
+                \int_set:Nn \l__mhchem_ce_distanceFromLastComma_int { 0 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_part_tl
+                  \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_part_tl
+                  \__mhchem_ce_loop:
+              }
+            }}}
+          }
+        { a-t1 }
+          {
+            \peek_charcode_remove:NTF \c_space_token
+              {
+                \__mhchem_ce_output:nn { 0 } { 0 }
+                \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF T
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-[1 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTypeOne_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF M
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-[1 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTypeOne_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF C
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-[1 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTypeOne_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF [
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-]1 }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \str_case:VnF \l__mhchem_ce_arrowName_tl
+                  {
+                    { yieldsLeft }
+                      {
+                        \peek_charcode:NTF -
+                          {
+                            \tl_set:Nn \l__mhchem_ce_state_tl { c }
+                            \tl_set:Nn \l__mhchem_ce_part_tl { <- }
+                            \__mhchem_loopHelper_appendNextToken:NNn
+                              \l__mhchem_ce_part_tl
+                              \__mhchem_ce_loop:
+                          }{
+                        \peek_charcode:NTF >
+                          {
+                            \tl_set:Nn \l__mhchem_ce_state_tl { c }
+                            \tl_set:Nn \l__mhchem_ce_part_tl { <- }
+                            \__mhchem_loopHelper_appendNextToken:NNn
+                              \l__mhchem_ce_part_tl
+                              \__mhchem_ce_loop:
+                          }
+                        % else
+                          {
+                            \__mhchem_ce_output:nn { 0 } { 0 }
+                            \tl_set:Nn \l__mhchem_ce_state_tl { a-end }
+                            \__mhchem_ce_loop:
+                          }
+                        }
+                      }
+                    { equilibrium }
+                      {
+                        \peek_charcode:NTF >
+                          {
+                            \tl_set:Nn \l__mhchem_ce_state_tl { c }
+                            \tl_set:Nn \l__mhchem_ce_part_tl { <=> }
+                            \__mhchem_loopHelper_appendNextToken:NNn
+                              \l__mhchem_ce_part_tl
+                              \__mhchem_ce_loop:
+                          }
+                        % else
+                          {
+                            \__mhchem_ce_output:nn { 0 } { 0 }
+                            \tl_set:Nn \l__mhchem_ce_state_tl { a-end }
+                            \__mhchem_ce_loop:
+                          }
+                      }
+                  }
+                  % else
+                  {
+                    \__mhchem_ce_output:nn { 0 } { 0 }
+                    \tl_set:Nn \l__mhchem_ce_state_tl { a-end }
+                    \__mhchem_ce_loop:
+                  }
+              }
+            }}}}
+          }
+        { a-[1 }
+          {
+            \peek_charcode:NTF [
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-]1 }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \__mhchem_ce_output:nn { 0 } { 0 }
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-end }
+                \__mhchem_ce_loop:
+              }
+          }
+        { a-]1 }
+          {
+            \peek_catcode:NTF \c_group_begin_token
+              {
+                \__mhchem_loopHelper_appendNextGroup:NNn
+                  \l__mhchem_ce_arrowTextOne_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_ce_arrowTextOne_tl }
+                  { __mhchem_ce_loop: }
+              }{
+            \peek_charcode_remove:NTF \c_space_token
+              {
+                \tl_put_right:Nn \l__mhchem_ce_arrowTextOne_tl { ~ }
+                \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF ]
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-t2 }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTextOne_tl
+                  \__mhchem_ce_loop:
+              }
+            }}}
+          }
+        { a-t2 }
+          {
+            \peek_charcode_remove:NTF \c_space_token
+              {
+                \__mhchem_ce_output:nn { 0 } { 0 }
+                \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF T
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-[2 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTypeTwo_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF M
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-[2 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTypeTwo_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF C
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-[2 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTypeTwo_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF [
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-]2 }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \__mhchem_ce_output:nn { 0 } { 0 }
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-end }
+                \__mhchem_ce_loop:
+              }
+            }}}}
+          }
+        { a-[2 }
+          {
+            \peek_charcode:NTF [
+              {
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-]2 }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \__mhchem_ce_output:nn { 0 } { 0 }
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-end }
+                \__mhchem_ce_loop:
+              }
+          }
+        { a-]2 }
+          {
+            \peek_catcode:NTF \c_group_begin_token
+              {
+                \__mhchem_loopHelper_appendNextGroup:NNn
+                  \l__mhchem_ce_arrowTextTwo_tl
+                  \__mhchem_ce_loop:
+              }{
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_ce_arrowTextTwo_tl }
+                  { __mhchem_ce_loop: }
+              }{
+            \peek_charcode_remove:NTF \c_space_token
+              {
+                \tl_put_right:Nn \l__mhchem_ce_arrowTextTwo_tl { ~ }
+                \__mhchem_ce_loop:
+              }{
+            \peek_charcode:NTF ]
+              {
+                \__mhchem_ce_output:nn { 0 } { 0 }
+                \tl_set:Nn \l__mhchem_ce_state_tl { a-end }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_ce_arrowTextTwo_tl
+                  \__mhchem_ce_loop:
+              }
+            }}}
+          }
+        { a-end }
+          {
+            \tl_set:Nn \l__mhchem_ce_state_tl { c }
+            \peek_charcode_remove:NTF \c_space_token
+              {
+                \__mhchem_ce_loop:
+              }
+            % else
+              {
+                \__mhchem_ce_loop:
+              }
+          }
+      }
+      {
+        \msg_error:nnx { mhchem } { ce / unexpected-state }
+          { \l__mhchem_ce_state_tl }
+        \__mhchem_loopHelper_appendNextToken:NNn
+          \l__mhchem_ce_result_tl
+          \__mhchem_ce_loop:
+      }
+    }
+  }
+\tl_new:N \l__mhchem_ce_output_cache_part_tl
+\tl_new:N \l__mhchem_ce_output_cache_state_tl
+\cs_new_protected:Npn \__mhchem_ce_output:nn #1#2  % #1 0/1 can be connected with previous to a cf phrase, #2 0/1 can be connected with following to a cf phrase
+  {
+    \regex_match:NVTF \l__mhchem_regex_ceOperator_fregex \l__mhchem_ce_part_tl
+      {
+        \__mhchem_ce_output_cache:
+        \tl_set:NV \l__mhchem_ce_output_cache_state_tl \l__mhchem_ce_state_tl
+        \tl_set:NV \l__mhchem_ce_output_cache_part_tl \l__mhchem_ce_part_tl
+        \__mhchem_ce_output_cache:
+      }
+      {
+        \bool_if:nTF
+          {
+            \str_if_eq_p:nn { #1 } { 0 }  ||
+            ( ! \tl_if_empty_p:N \l__mhchem_ce_output_cache_state_tl  &&
+              ! \str_if_eq_p:VV \l__mhchem_ce_output_cache_state_tl \l__mhchem_ce_state_tl )
+          }
+          {
+            \__mhchem_ce_output_cache:
+            \tl_set:NV \l__mhchem_ce_output_cache_state_tl \l__mhchem_ce_state_tl
+            \tl_set:NV \l__mhchem_ce_output_cache_part_tl \l__mhchem_ce_part_tl
+            \str_if_eq:nnT { #2 } { 0 }
+              {
+                \__mhchem_ce_output_cache:
+              }
+          }
+          {
+            \tl_if_empty:NF \l__mhchem_ce_output_cache_part_tl
+              {
+                \tl_if_empty:NF \l__mhchem_ce_part_tl
+                  { \tl_put_right:Nn \l__mhchem_ce_output_cache_part_tl { ~ } }
+              }
+            \tl_put_right:NV \l__mhchem_ce_output_cache_part_tl \l__mhchem_ce_part_tl
+            \tl_set:NV \l__mhchem_ce_output_cache_state_tl \l__mhchem_ce_state_tl
+            \str_if_eq:nnT { #2 } { 0 }
+              { \__mhchem_ce_output_cache: }
+          }
+      }
+    \tl_clear:N \l__mhchem_ce_part_tl
+    \tl_set:Nn \l__mhchem_ce_state_tl { c }
+  }
+\cs_new_protected:Npn \__mhchem_ce_output_cache:
+  {
+    \str_case:VnF \l__mhchem_ce_output_cache_state_tl
+      {
+        { c }
+          {
+            \str_case:VnF \l__mhchem_ce_output_cache_part_tl
+              {
+                { + }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \__mhchem_output_operatorPlus: }
+                  }
+                { - }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \__mhchem_output_operatorMinus: }
+                  }
+                { = }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \__mhchem_output_operatorEquals: }
+                  }
+                { \pm }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \__mhchem_output_operatorPlusMinus: }
+                  }
+                { $\pm$ }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \__mhchem_output_operatorPlusMinus: }
+                  }
+                { (v) }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \ensuremath{{}\mathop{\downarrow}{}} }
+                  }
+                { v }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \ensuremath{{}\mathop{\downarrow}{}} }
+                  }
+                { (^) }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \ensuremath{{}\mathop{\uparrow}{}} }
+                  }
+                { ^ }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \ensuremath{{}\mathop{\uparrow}{}} }
+                  }
+                { . }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \__mhchem_output_additionCompound: }
+                  }
+                { * }
+                  {
+                    \tl_put_right:Nn \l__mhchem_ce_result_tl
+                      { \__mhchem_output_additionCompound: }
+                  }
+                {  }
+                  {
+                  }
+              }
+            % else
+              {
+                \int_compare:nTF { \l__mhchem_option_version_int > 3 }
+                  {
+                    \regex_match:NVTF
+                      \l__mhchem_regex_stateOfAggregationAtEnd_fregex
+                      \l__mhchem_ce_output_cache_part_tl
+                      {
+                         \regex_replace_once:NnN
+                           \l__mhchem_regex_stateOfAggregationAtEnd_fregex
+                           {
+                             \c{__mhchem_cf:nn}\cB[\cE]\cB[ \1 \cE]
+                             \c{__mhchem_output_skipBeforeStateOfAggregation:}
+                             \c{__mhchem_cf:nn}\cB[\cE]\cB[ \2 \cE]
+                           }
+                           \l__mhchem_ce_output_cache_part_tl
+                        \tl_put_right:Nx \l__mhchem_ce_result_tl
+                          { \exp_not:V \l__mhchem_ce_output_cache_part_tl }
+                      }
+                      {
+                        \tl_put_right:Nx \l__mhchem_ce_result_tl
+                          {
+                            \exp_not:N \__mhchem_cf:nn
+                            {}
+                            { \exp_not:V \l__mhchem_ce_output_cache_part_tl }
+                          }
+                      }
+                  }
+                  {
+                    \tl_put_right:Nx \l__mhchem_ce_result_tl
+                      {
+                        \exp_not:N \__mhchem_cf:nn
+                        {}
+                        { \exp_not:V \l__mhchem_ce_output_cache_part_tl }
+                      }
+                  }
+              }
+          }
+        { a-t1 }
+          {
+            \__mhchem_ce_outputArrow:ooooo
+              { \l__mhchem_ce_arrowName_tl }
+              {}
+              {}
+              {}
+              {}
+          }
+        { a-[1 }
+          {
+            \__mhchem_ce_outputArrow:ooooo
+              { \l__mhchem_ce_arrowName_tl }
+              {}
+              {}
+              {}
+              {}
+            \tl_set:NV \l__mhchem_ce_output_cache_part_tl \l__mhchem_ce_arrowTypeOne_tl
+            \tl_set:Nn \l__mhchem_ce_output_cache_state_tl { c }
+            \__mhchem_ce_output_cache:
+          }
+        { a-]1 }
+          {
+            \__mhchem_ce_outputArrow:ooooo
+              { \l__mhchem_ce_arrowName_tl }
+              { \l__mhchem_ce_arrowTypeOne_tl }
+              { \l__mhchem_ce_arrowTextOne_tl }
+              {}
+              {}
+          }
+        { a-t2 }
+          {
+            \__mhchem_ce_outputArrow:ooooo
+              { \l__mhchem_ce_arrowName_tl }
+              { \l__mhchem_ce_arrowTypeOne_tl }
+              { \l__mhchem_ce_arrowTextOne_tl }
+              {}
+              {}
+          }
+        { a-[2 }
+          {
+            \__mhchem_ce_outputArrow:ooooo
+              { \l__mhchem_ce_arrowName_tl }
+              { \l__mhchem_ce_arrowTypeOne_tl }
+              { \l__mhchem_ce_arrowTextOne_tl }
+              {}
+              {}
+            \tl_set:NV \l__mhchem_ce_output_cache_part_tl \l__mhchem_ce_arrowTypeTwo_tl
+            \tl_set:Nn \l__mhchem_ce_output_cache_state_tl { c }
+            \__mhchem_ce_output_cache:
+          }
+        { a-]2 }
+          {
+            \__mhchem_ce_outputArrow:ooooo
+              { \l__mhchem_ce_arrowName_tl }
+              { \l__mhchem_ce_arrowTypeOne_tl }
+              { \l__mhchem_ce_arrowTextOne_tl }
+              { \l__mhchem_ce_arrowTypeTwo_tl }
+              { \l__mhchem_ce_arrowTextTwo_tl }
+          }
+      }
+      {}
+    \tl_clear:N \l__mhchem_ce_output_cache_state_tl
+    \tl_clear:N \l__mhchem_ce_output_cache_part_tl
+  }
+\cs_new_protected:Npn \__mhchem_ce_outputArrow:nnnnn #1#2#3#4#5
+  {
+    \tl_put_right:Nn \l__mhchem_ce_result_tl
+      {
+        \__mhchem_arrow_deploy:nnnnn {#1} {#2} {#3} {#4} {#5}
+      }
+    \tl_clear:N \l__mhchem_ce_part_tl
+    \tl_set:Nn \l__mhchem_ce_state_tl { c }
+  }
+\cs_generate_variant:Nn \__mhchem_ce_outputArrow:nnnnn {ooooo}
+\cs_new_protected:Npn \__mhchem_ce_loop_startArrow:
+  {
+    \tl_set:Nn \l__mhchem_ce_state_tl { a-t1 }
+    \tl_clear:N \l__mhchem_ce_arrowTypeOne_tl
+    \tl_clear:N \l__mhchem_ce_arrowTextOne_tl
+    \tl_clear:N \l__mhchem_ce_arrowTypeTwo_tl
+    \tl_clear:N \l__mhchem_ce_arrowTextTwo_tl
+    \tl_clear:N \l__mhchem_ce_part_tl
+  }
+\cs_new_protected:Npn \__mhchem_ce_loop_abortArrow:
+  {
+    \tl_put_right:Nx \l__mhchem_ce_part_tl
+      {
+        \tl_set:Nn \l__mhchem_ce_state_tl { a-t1 }
+        \exp_not:V \l__mhchem_ce_arrowTypeOne_tl
+        \exp_not:V \l__mhchem_ce_arrowTextOne_tl
+        \exp_not:V \l__mhchem_ce_arrowTypeTwo_tl
+        \exp_not:V \l__mhchem_ce_arrowTextTwo_tl
+      }
+    \tl_set:Nn \l__mhchem_ce_state_tl { c }
+  }
+\ExplSyntaxOff
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   arrows   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ExplSyntaxOn
+\cs_new:Npn \__mhchem_arrow_options_minLength:n { {2em} }
+\tl_new:N \mhchem@option@arrow@pgf@tip
+\tl_new:N \mhchem@option@arrow@pgf@linewidth
+
+\msg_new:nnn { mhchem } { error-arrow-type }
+  {
+    Cannot~understand~arrow~type~'#1'.
+  }
+\msg_new:nnn { mhchem } { unexpected-arrow-type }
+  {
+    Assertion~failed:~Unexpected~arrow~type~'#1'.~
+    You~found~a~bug.~Please~contact~the~package~author.
+  }
+\msg_new:nnn { mhchem } { unexpected-arrow-name }
+  {
+    Assertion~failed:~Unexpected~arrow~name~'#1'.~
+    You~found~a~bug.~Please~contact~the~package~author.
+  }
+\msg_new:nnn { mhchem } { unexpected-arrow-label-type }
+  {
+    Assertion~failed:~Unexpected~arrow~label~type~'#1'.~
+    You~found~a~bug.~Please~contact~the~package~author.
+  }
+
+\cs_new_protected:Npn \__mhchem_arrow_init_pgf: #1
+  {
+    \bool_if:NTF { \l__mhchem_option_inPreamble_bool }
+      {
+        \RequirePackage{pgf}
+        \RequirePackage{tikz}
+        \AtBeginDocument {
+          \usetikzlibrary{arrows.meta}
+          \__mhchem_arrow_init_pgf_ii: {#1}
+        }
+      }
+      { \__mhchem_arrow_init_pgf_ii: {#1} }
+  }
+\tl_new:N \l__mhchem_arrow_init_pgf_tl
+\cs_new_protected:Npn \__mhchem_arrow_init_pgf_ii: #1
+  {
+    \tl_set:Nn \l__mhchem_option_arrowType_tl { pgf }
+    \str_case:nnF {#1}
+      {
+        { pgf }
+          {
+            \tikzset{mhchemtip /.tip = {Computer~Modern~Rightarrow[length=0pt~5,width'=0pt~1.8]}}
+            \tl_set:Nn \mhchem@option@arrow@pgf@linewidth { 0.09ex }
+          }
+        { pgf-filled }
+          {
+            \tikzset{mhchemtip /.tip = {Stealth[round,length=0pt~10,width'=0pt~0.65]}}
+            \tl_set:Nn \mhchem@option@arrow@pgf@linewidth { 0.09ex }
+          }
+      }
+      {
+        \regex_extract_once:nnNTF
+          { \A pgf \cB. (.+?) \cE. \cB. (.+?) \cE. \Z }
+          {#1}
+          \l__mhchem_tmp_arrow_seq
+          {
+            \seq_pop_left:NN \l__mhchem_tmp_arrow_seq \l__mhchem_option_tmpa_tl
+            \seq_pop_left:NN \l__mhchem_tmp_arrow_seq \l__mhchem_option_tmpa_tl
+            \tl_set:Nx \l__mhchem_arrow_init_pgf_tl { mhchemtip /.tip = {\l__mhchem_option_tmpa_tl} }
+            \exp_after:wN \tikzset \exp_after:wN { \l__mhchem_arrow_init_pgf_tl }
+            \seq_pop_left:NN \l__mhchem_tmp_arrow_seq \l__mhchem_option_tmpa_tl
+            \tl_set_eq:NN \mhchem@option@arrow@pgf@linewidth \l__mhchem_option_tmpa_tl
+          }
+          {
+            { \msg_error:nnn { mhchem } { error-arrow-type } {#1} }
+          }
+      }
+  }
+
+\tl_new:N \l__mhchem_arrow_deploy_a_tl
+\tl_new:N \l__mhchem_arrow_deploy_b_tl
+\cs_new_protected:Npn \__mhchem_arrow_deploy:nnnnn #1#2#3#4#5
+  {
+    \str_case:nnF {#2}
+      {
+        {  }
+          {
+            \int_compare:nTF { \l__mhchem_option_version_int > 3 }
+              {
+                \tl_if_empty:nTF
+                  {#3}
+                  { \tl_clear:N \l__mhchem_arrow_deploy_a_tl }
+                  { \tl_set:Nn \l__mhchem_arrow_deploy_a_tl { \ce {#3} } }
+                \tl_if_empty:nTF
+                  {#5}
+                  { \tl_clear:N \l__mhchem_arrow_deploy_b_tl }
+                  { \tl_set:Nn \l__mhchem_arrow_deploy_b_tl { \ce {#5} } }
+                \__mhchem_arrow_output:nVV {#1} \l__mhchem_arrow_deploy_a_tl \l__mhchem_arrow_deploy_b_tl
+              }
+              { \__mhchem_arrow_output:nnn {#1} {#3} {#5} }
+          }
+        { M }
+          { \__mhchem_arrow_output:nnn {#1} {#3} {#5} }
+        { T }
+          {
+            \tl_if_empty:nTF
+              {#3}
+              { \tl_clear:N \l__mhchem_arrow_deploy_a_tl }
+              { \tl_set:Nn \l__mhchem_arrow_deploy_a_tl { \__mhchem_output_escapeFromMathToText:n {#3} } }
+            \tl_if_empty:nTF
+              {#5}
+              { \tl_clear:N \l__mhchem_arrow_deploy_b_tl }
+              { \tl_set:Nn \l__mhchem_arrow_deploy_b_tl { \__mhchem_output_escapeFromMathToText:n {#5} } }
+            \__mhchem_arrow_output:nVV {#1} \l__mhchem_arrow_deploy_a_tl \l__mhchem_arrow_deploy_b_tl
+          }
+        { C }
+          {
+            \tl_if_empty:nTF
+              {#3}
+              { \tl_clear:N \l__mhchem_arrow_deploy_a_tl }
+              { \tl_set:Nn \l__mhchem_arrow_deploy_a_tl { \ce {#3} } }
+            \tl_if_empty:nTF
+              {#5}
+              { \tl_clear:N \l__mhchem_arrow_deploy_b_tl }
+              { \tl_set:Nn \l__mhchem_arrow_deploy_b_tl { \ce {#5} } }
+            \__mhchem_arrow_output:nVV {#1} \l__mhchem_arrow_deploy_a_tl \l__mhchem_arrow_deploy_b_tl
+          }
+      }
+      { \msg_error:nnn { mhchem } { unexpected-arrow-label-type } {#2} }
+  }
+\cs_new_protected:Npn \__mhchem_arrow_output:nnn #1#2#3
+  {
+    \str_case:VnF \l__mhchem_option_arrowType_tl
+      {
+        { font }
+          {
+            \cs_set_protected:Npn \__mhchem_arrow_base: { \__mhchem_arrow_ext:nnnnnnnn }
+            \cs_set_protected:Npn \__mhchem_arrow_rightArrowFill: { \rightarrowfill@ }
+            \cs_set_protected:Npn \__mhchem_arrow_leftArrowFill: { \leftarrowfill@ }
+            \cs_set_protected:Npn \__mhchem_arrow_leftRightArrowFill: { \leftrightarrowfill@ }
+            \cs_set_protected:Npn \__mhchem_arrow_rightHarpoonUpFill: { \__mhchem_arrow_rightharpoonupfill }
+            \cs_set_protected:Npn \__mhchem_arrow_leftHarpoonDownFill: { \__mhchem_arrow_leftharpoondownfill }
+          }
+        { pgf }
+          {
+            \cs_set_protected:Npn \__mhchem_arrow_base: { \__mhchem_arrow_extPgf:nnnnnnnn }
+            \cs_set_protected:Npn \__mhchem_arrow_rightArrowFill: { \mhchem@arrow@right@pgf }
+            \cs_set_protected:Npn \__mhchem_arrow_leftArrowFill: { \mhchem@arrow@left@pgf }
+            \cs_set_protected:Npn \__mhchem_arrow_leftRightArrowFill: { \mhchem@arrow@leftright@pgf }
+            \cs_set_protected:Npn \__mhchem_arrow_rightHarpoonUpFill: { \mhchem@arrow@rightharpoonup@pgf }
+            \cs_set_protected:Npn \__mhchem_arrow_leftHarpoonDownFill: { \mhchem@arrow@leftharpoondown@pgf }
+          }
+      }
+      { \msg_error:nnx { mhchem } { unexpected-arrow-type } { \l__mhchem_option_arrowType_tl } }
+    \str_case:nnF {#1}
+      {
+        { yields }
+          { \ensuremath{{}\__mhchem_arrow_base:{5}{9}{#2}{5}{9}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightArrowFill:}{}} }
+        { yieldsLeft }
+          { \ensuremath{{}\__mhchem_arrow_base:{9}{5}{#2}{9}{5}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftArrowFill:}{}} }
+        { yieldsLeftRight }
+          {
+            \ensuremath{{}\mathrel{
+              \@ifempty{#3}
+                {\rlap{\raisebox{.44ex}{$\__mhchem_arrow_base:{9}{9}{#2}{9}{9}{}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightArrowFill:}$}}}
+                {\rlap{\raisebox{.44ex}{$\__mhchem_arrow_base:{9}{9}{#2}{9}{9}{\hphantom{#3}}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightArrowFill:}$}}}
+              \@ifempty{#2}
+                {\raisebox{-.44ex}{$\__mhchem_arrow_base:{9}{9}{}{9}{9}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftArrowFill:}$}}
+                {\raisebox{-.44ex}{$\__mhchem_arrow_base:{9}{9}{\hphantom{#2}}{9}{9}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftArrowFill:}$}}
+            }{}}
+          }
+        { mesomerism }
+          { \ensuremath{{}\__mhchem_arrow_base:{9}{9}{#2}{9}{9}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftRightArrowFill:}{}} }
+        { equilibrium }
+          {
+            \ensuremath{{}\mathrel{
+              \@ifempty{#3}
+                {\rlap{\raisebox{.22ex}{$\__mhchem_arrow_base:{5}{9}{#2}{9}{9}{}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightHarpoonUpFill:}$}}}
+                {\rlap{\raisebox{.22ex}{$\__mhchem_arrow_base:{9}{9}{#2}{9}{5}{\hphantom{#3}}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightHarpoonUpFill:}$}}}
+              \@ifempty{#2}
+                {\raisebox{-.22ex}{$\__mhchem_arrow_base:{9}{9}{}{9}{5}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+                {\raisebox{-.22ex}{$\__mhchem_arrow_base:{5}{9}{\hphantom{#2}}{9}{9}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+            }{}}
+          }
+        { equilibriumRight }
+          {
+            \ensuremath{{}\mathrel{
+              \@ifempty{#2}{
+                \rlap{\raisebox{-.22ex}{$\kern0.5em\__mhchem_arrow_base:{0}{0}{}{9}{5}{#3}{\__mhchem_arrow_options_minLength:n-1em}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+                \@ifempty{#3}
+                  {\raisebox{.22ex}{$\__mhchem_arrow_base:{0}{0}{}{0}{0}{}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightHarpoonUpFill:}$}}
+                  {\raisebox{.22ex}{$\__mhchem_arrow_base:{0}{0}{}{9}{5}{\hphantom{#3}\kern1em}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightHarpoonUpFill:}$}}
+              }{
+                \rlap{\raisebox{-.22ex}{$\kern0.5em\__mhchem_arrow_base:{5}{9}{\hphantom{#2}\kern-1em}{9}{9}{#3}{\__mhchem_arrow_options_minLength:n-1em}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+                \@ifempty{#3}
+                  {\raisebox{.22ex}{$\__mhchem_arrow_base:{5}{9}{#2}{0}{0}{}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightHarpoonUpFill:}$}}
+                  {\raisebox{.22ex}{$\__mhchem_arrow_base:{9}{9}{#2}{9}{9}{\hphantom{#3}\kern1em}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_rightHarpoonUpFill:}$}}
+              }
+            }{}}
+          }
+        { equilibriumLeft }
+          {
+            \ensuremath{{}\mathrel{
+              \@ifempty{#3}{
+                \rlap{\raisebox{.22ex}{$\kern0.5em\__mhchem_arrow_base:{5}{9}{#2}{0}{0}{}{\__mhchem_arrow_options_minLength:n-1em}{\__mhchem_arrow_rightHarpoonUpFill:}$}}
+                \@ifempty{#2}
+                {\raisebox{-.22ex}{$\__mhchem_arrow_base:{0}{0}{}{0}{0}{}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+                {\raisebox{-.22ex}{$\__mhchem_arrow_base:{5}{9}{\hphantom{#2}\kern1em}{0}{0}{}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+              }{
+                \rlap{\raisebox{.22ex}{$\kern0.5em\__mhchem_arrow_base:{9}{9}{#2}{5}{9}{\hphantom{#3}\kern-1em}{\__mhchem_arrow_options_minLength:n-1em}{\__mhchem_arrow_rightHarpoonUpFill:}$}}
+                \@ifempty{#2}
+                {\raisebox{-.22ex}{$\__mhchem_arrow_base:{0}{0}{}{9}{5}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+                {\raisebox{-.22ex}{$\__mhchem_arrow_base:{9}{9}{\hphantom{#2}\kern1em}{9}{9}{#3}{\__mhchem_arrow_options_minLength:n}{\__mhchem_arrow_leftHarpoonDownFill:}$}}
+              }
+            }{}}
+          }
+      }
+      { \msg_error:nnn { mhchem } { unexpected-arrow-name } {#1} }
+  }
+\cs_generate_variant:Nn \__mhchem_arrow_output:nnn {nVV}
+
+%%% Font arrows
+\cs_new_protected:Npn \__mhchem_arrow_ext:nnnnnnnn #1#2#3#4#5#6#7#8 % adaption of amsmath's ext@arrow
+  {
+    \mathrel{
+      \mathop{\makebox[#7]{#8\displaystyle}}
+      \limits
+        \@ifnotempty{#3}{^{\mkern#1mu#3\mkern#2mu}}
+        \@ifnotempty{#6}
+          {
+            \c_math_subscript_token{\makebox{
+              \raisebox{1.25ex-\heightof{$\scriptstyle\mkern#4mu#6\mkern#5mu$}}[0pt]
+              {$\scriptstyle\mkern#4mu#6\mkern#5mu$}
+            }}
+          }
+    }
+  }
+\cs_new_protected:Npn \__mhchem_arrow_rightharpoonupfill
+  { \arrowfill@\relbar\relbar\rightharpoonup }
+\cs_new_protected:Npn \__mhchem_arrow_leftharpoondownfill
+  { \arrowfill@\leftharpoondown\relbar\relbar }
+%%% pgf arrows
+\skip_new:N \__mhchem_arrow_extPgfLength_skip
+\cs_new_protected:Npn \__mhchem_arrow_extPgf:nnnnnnnn #1#2#3#4#5#6#7#8
+  {
+    \setlength \__mhchem_arrow_extPgfLength_skip
+      {
+        \widthof{\ensuremath{
+          \__mhchem_arrow_ext:nnnnnnnn{#1}{#2}{#3}{#4}{#5}{#6}{#7}{\rightarrowfill@}
+        }}
+      }
+    \mathrel{
+      \mathop{\kern0.7pt#8{\__mhchem_arrow_extPgfLength_skip-1.8pt}\kern0.7pt}
+      \limits
+        \@ifnotempty{#3}{^{\mkern#1mu#3\mkern#2mu}}
+        \@ifnotempty{#6}{\c_math_subscript_token{\mkern#4mu#6\mkern#5mu}}
+    }
+  }
+\ExplSyntaxOff
+
+\newcommand*\mhchem@arrow@right@pgf[1]{%
+  \begin{tikzpicture}[baseline]%
+    \draw[use as bounding box] (0,0) (#1,0.85ex);
+    \draw[arrows={-mhchemtip}, shorten <=0.5*\mhchem@option@arrow@pgf@linewidth, cap=round, line width=\mhchem@option@arrow@pgf@linewidth]
+      (0cm,0.575ex) -- ++(#1,0cm);
+  \end{tikzpicture}%
+}%
+\newcommand*\mhchem@arrow@left@pgf[1]{%
+  \begin{tikzpicture}[baseline]%
+    \draw[use as bounding box] (0,0) (#1,0.85ex);
+    \draw[arrows={mhchemtip-}, shorten >=0.5*\mhchem@option@arrow@pgf@linewidth, cap=round, line width=\mhchem@option@arrow@pgf@linewidth]
+      (0cm,0.575ex) -- ++(#1,0cm);
+  \end{tikzpicture}%
+}%
+\newcommand*\mhchem@arrow@leftright@pgf[1]{%
+  \begin{tikzpicture}[baseline]%
+    \draw[use as bounding box] (0,0) (#1,0.85ex);
+    \draw[arrows={mhchemtip-mhchemtip}, cap=round, line width=\mhchem@option@arrow@pgf@linewidth]
+      (0cm,0.575ex) -- ++(#1,0cm);
+  \end{tikzpicture}%
+}%
+\newcommand*\mhchem@arrow@rightharpoonup@pgf[1]{%
+  \begin{tikzpicture}[baseline]%
+    \draw[use as bounding box] (0,0) (#1,0.85ex);
+    \draw[arrows={-mhchemtip[harpoon]}, shorten <=0.5*\mhchem@option@arrow@pgf@linewidth, cap=round, line width=\mhchem@option@arrow@pgf@linewidth, ]
+      (0cm,0.575ex) -- ++(#1,0cm);
+  \end{tikzpicture}%
+}%
+\newcommand*\mhchem@arrow@leftharpoondown@pgf[1]{%
+  \begin{tikzpicture}[baseline]%
+    \draw[use as bounding box] (0,0) (#1,0.85ex);
+    \draw[arrows={mhchemtip[harpoon]-}, shorten >=0.5*\mhchem@option@arrow@pgf@linewidth, cap=round, line width=\mhchem@option@arrow@pgf@linewidth, ]
+      (0cm,0.575ex) -- ++(#1,0cm);
+  \end{tikzpicture}%
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   loop helpers   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ExplSyntaxOn
+
+\msg_new:nnn { mhchem } { cf / unexpected-input }
+  {
+    Assertion~failed:~Unexpected~input~character.~
+    In~case~you~think~this~is~a~bug,~
+    please~contact~the~package~author.
+  }
+\msg_new:nnn { mhchem } { cf / unexpected-state }
+  {
+    Assertion~failed:~Unexpected~internal~state~'#1' (cf).~
+    You~found~a~bug.~Please~contact~the~package~author.
+  }
+\msg_new:nnn { mhchem } { cf / unexpected-two-superscripts }
+  {
+    Assertion~failed:~Two~superscripts.~You~entered~an~invalid~formula.~
+    Or~you~found~a~bug,~in~which~case~you~should~contact~the~package~author.
+  }
+
+\cs_new_protected:Npn
+  \__mhchem_loopHelper_outputAndReset_appendNextTokenToResult_setState:nNn #1#2#3
+  {
+    \__mhchem_cf_outputAndReset:
+    \tl_put_right:Nn \l__mhchem_cf_element_tl { \__mhchem_output_withFont:n {#3} }
+    \__mhchem_cf_outputRawElementAndReset:
+    \tl_set:Nn \l__mhchem_cf_state_tl {#1}
+    #2
+  }
+\cs_new_protected:Npn
+  \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn #1#2#3#4
+  {
+    \__mhchem_cf_outputAndReset:
+    \tl_put_right:Nn \l__mhchem_cf_element_tl {#1}
+    \__mhchem_cf_outputRawElementAndReset:
+    \tl_set:Nn \l__mhchem_cf_state_tl {#2}
+    #3
+  }
+\cs_new_protected:Npn
+  \__mhchem_loopHelper_outputAndReset_append_appendNextGroupToResult:nNnn #1#2#3
+  {
+    \__mhchem_cf_outputAndReset:
+    \tl_put_right:Nn \l__mhchem_cf_element_tl {#1}
+    \tl_put_right:Nn \l__mhchem_cf_element_tl {{#3}}
+    \__mhchem_cf_outputRawElementAndReset:
+    #2
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   \cf   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand*\mhchem@cf[2][]{
+  \__mhchem_cf:nn {#1} {#2}
+}
+
+\bool_new:N \l__mhchem_cf_startedWithBond_bool
+
+\tl_new:N \l__mhchem_cf_state_tl
+\tl_new:N \l__mhchem_cf_presup_tl
+\tl_new:N \l__mhchem_cf_presub_tl
+\tl_new:N \l__mhchem_cf_presupState_tl
+\tl_new:N \l__mhchem_cf_presubState_tl
+\tl_new:N \l__mhchem_cf_element_tl
+\tl_new:N \l__mhchem_cf_sub_tl
+\tl_new:N \l__mhchem_cf_sup_tl
+\tl_new:N \l__mhchem_cf_supState_tl
+\tl_new:N \l__mhchem_cf_subState_tl
+\tl_new:N \l__mhchem_cf_lastNonIsotopeElement_tl
+\bool_new:N \g__mhchem_cf_lastElementWithScript_bool
+\cs_new_protected:Npn \__mhchem_cf_resetOutput:
+  {
+    \tl_clear:N \l__mhchem_cf_presup_tl
+    \tl_clear:N \l__mhchem_cf_presub_tl
+    \tl_set:Nn \l__mhchem_cf_presupState_tl { - }
+    \tl_set:Nn \l__mhchem_cf_presubState_tl { - }
+    \tl_clear:N \l__mhchem_cf_element_tl
+    \tl_clear:N \l__mhchem_cf_sub_tl
+    \tl_clear:N \l__mhchem_cf_sup_tl
+    \tl_set:Nn \l__mhchem_cf_supState_tl { - }
+    \tl_set:Nn \l__mhchem_cf_subState_tl { - }
+  }
+
+\bool_new:N \l__mhchem_cf_cfActive_bool
+\bool_set_false:N \l__mhchem_cf_cfActive_bool
+\tl_new:N \l__mhchem_cf_result_tl
+\cs_new_protected:Npn \__mhchem_cf:nn #1#2
+  {
+    \group_begin:
+    \bool_if:NF \l__mhchem_cf_cfActive_bool
+      {
+        \bool_set_true:N \l__mhchem_cf_cfActive_bool
+        \bool_if:NF \l__mhchem_ce_ceActive_bool
+          { \__mhchem_output_defMathOrText: }
+        \int_compare:nTF { \l__mhchem_option_version_int < 3 }
+          { \cs_set_eq:NN \bond \__mhchem_output_bond_single: }
+          {
+            \cs_set_protected:Npn \bond { \mhchem@bond }
+          }
+        \int_compare:nT { \l__mhchem_option_version_int < 4 }
+          {
+            \cs_set_protected:Npn \sbond { \__mhchem_output_bond_single: }
+            \cs_set_protected:Npn \dbond { \__mhchem_output_bond_double: }
+            \cs_set_protected:Npn \tbond { \__mhchem_output_bond_triple: }
+          }
+        \cs_set_protected:Npn \hyphen {\mhchem@hyphen}
+      }
+    \tl_set:Nn \l__mhchem_cf_state_tl { s }
+    \bool_set_false:N \l__mhchem_cf_startedWithBond_bool
+    \__mhchem_cf_resetOutput:
+    \tl_clear:N \l__mhchem_cf_result_tl
+    \__mhchem_cf_loop: #2 \q_recursion_stop
+    \tl_if_empty:nTF {#1}
+      { \ensuremath{\tl_use:N \l__mhchem_cf_result_tl} }
+      { \ensuremath{\overset{#1}{\tl_use:N \l__mhchem_cf_result_tl}} }
+    \group_end:
+  }
+\tl_new:N \l__mhchem_cf_loop_tmpa_l
+\tl_new:N \l__mhchem_cf_loop_tmpb_l
+\tl_new:N \l__mhchem_cf_loop_tmpc_l
+\tl_new:N \l__mhchem_cf_loop_tmpd_l
+\cs_new_protected:Npn \__mhchem_cf_loop:
+  {
+    \peek_meaning_remove:NTF \q_recursion_stop
+      {
+        \str_case:VnF \l__mhchem_cf_state_tl
+          {
+            { - }
+              {
+                \bool_if:NTF \l__mhchem_cf_startedWithBond_bool
+                  { \__mhchem_cf_outputRaw:n { \__mhchem_output_bond_single: } }
+                  { \tl_put_right:Nn \l__mhchem_cf_sup_tl { - } }
+              }
+            { 1 }
+              { \tl_set:Nn \l__mhchem_cf_state_tl {9} }
+            { frac2 }
+              { \__mhchem_cf_outputRawElementAndReset: }
+          }
+          {}
+        \__mhchem_cf_outputAndReset:
+      }{
+    \peek_charcode_remove:NTF \c_space_token
+      {
+        \str_case:VnF \l__mhchem_cf_state_tl
+          {
+            { - }
+              {
+                \bool_if:NTF \l__mhchem_cf_startedWithBond_bool
+                  { \__mhchem_cf_outputRaw:n { \__mhchem_output_bond_single: } }
+                  { \tl_put_right:Nn \l__mhchem_cf_sup_tl { - } }
+              }
+            { 1 }
+              { \tl_set:Nn \l__mhchem_cf_state_tl {9} }
+            { frac2 }
+              { \__mhchem_cf_outputRawElementAndReset: }
+            { a }
+              {
+                \bool_if:nT
+                  {
+                    \tl_if_empty_p:N \l__mhchem_cf_presup_tl  &&
+                    \tl_if_empty_p:N \l__mhchem_cf_presub_tl  &&
+                    \tl_if_empty_p:N \l__mhchem_cf_sub_tl  &&
+                    \tl_if_empty_p:N \l__mhchem_cf_sup_tl
+                  }
+                  {
+                    \regex_replace_once:NnNTF
+                      \l__mhchem_regex_oneLowercaseLetter_fregex
+                      { \c{__mhchem_output_withFont:n}\cB[ \c{__mhchem_cg_itshape:n}\cB[ \0 \cE]\cE] }
+                      \l__mhchem_cf_element_tl
+                      {}
+                      {}
+                  }
+              }
+          }
+          {}
+        \__mhchem_cf_outputAndReset:
+        \int_compare:nT { \l__mhchem_option_version_int > 3 }
+          { \__mhchem_cf_outputRaw:n { \__mhchem_output_skipAfterAmount: } }
+        \tl_set:Nn \l__mhchem_cf_state_tl { s }
+        \__mhchem_cf_loop:
+      }{
+    \peek_meaning:NTF \relax
+      { \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop: }{
+    \peek_meaning:NTF \protect
+      { \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop: }{
+    \str_case:VnF \l__mhchem_cf_state_tl
+      {
+        { - }
+          {
+            \__mhchem_cf_outputAndReset:
+            \int_compare:nTF { \l__mhchem_option_version_int > 3 }
+              {
+                \regex_match:NVTF
+                  \l__mhchem_regex_oneLowercaseLetterPlus_fregex
+                  \l__mhchem_cf_lastNonIsotopeElement_tl
+                  {
+                    \__mhchem_cf_outputRaw:n
+                      { \__mhchem_cg_escapeFromMathToTextOrFaketext:n { - } }
+                  }
+                  { \__mhchem_cf_outputRaw:n { \__mhchem_output_bond_single: } }
+              }
+              { \__mhchem_cf_outputRaw:n { \__mhchem_output_bond_single: } }
+            \tl_set:Nn \l__mhchem_cf_state_tl { s }
+            \__mhchem_cf_loop:
+          }
+        { ( }
+          {
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { 1 }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_cf_loop:
+              }
+          }
+        { ps }
+          {
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_uppercaseLetterOrParenthesis_pregex
+              {
+                \regex_match:NVTF
+                  \l__mhchem_regex_formulaAmount_fregex
+                  \l__mhchem_cf_element_tl
+                  {
+                    \__mhchem_cf_outputAndReset:
+                    \tl_put_right:Nn
+                      \l__mhchem_cf_result_tl
+                      { \__mhchem_output_skipAfterAmount: }
+                  }
+                  {}
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_cf_loop:
+              }
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_cf_loop:
+              }
+          }
+        { s }
+          {
+            \peek_catcode:NTF \mhchem@macro
+              {
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { c }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }{
+            \peek_catcode:NTF \c_group_begin_token
+              {
+                \__mhchem_cf_outputAndReset:
+                \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+                  {
+                    \__mhchem_loopHelper_outputAndReset_append_appendNextGroupToResult:nNnn
+                      {}
+                      \__mhchem_cf_loop:
+                  }
+                % else
+                  {
+                    \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                    \__mhchem_loopHelper_appendNextGroup_prefix_doIfEmpty:NnnNn
+                      \l__mhchem_cf_element_tl
+                      { \__mhchem_cg_escapeFromMathToTextOrFaketext:n }
+                      { \tl_set:Nn \l__mhchem_cf_state_tl { s } }
+                      \__mhchem_cf_loop:
+                  }
+              }{
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \int_compare:nTF { \l__mhchem_option_version_int > 3 }
+                  { \tl_set:Nn \l__mhchem_cf_state_tl { ps } }
+                  { \tl_set:Nn \l__mhchem_cf_state_tl { a } }
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_cf_element_tl }
+                  { __mhchem_cf_loop: }
+              }{
+            \peek_charcode:NTF -
+              {
+                \__mhchem_cf_outputAndReset:
+                \int_compare:nTF { \l__mhchem_option_version_int > 1 }
+                  {
+                    \tl_set:Nn \l__mhchem_cf_state_tl { - }
+                    \bool_set_true:N \l__mhchem_cf_startedWithBond_bool
+                    \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+                  }
+                % else
+                  {
+                    \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                    \tl_put_right:Nn \l__mhchem_cf_sup_tl { - }
+                    \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+                  }
+              }{
+            \peek_charcode:NTF =
+              {
+                \__mhchem_cf_outputAndReset:
+                \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn
+                  { \__mhchem_output_bond_double: }
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF ##
+              {
+                \__mhchem_cf_outputAndReset:
+                \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn
+                  { \__mhchem_output_bond_triple: }
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF ^
+              {
+                \str_if_eq:VnF \l__mhchem_cf_presupState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \tl_set:Nn \l__mhchem_cf_presupState_tl { d }
+                \tl_set:Nn \l__mhchem_cf_state_tl { p }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF _
+              {
+                \str_if_eq:VnF \l__mhchem_cf_presubState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \tl_set:Nn \l__mhchem_cf_presubState_tl { d }
+                \tl_set:Nn \l__mhchem_cf_state_tl { q }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF `
+              {
+                \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+                  {
+                    \str_if_eq:VnF \l__mhchem_cf_presupState_tl { - }
+                      { \__mhchem_cf_outputAndReset: }
+                    \tl_set:Nn \l__mhchem_cf_presupState_tl { rm }
+                    \tl_set:Nn \l__mhchem_cf_state_tl { p }
+                    \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+                  }
+                % else
+                  {
+                    \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                    \__mhchem_loopHelper_appendNextToken:NNn
+                      \l__mhchem_cf_element_tl
+                      \__mhchem_cf_loop:
+                  }
+              }{
+            \peek_charcode:NTF ,
+              {
+                \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+                  {
+                    \str_if_eq:VnF \l__mhchem_cf_presubState_tl { - }
+                      { \__mhchem_cf_outputAndReset: }
+                    \tl_set:Nn \l__mhchem_cf_presubState_tl { rm }
+                    \tl_set:Nn \l__mhchem_cf_state_tl { q }
+                    \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+                  }
+                % else
+                  {
+                    \__mhchem_cf_outputAndReset:
+                    \tl_set:Nn \l__mhchem_cf_state_tl { 1 }
+                    \__mhchem_cf_loop:
+                  }
+              }{
+            \peek_charcode:NTF *
+              {
+                \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn
+                  { \__mhchem_output_additionCompound: }
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF +
+              {
+                \str_if_eq:VnF \l__mhchem_cf_presupState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \tl_set:Nn \l__mhchem_cf_presupState_tl { d }
+                \tl_set:Nn \l__mhchem_cf_state_tl { p }
+                \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF (
+              {
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { ( }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF [
+              {
+                \__mhchem_loopHelper_outputAndReset_appendNextTokenToResult_setState:nNn
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_closingBracket_pregex
+              {
+                \__mhchem_loopHelper_outputAndReset_appendNextTokenToResult_setState:nNn
+                  { a }
+                  \__mhchem_cf_loop:
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_letter_pregex
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digitOrDot_pregex
+              {
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { 1 }
+                \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF |
+              {
+                \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn
+                  { \__mhchem_output_verticalBar: }
+                  { s }
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \__mhchem_loopHelper_breakLoop:w
+                  { \msg_error:nnn { mhchem } { cf / unexpected-input } }
+              }
+            }}}}}}}}}}}}}}}}}
+          }
+        { c }
+          {
+            \regex_match:NVTF
+              \l__mhchem_regex_oneGreekLetter_fregex
+              \l__mhchem_cf_element_tl
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_cf_loop:
+              }{
+            \regex_match:NVTF
+              \l__mhchem_regex_fracMacro_fregex
+              \l__mhchem_cf_element_tl
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { frac1 }
+                \__mhchem_loopHelper_appendNextGroupAsCe:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }{
+            \peek_catcode:NTF \c_group_begin_token
+              {
+                \__mhchem_loopHelper_appendNextGroup:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \__mhchem_cf_outputRawElementAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_cf_loop:
+                }
+              }}
+          }
+        { frac1 }
+          {
+            \tl_set:Nn \l__mhchem_cf_state_tl { frac2 }
+            \__mhchem_loopHelper_appendNextGroupAsCe:NNn
+              \l__mhchem_cf_element_tl
+              \__mhchem_cf_loop:
+          }
+        { frac2 }
+          {
+            \__mhchem_cf_outputRawElementAndReset:
+            \tl_set:Nn \l__mhchem_cf_state_tl { a }
+            \__mhchem_cf_loop:
+          }
+        { 1 }
+          {
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digitOrDotPlus_pregex
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF ,
+              {
+                \tl_put_right:Nn \l__mhchem_cf_element_tl { \__mhchem_output_commaDecimal: }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF -
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { 9 }
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { - }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_cf_loop:
+              }
+            }}
+          }
+        { a }
+          {
+            \peek_catcode:NTF \mhchem@macro
+              {
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { c }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }{
+            \peek_catcode:NTF \c_group_begin_token
+              {
+                \__mhchem_cf_outputAndReset:
+                \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+                  {
+                    \__mhchem_loopHelper_appendNextGroup:NNn
+                      \l__mhchem_cf_result_tl
+                      \__mhchem_cf_loop:
+                  }
+                % else
+                  {
+                    \__mhchem_loopHelper_appendNextGroup_prefix_doIfEmpty:NnnNn
+                      \l__mhchem_cf_element_tl
+                      { \__mhchem_cg_escapeFromMathToTextOrFaketext:n }
+                      {}
+                      \__mhchem_cf_loop:
+                  }
+              }{
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \str_if_eq:VnF \l__mhchem_cf_supState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \str_if_eq:VnF \l__mhchem_cf_subState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_cf_element_tl }
+                  { __mhchem_cf_loop: }
+              }{
+            \peek_charcode:NTF -
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { - }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF =
+              {
+                \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn
+                  { \__mhchem_output_bond_double: }
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF ##
+              {
+                \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn
+                  { \__mhchem_output_bond_triple: }
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF ^
+              {
+                \str_if_eq:VnF \l__mhchem_cf_supState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \str_if_eq:VnTF \l__mhchem_cf_subState_tl { - }
+                  { \tl_set:Nn \l__mhchem_cf_supState_tl { kv } }
+                  { \tl_set:Nn \l__mhchem_cf_supState_tl { d } }
+                \tl_set:Nn \l__mhchem_cf_state_tl { e }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF _
+              {
+                \str_if_eq:VnF \l__mhchem_cf_subState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \tl_set:Nn \l__mhchem_cf_subState_tl { d }
+                \tl_set:Nn \l__mhchem_cf_state_tl { f }
+                \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF `
+              {
+                \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+                  {
+                    \str_if_eq:VnF \l__mhchem_cf_supState_tl { - }
+                      { \__mhchem_cf_outputAndReset: }
+                    \tl_set:Nn \l__mhchem_cf_supState_tl { rm }
+                    \tl_set:Nn \l__mhchem_cf_state_tl { e }
+                    \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+                  }
+                % else
+                  {
+                    \str_if_eq:VnF \l__mhchem_cf_supState_tl { - }
+                      { \__mhchem_cf_outputAndReset: }
+                    \str_if_eq:VnF \l__mhchem_cf_subState_tl { - }
+                      { \__mhchem_cf_outputAndReset: }
+                    \__mhchem_loopHelper_appendNextToken:NNn
+                      \l__mhchem_cf_element_tl
+                      \__mhchem_cf_loop:
+                  }
+              }{
+            \peek_charcode:NTF ,
+              {
+                \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+                  {
+                    \str_if_eq:VnF \l__mhchem_cf_subState_tl { - }
+                      { \__mhchem_cf_outputAndReset: }
+                    \tl_set:Nn \l__mhchem_cf_subState_tl { rm }
+                    \tl_set:Nn \l__mhchem_cf_state_tl { f }
+                    \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+                  }
+                % else
+                  {
+                    \__mhchem_cf_outputRaw:n
+                      { \__mhchem_output_commaEnumeration: }
+                    \__mhchem_loopHelper_ignoreNextToken:Nn \__mhchem_cf_loop:
+                  }
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_dotOrAsterisk_pregex
+              {
+                \__mhchem_loopHelper_outputAndReset_appendToResult_setState_useNone:nnNn
+                  { \__mhchem_output_additionCompound: }
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF +
+              {
+                \tl_set:Nn \l__mhchem_cf_supState_tl { d }
+                \tl_set:Nn \l__mhchem_cf_state_tl { e }
+                \__mhchem_cf_loop:
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_openingBracket_pregex
+              {
+                \__mhchem_loopHelper_outputAndReset_appendNextTokenToResult_setState:nNn
+                  { s }
+                  \__mhchem_cf_loop:
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_closingBracket_pregex
+              {
+                \__mhchem_loopHelper_outputAndReset_appendNextTokenToResult_setState:nNn
+                  { a }
+                  \__mhchem_cf_loop:
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_letter_pregex
+              {
+                \str_if_eq:VnTF \l__mhchem_cf_supState_tl { - }
+                  {
+                    \str_if_eq:VnF \l__mhchem_cf_subState_tl { - }
+                      { \__mhchem_cf_outputAndReset: }
+                  }
+                  {
+                    \regex_match:NVTF
+                      \l__mhchem_regex_digits_fregex
+                      \l__mhchem_cf_sup_tl
+                      {
+                        \tl_set:NV \l__mhchem_cf_loop_tmpa_l \l__mhchem_cf_sup_tl
+                        \tl_set:NV \l__mhchem_cf_loop_tmpb_l \l__mhchem_cf_supState_tl
+                        \tl_set:NV \l__mhchem_cf_loop_tmpc_l \l__mhchem_cf_sub_tl
+                        \tl_set:NV \l__mhchem_cf_loop_tmpd_l \l__mhchem_cf_subState_tl
+                        \tl_clear:N \l__mhchem_cf_sup_tl
+                        \tl_set:Nn \l__mhchem_cf_supState_tl { - }
+                        \tl_clear:N \l__mhchem_cf_sub_tl
+                        \tl_set:Nn \l__mhchem_cf_subState_tl { - }
+                        \__mhchem_cf_outputAndReset:
+                        \tl_set:NV \l__mhchem_cf_presup_tl \l__mhchem_cf_loop_tmpa_l
+                        \tl_set:NV \l__mhchem_cf_presupState_tl \l__mhchem_cf_loop_tmpb_l
+                        \tl_set:NV \l__mhchem_cf_presub_tl \l__mhchem_cf_loop_tmpc_l
+                        \tl_set:NV \l__mhchem_cf_presubState_tl \l__mhchem_cf_loop_tmpd_l
+                      }
+                      { \__mhchem_cf_outputAndReset: }
+                  }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_element_tl
+                  \__mhchem_cf_loop:
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+              {
+                \str_if_eq:VnF \l__mhchem_cf_subState_tl { - }
+                  { \__mhchem_cf_outputAndReset: }
+                \tl_set:Nn \l__mhchem_cf_subState_tl { d }
+                \tl_set:Nn \l__mhchem_cf_state_tl { f }
+                \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \__mhchem_cf_outputAndReset:
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_cf_loop:
+              }
+            }}}}}}}}}}}}}}}
+          }
+        { e }
+          {
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_cf_sup_tl }
+                  { __mhchem_cf_loop: }
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { e+ }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_sup_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_sup_tl
+                  \__mhchem_cf_loop:
+              }
+            }
+          }
+        { e+ }
+          {
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digitOrPlus_pregex
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_sup_tl
+                  \__mhchem_cf_loop:
+              }{
+            \peek_charcode:NTF -
+              {
+                \regex_match:NVTF
+                  \l__mhchem_regex_oneLowercaseLetterPlus_fregex
+                  \l__mhchem_cf_element_tl
+                  {
+                    \tl_set:Nn \l__mhchem_cf_state_tl { - }
+                    \__mhchem_loopHelper_ignoreNextToken:Nn
+                      \__mhchem_cf_loop:
+                  }
+                  {
+                    \__mhchem_loopHelper_appendNextToken:NNn
+                      \l__mhchem_cf_sup_tl
+                      \__mhchem_cf_loop:
+                  }
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_cf_loop:
+              }
+            }
+          }
+        { f }
+          {
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_cf_sub_tl }
+                  { __mhchem_cf_loop: }
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digitOrSlash_pregex
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { f+ }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_sub_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_sub_tl
+                  \__mhchem_cf_loop:
+              }
+            }
+          }
+        { f+ }
+          {
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digitOrSlash_pregex
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_sub_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { a }
+                \__mhchem_cf_loop:
+              }
+          }
+        { p }
+          {
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_cf_presup_tl }
+                  { __mhchem_cf_loop: }
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digitOrMinus_pregex
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { p+ }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_presup_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_presup_tl
+                  \__mhchem_cf_loop:
+              }
+            }
+          }
+        { p+ }
+          {
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_presup_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_cf_loop:
+              }
+          }
+        { q }
+          {
+            \peek_catcode_remove:NTF \c_math_toggle_token
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_loopHelper_appendWithinMathTokens:nn
+                  { l__mhchem_cf_presub_tl }
+                  { __mhchem_cf_loop: }
+              }{
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digitOrMinus_pregex
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { q+ }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_presub_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_presub_tl
+                  \__mhchem_cf_loop:
+              }
+            }
+          }
+        { q+ }
+          {
+            \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+              {
+                \__mhchem_loopHelper_appendNextToken:NNn
+                  \l__mhchem_cf_presub_tl
+                  \__mhchem_cf_loop:
+              }
+            % else
+              {
+                \tl_set:Nn \l__mhchem_cf_state_tl { s }
+                \__mhchem_cf_loop:
+              }
+          }
+      }
+      {
+        \msg_error:nnx { mhchem } { cf / unexpected-state }
+          { \l__mhchem_cf_state_tl }
+        \__mhchem_loopHelper_appendNextToken:NNn
+          \l__mhchem_cf_result_tl
+          \__mhchem_cf_loop:
+      }
+    }}}}
+  }
+
+\cs_new_protected:Npn \__mhchem_cf_output:
+  {
+    \bool_if:nTF
+      {
+        \tl_if_empty_p:N \l__mhchem_cf_presup_tl  &&
+        \tl_if_empty_p:N \l__mhchem_cf_presub_tl  &&
+        \tl_if_empty_p:N \l__mhchem_cf_element_tl  &&
+        \tl_if_empty_p:N \l__mhchem_cf_sub_tl  &&
+        \tl_if_empty_p:N \l__mhchem_cf_sup_tl
+      }
+      {
+      }
+      {
+        \bool_if:nT
+          {
+            \tl_if_empty_p:N \l__mhchem_cf_presup_tl  &&
+            \tl_if_empty_p:N \l__mhchem_cf_presub_tl
+          }
+          { \tl_set:NV \l__mhchem_cf_lastNonIsotopeElement_tl \l__mhchem_cf_element_tl }
+          { \tl_clear:N \l__mhchem_cf_lastNonIsotopeElement_tl }
+        \bool_gset:Nn \g__mhchem_cf_lastElementWithScript_bool
+          {
+            ! \tl_if_empty_p:N \l__mhchem_cf_sub_tl  ||
+            ! \tl_if_empty_p:N \l__mhchem_cf_sup_tl
+          }
+        \str_case:VnF \l__mhchem_cf_state_tl
+          {
+            { 1 }
+              {
+                \__mhchem_cg_replaceForAmount:N \l__mhchem_cf_element_tl
+                \tl_put_right:Nx \l__mhchem_cf_result_tl
+                  {
+                    \exp_not:N \__mhchem_output_amount:n {
+                    \exp_not:V \l__mhchem_cf_element_tl
+                    }
+                  }
+              }
+            { 9 }
+              {
+                \__mhchem_cg_replaceForAmount:N \l__mhchem_cf_element_tl
+                \tl_put_right:Nx \l__mhchem_cf_result_tl
+                  {
+                    \exp_not:N \__mhchem_output_withFont:n {
+                    \exp_not:V \l__mhchem_cf_element_tl
+                    }
+                  }
+              }
+          }
+          {
+            \str_if_eq:VnTF \l__mhchem_cf_presupState_tl { rm }
+              { \tl_set:Nx \l__mhchem_cf_presup_tl { \exp_not:N \__mhchem_output_escapeToRomanMath:n { \exp_not:V \l__mhchem_cf_presup_tl } } }
+              { \__mhchem_cg_replaceForSuperscript:N \l__mhchem_cf_presup_tl }
+            \str_if_eq:VnTF \l__mhchem_cf_presubState_tl { rm }
+              { \tl_set:Nx \l__mhchem_cf_presub_tl { \exp_not:N \__mhchem_output_escapeToRomanMath:n { \exp_not:V \l__mhchem_cf_presub_tl } } }
+              { \__mhchem_cg_replaceForSubscript:N \l__mhchem_cf_presub_tl }
+            \__mhchem_cg_replaceForElement:N \l__mhchem_cf_element_tl
+            \str_if_eq:VnTF \l__mhchem_cf_subState_tl { rm }
+              { \tl_set:Nx \l__mhchem_cf_sub_tl { \exp_not:N \__mhchem_output_escapeToRomanMath:n { \exp_not:V \l__mhchem_cf_sub_tl } } }
+              { \__mhchem_cg_replaceForSubscript:N \l__mhchem_cf_sub_tl }
+            \str_if_eq:VnTF \l__mhchem_cf_supState_tl { rm }
+              { \tl_set:Nx \l__mhchem_cf_sup_tl { \exp_not:N \__mhchem_output_escapeToRomanMath:n { \exp_not:V \l__mhchem_cf_sup_tl } } }
+              { \__mhchem_cg_replaceForSuperscript:N \l__mhchem_cf_sup_tl }
+            \str_if_eq:VnT \l__mhchem_cf_supState_tl { kv }
+              {
+                \regex_match:NVTF
+                  \l__mhchem_regex_romanNumeral_fregex
+                  \l__mhchem_cf_sup_tl
+                  { \tl_set:Nn \l__mhchem_cf_supState_tl { ox } }
+                  {}
+              }
+            \bool_if:nT
+              {
+                \str_if_eq_p:Vn \l__mhchem_cf_supState_tl { kv }  &&
+                \tl_if_empty_p:V \l__mhchem_cf_sub_tl
+              }
+              { \tl_set:Nn \l__mhchem_cf_supState_tl { d } }
+            \str_case:VnF \l__mhchem_cf_supState_tl
+              {
+                { kv }
+                  {
+                    \tl_put_right:Nx \l__mhchem_cf_result_tl
+                      {
+                        \exp_not:N \__mhchem_output_coreFive:nnnnnnn
+                          { \exp_not:V \l__mhchem_cf_presup_tl }
+                          { \exp_not:V \l__mhchem_cf_presub_tl }
+                          { \exp_not:V \l__mhchem_cf_element_tl }
+                          {}
+                          { \exp_not:V \l__mhchem_cf_sup_tl }
+                          { \exp_not:V \l__mhchem_cf_sub_tl }
+                          {}
+                     }
+                  }
+                { ox }
+                  {
+                    \tl_put_right:Nx \l__mhchem_cf_result_tl
+                      {
+                        \exp_not:N \__mhchem_output_coreFive:nnnnnnn
+                          { \exp_not:V \l__mhchem_cf_presup_tl }
+                          { \exp_not:V \l__mhchem_cf_presub_tl }
+                          { \exp_not:V \l__mhchem_cf_element_tl }
+                          { \exp_not:V \l__mhchem_cf_sup_tl }
+                          {}
+                          { \exp_not:V \l__mhchem_cf_sub_tl }
+                          {}
+                     }
+                  }
+              }
+              {
+                \tl_put_right:Nx \l__mhchem_cf_result_tl
+                  {
+                    \exp_not:N \__mhchem_output_coreFive:nnnnnnn
+                      { \exp_not:V \l__mhchem_cf_presup_tl }
+                      { \exp_not:V \l__mhchem_cf_presub_tl }
+                      { \exp_not:V \l__mhchem_cf_element_tl }
+                      {}
+                      {}
+                      { \exp_not:V \l__mhchem_cf_sub_tl }
+                      { \exp_not:V \l__mhchem_cf_sup_tl }
+                  }
+              }
+          }
+      }
+  }
+\cs_new_protected:Npn \__mhchem_cf_outputRawElement:
+  {
+    \tl_set:NV \l__mhchem_cf_lastNonIsotopeElement_tl \l__mhchem_cf_element_tl
+    \tl_put_right:Nx \l__mhchem_cf_result_tl  { \exp_not:V \l__mhchem_cf_element_tl }
+  }
+\cs_new_protected:Npn \__mhchem_cf_outputAndReset:
+  {
+    \__mhchem_cf_output:
+    \__mhchem_cf_resetOutput:
+  }
+\cs_new_protected:Npn \__mhchem_cf_outputRawElementAndReset:
+  {
+    \__mhchem_cf_outputRawElement:
+    \__mhchem_cf_resetOutput:
+  }
+\cs_new_protected:Npn \__mhchem_cf_outputRaw:n #1
+  {
+    \__mhchem_cf_outputAndReset:
+    \tl_put_right:Nn \l__mhchem_cf_element_tl {#1}
+    \__mhchem_cf_outputRawElementAndReset:
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   cg   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tl_new:N \l__mhchem_cg_withinMathTokens_tmpa_tl
+\bool_new:N \l__mhchem_cg_withinMathTokens_bool
+\bool_set_false:N \l__mhchem_cg_withinMathTokens_bool
+\cs_new_protected:Npn \__mhchem_cg_withinMathTokens:n #1
+  {
+    \group_begin:
+    \bool_set_true:N \l__mhchem_cg_withinMathTokens_bool
+    \int_compare:nTF { \l__mhchem_option_version_int > 3 }
+      {
+        \regex_match:NnTF
+          \l__mhchem_regex_bracedGroup_fregex
+          {#1}
+          {
+            \__mhchem_output_escapeFromMathToItalicMath:n {#1}
+          }
+        % else
+          {
+            \regex_match:NnTF
+              \l__mhchem_regex_digitOrLetterOrGreek_fregex
+              {#1}
+              {
+                \group_begin:
+                  \bool_if:NTF \l__mhchem_output_isMathMode_bool
+                    {
+                      \thinmuskip=0mu
+                      \medmuskip=0mu
+                      \thickmuskip=0mu
+                      \__mhchem_output_escapeFromMathToItalicMath:n {#1}
+                    }
+                    {
+                      \tl_set:Nn \l__mhchem_cg_withinMathTokens_tmpa_tl { #1 }
+                      \regex_replace_all:NnN
+                        \l__mhchem_regex_letters_regex
+                        { \c{__mhchem_output_escapeFromTextToItalicText:n} \cB[ \0 \cE] }
+                        \l__mhchem_cg_withinMathTokens_tmpa_tl
+                      \regex_replace_all:NnN
+                        \l__mhchem_regex_spaces_regex
+                        {}
+                        \l__mhchem_cg_withinMathTokens_tmpa_tl
+                      \regex_replace_all:NnN
+                        \l__mhchem_regex_hyphen_regex
+                        { \c{mhchem@option@textminus} }
+                        \l__mhchem_cg_withinMathTokens_tmpa_tl
+                      \tl_use:N \l__mhchem_cg_withinMathTokens_tmpa_tl
+                    }
+                \group_end:
+              }
+              {
+                \bool_if:NTF \l__mhchem_output_isMathMode_bool
+                  { \__mhchem_output_escapeFromMathToItalicMath:n {#1} }
+                  { \__mhchem_output_escapeFromTextToItalicMath:n {#1} }
+              }
+          }
+      }
+    % else
+      {
+        \__mhchem_output_escapeFromMathToItalicMath:n {#1}
+      }
+    \group_end:
+  }
+\cs_new_protected:Npn \__mhchem_cg_itshape:n #1
+  {
+    \int_compare:nTF { \l__mhchem_option_version_int > 3 }
+      {
+        \bool_if:NTF \l__mhchem_output_isMathMode_bool
+          { \__mhchem_output_escapeFromMathToItalicMath:n {#1} }
+          { \__mhchem_output_escapeFromTextToItalicText:n {#1} }
+      }
+      { #1 }
+  }
+\cs_new_protected:Npn \__mhchem_cg_escapeFromMathToTextOrFaketext:n #1
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { \__mhchem_cg_escapeFromMathToFakeText:n {#1} }
+      { \__mhchem_output_escapeFromMathToText:n { #1 } }
+  }
+\tl_new:N \l__mhchem_cg_escapeFromMathToFakeText_result_tl
+\cs_new_protected:Npn \__mhchem_cg_escapeFromMathToFakeText:n #1
+  {
+    \tl_clear:N \l__mhchem_cg_escapeFromMathToFakeText_result_tl
+    \__mhchem_cg_escapeFromMathToFakeText_loop: #1 \q_recursion_stop
+    \__mhchem_output_escapeFromMathToRomanMath:n { \tl_use:N \l__mhchem_cg_escapeFromMathToFakeText_result_tl }
+  }
+\cs_new_protected:Npn \__mhchem_cg_escapeFromMathToFakeText_loop:
+  {
+    \peek_meaning:NTF \q_recursion_stop
+      { \use_none:n }
+      {
+    \peek_catcode_remove:NTF \c_math_toggle_token
+      {
+        \__mhchem_loopHelper_appendWithinMathTokens:nn
+          { l__mhchem_cg_escapeFromMathToFakeText_result_tl }
+          { __mhchem_cg_escapeFromMathToFakeText_loop: }
+      }
+      {
+    \peek_catcode:NTF \c_group_begin_token
+      {
+        \__mhchem_loopHelper_appendNextGroup:NNn
+          \l__mhchem_cg_escapeFromMathToFakeText_result_tl
+          \__mhchem_cg_escapeFromMathToFakeText_loop:
+      }{
+    \peek_charcode_remove:NTF \c_space_token
+      {
+        \tl_put_right:Nn
+          \l__mhchem_cg_escapeFromMathToFakeText_result_tl
+          { \mkern6mu }
+        \__mhchem_cg_escapeFromMathToFakeText_loop:
+      }{
+    \peek_charcode_remove:NTF -
+      {
+        \tl_put_right:Nn
+          \l__mhchem_cg_escapeFromMathToFakeText_result_tl
+          { \mhchem@hyphen }
+        \__mhchem_cg_escapeFromMathToFakeText_loop:
+      }
+    % else
+      {
+        \__mhchem_loopHelper_appendNextToken:NNn
+          \l__mhchem_cg_escapeFromMathToFakeText_result_tl
+          \__mhchem_cg_escapeFromMathToFakeText_loop:
+      }
+    }}}}
+  }
+
+\cs_new_protected:Npn \__mhchem_cg_replaceForAmount:N #1
+  {
+    \regex_replace_once:NnN
+      \l__mhchem_regex_fraction_fregex
+      { \c{__mhchem_cg_frac:nn} \cB[\1\cE] \cB[\2\cE] }
+      #1
+  }
+\cs_new_protected:Npn \__mhchem_cg_frac:nn #1#2
+  {
+    \ensuremath{\frac
+      { \__mhchem_output_withFont:n {#1} }
+      { \__mhchem_output_withFont:n {#2} }
+    }
+  }
+
+\cs_new_protected:Npn \__mhchem_cg_replaceForElement:N #1
+  {}
+
+\tl_new:N \l__mhchem_cg_replaceForSubscript_result_tl
+\tl_new:N \l__mhchem_cg_replaceForSubscript_state_tl
+\cs_new_protected:Npn \__mhchem_cg_replaceForSubscript:N #1
+  {
+    \int_compare:nTF { \l__mhchem_option_version_int > 3}
+      {
+        \regex_match:NVTF
+          \l__mhchem_regex_nonFormula_fregex
+          #1
+          {
+            \tl_clear:N \l__mhchem_cg_replaceForSubscript_result_tl
+            \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+            \exp_after:wN \__mhchem_cg_replaceForSubscript_loop: #1 \q_recursion_stop
+            \tl_set:NV #1 \l__mhchem_cg_replaceForSubscript_result_tl
+          }
+          {
+            \regex_match:NVTF
+              \l__mhchem_regex_formula_fregex
+              #1
+              {
+                \regex_replace_all:NnN
+                  \l__mhchem_regex_oneLowercaseLetter_regex
+                  { \c{__mhchem_output_withFont:n}\cB[ \c{__mhchem_cg_itshape:n}\cB[ \0 \cE]\cE] }
+                  #1
+                \regex_replace_all:NnN
+                  \l__mhchem_regex_hyphen_regex
+                  { \c{__mhchem_output_minus:} }
+                  #1
+              }
+              {
+                \tl_clear:N \l__mhchem_cg_replaceForSubscript_result_tl
+                \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+                \exp_after:wN \__mhchem_cg_replaceForSubscript_loop: #1 \q_recursion_stop
+                \tl_set:NV #1 \l__mhchem_cg_replaceForSubscript_result_tl
+              }
+          }
+      }
+    % else
+      {
+        \tl_clear:N \l__mhchem_cg_replaceForSubscript_result_tl
+        \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+        \exp_after:wN \__mhchem_cg_replaceForSubscript_loop: #1 \q_recursion_stop
+        \tl_set:NV #1 \l__mhchem_cg_replaceForSubscript_result_tl
+      }
+  }
+\cs_new_protected:Npn \__mhchem_cg_replaceForSubscript_loop:
+  {
+    \peek_meaning:NTF \q_recursion_stop
+      { \use_none:n }
+      {
+    \peek_catcode_remove:NTF \c_math_toggle_token
+      {
+        \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+        \__mhchem_loopHelper_appendWithinMathTokens:nn
+          { l__mhchem_cg_replaceForSubscript_result_tl }
+          { __mhchem_cg_replaceForSubscript_loop: }
+      }
+      {
+    \peek_catcode:NTF \c_group_begin_token
+      {
+        \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+        \__mhchem_loopHelper_appendNextGroup:NNn
+          \l__mhchem_cg_replaceForSubscript_result_tl
+          \__mhchem_cg_replaceForSubscript_loop:
+      }{
+    \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+      {
+        \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { 9 }
+        \__mhchem_loopHelper_appendNextToken:NNn
+          \l__mhchem_cg_replaceForSubscript_result_tl
+          \__mhchem_cg_replaceForSubscript_loop:
+      }{
+    \peek_charcode_remove:NTF -
+      {
+        \int_compare:nTF { \l__mhchem_option_version_int > 3 }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSubscript_result_tl
+              { \__mhchem_output_minus: }
+          }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSubscript_result_tl { - }
+          }
+          \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+          \__mhchem_cg_replaceForSubscript_loop:
+      }{
+    \peek_charcode_remove:NTF ,
+      {
+        \str_if_eq:VnTF \l__mhchem_cg_replaceForSubscript_state_tl { 9 }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSubscript_result_tl
+              { \__mhchem_output_commaAutoSmall: }
+          }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSubscript_result_tl
+              { \__mhchem_output_commaEnumerationSmall: }
+          }
+        \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+        \__mhchem_cg_replaceForSubscript_loop:
+      }
+    % else
+      {
+        \tl_set:Nn \l__mhchem_cg_replaceForSubscript_state_tl { s }
+        \__mhchem_loopHelper_appendNextToken:NNn
+          \l__mhchem_cg_replaceForSubscript_result_tl
+          \__mhchem_cg_replaceForSubscript_loop:
+      }
+    }}}}}
+  }
+
+\tl_new:N \l__mhchem_cg_replaceForSuperscript_result_tl
+\tl_new:N \l__mhchem_cg_replaceForSuperscript_state_tl
+\bool_new:N \l__mhchem_cg_replaceForSuperscript_isFormula_bool
+\cs_new_protected:Npn \__mhchem_cg_replaceForSuperscript:N #1
+  {
+    \regex_match:NVTF
+      \l__mhchem_regex_formula_fregex
+      #1
+      { \bool_set_true:N \l__mhchem_cg_replaceForSuperscript_isFormula_bool }
+      { \bool_set_false:N \l__mhchem_cg_replaceForSuperscript_isFormula_bool }
+    \tl_clear:N \l__mhchem_cg_replaceForSuperscript_result_tl
+    \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+    \exp_after:wN \__mhchem_cg_replaceForSuperscript_loop: #1 \q_recursion_stop
+    \tl_set:NV #1 \l__mhchem_cg_replaceForSuperscript_result_tl
+  }
+\cs_new_protected:Npn \__mhchem_cg_replaceForSuperscript_loop:
+  {
+    \peek_meaning:NTF \q_recursion_stop
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \use_none:n
+      }{
+    \peek_catcode_remove:NTF \c_math_toggle_token
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+        \__mhchem_loopHelper_appendWithinMathTokens:nn
+          { l__mhchem_cg_replaceForSuperscript_result_tl }
+          { __mhchem_cg_replaceForSuperscript_loop: }
+      }{
+    \peek_catcode:NTF \c_group_begin_token
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+        \__mhchem_loopHelper_appendNextGroup:NNn
+          \l__mhchem_cg_replaceForSuperscript_result_tl
+          \__mhchem_cg_replaceForSuperscript_loop:
+      }{
+    \peek_charcode_remove:NTF -
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+        \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+          { \__mhchem_output_minus: }
+        \__mhchem_cg_replaceForSuperscript_loop:
+      }{
+    \peek_charcode_remove:NTF .
+      {
+        \str_case:VnF \l__mhchem_cg_replaceForSuperscript_state_tl
+          {
+            { 9. }
+              {
+                \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+                  { \__mhchem_output_electronDot: \__mhchem_output_electronDot: }
+                \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+              }
+            { 9 }
+              { \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { 9. } }
+          }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \__mhchem_cg_replaceForSuperscript_loop:
+      }{
+    \__mhchem_regex_peek:NTF \l__mhchem_regex_oneLowercaseLetter_pregex
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+        \bool_if:NTF
+          \l__mhchem_cg_replaceForSuperscript_isFormula_bool
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_cg_itshape:n }
+            \__mhchem_loopHelper_appendNextGroup:NNn
+              \l__mhchem_cg_replaceForSuperscript_result_tl
+              \__mhchem_cg_replaceForSuperscript_loop:
+          }
+          {
+            \__mhchem_loopHelper_appendNextToken:NNn
+              \l__mhchem_cg_replaceForSuperscript_result_tl
+              \__mhchem_cg_replaceForSuperscript_loop:
+          }
+      }{
+    \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          { \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl { . } }
+        \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { 9 }
+        \__mhchem_loopHelper_appendNextToken:NNn
+          \l__mhchem_cg_replaceForSuperscript_result_tl
+          \__mhchem_cg_replaceForSuperscript_loop:
+      }{
+    \peek_charcode_remove:NTF *
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+        \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+          { \__mhchem_output_excited: }
+        \__mhchem_cg_replaceForSuperscript_loop:
+      }{
+    \peek_charcode_remove:NTF ,
+      {
+        \str_case:VnF \l__mhchem_cg_replaceForSuperscript_state_tl
+          {
+            { 9. }
+              {
+                \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+                  { \__mhchem_output_electronDot: }
+              }
+            { 9 }
+              {
+                \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+                  { \__mhchem_output_commaAutoSmall: }
+             }
+          }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_commaEnumerationSmall: }
+          }
+          \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+          \__mhchem_cg_replaceForSuperscript_loop:
+      }
+    % else
+      {
+        \str_if_eq:VnT \l__mhchem_cg_replaceForSuperscript_state_tl { 9. }
+          {
+            \tl_put_right:Nn \l__mhchem_cg_replaceForSuperscript_result_tl
+              { \__mhchem_output_electronDot: }
+          }
+        \tl_set:Nn \l__mhchem_cg_replaceForSuperscript_state_tl { s }
+        \__mhchem_loopHelper_appendNextToken:NNn
+          \l__mhchem_cg_replaceForSuperscript_result_tl
+          \__mhchem_cg_replaceForSuperscript_loop:
+      }
+    }}}}}}}}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   output   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bool_new:N \l__mhchem_output_isMathMode_bool
+\cs_new_protected:Npn \__mhchem_output_defMathOrText:
+  {
+    \bool_if:nTF
+      {
+        \mode_if_math_p: ||
+        ( \l__mhchem_ce_ceActive_bool && \int_compare_p:n { \l__mhchem_option_version_int < 2 } )
+      }
+      {
+        \bool_set_true:N \l__mhchem_output_isMathMode_bool
+      }
+      {
+        \bool_set_false:N \l__mhchem_output_isMathMode_bool
+        \mhchem@option@textFont
+      }
+  }
+
+\cs_new_protected:Npn \__mhchem_output_amount:n #1
+  {
+    \__mhchem_output_withFont:n {#1}
+    \__mhchem_output_skipAfterAmount:
+  }
+\cs_new_protected:Npn \__mhchem_output_coreFive:nnnnnnn #1#2#3#4#5#6#7
+  {
+    \group_begin:
+    \bool_if:nT
+      { \tl_if_empty_p:n {#7}  &&  ! \tl_if_empty_p:n {#5} }
+      { \bool_set_true:N \l__mhchem_option_superscriptsStacked_bool }
+    \m@th
+    \ensuremath
+      {
+        \tl_if_empty:nF {#1#2}
+          {
+            \hphantom { {}^{\__mhchem_output_withFont:n{#1}}\c_math_subscript_token{\__mhchem_output_withFont:n{#2}} }
+            { \vphantom { \__mhchem_output_withFont:n { X } } }
+            ^ {
+                \__mhchem_output_coreFive_llap:n
+                  {
+                    \vphantom { \smash[t] { \__mhchem_output_scriptWithFont:n { 2 } } }
+                    \__mhchem_output_scriptWithFont:n {#1}
+                  }
+              }
+            \tl_if_empty:nF {#2}
+              {
+                \c_math_subscript_token {
+                  \__mhchem_output_coreFive_llap:n
+                    {
+                      \vphantom { \__mhchem_output_scriptWithFont:n { 2 } }
+                      \smash[t] { \__mhchem_output_scriptWithFont:n {#2} }
+                    }
+                }
+              }
+            \mhchem@minispace
+          }
+        \__mhchem_output_withFont:n {#3}
+        \tl_if_empty:nF {#4#5#6#7}
+          {
+            \bool_if:NTF \l__mhchem_option_superscriptsStacked_bool
+              {
+                { \vphantom { \__mhchem_output_withFont:n { X } } }
+                \tl_if_empty:nF {#6}
+                  {
+                    \c_math_subscript_token
+                      {
+                        \vphantom { \__mhchem_output_scriptWithFont:n { 2 } }
+                        \smash[t] { \__mhchem_output_scriptWithFont:n {#6} }
+                      }
+                  }
+                ^ {
+                    \vphantom { \smash[t] { \__mhchem_output_scriptWithFont:n { 2 } } }
+                    \__mhchem_output_scriptWithFont:n {#4#5#7}
+                  }
+              }
+            % else
+              {
+                \bool_if:NTF \l__mhchem_option_subscriptsDeep_bool
+                  {
+                    \tl_if_empty:nF {#4}
+                      {
+                        { \vphantom { \__mhchem_output_withFont:n { X } } }
+                        ^ {
+                            \vphantom { \smash[t] { \__mhchem_output_scriptWithFont:n { 2 } } }
+                            \__mhchem_output_scriptWithFont:n {#4}
+                          }
+                        \c_math_subscript_token
+                          {
+                            \vphantom { \__mhchem_output_scriptWithFont:n { 2 } }
+                          }
+                      }
+                    \tl_if_empty:nF {#5#6#7}
+                      {
+                        { \vphantom { \__mhchem_output_withFont:n { X } } }
+                        \tl_if_empty:nF {#6}
+                          {
+                            \c_math_subscript_token
+                              {
+                                \vphantom { \__mhchem_output_scriptWithFont:n { 2 } }
+                                \smash[t] { \__mhchem_output_scriptWithFont:n {#6} }
+                              }
+                          }
+                        ^ {
+                            \vphantom { \smash[t] { \__mhchem_output_scriptWithFont:n { 2 } } }
+                            \hphantom { \__mhchem_output_scriptWithFont:n {#6} }
+                            \__mhchem_output_scriptWithFont:n {#5#7}
+                          }
+                      }
+                  }
+                  {
+                    \tl_if_empty:nF {#4}
+                      {
+                        { \vphantom { \__mhchem_output_withFont:n { X } } }
+                        ^ {
+                            \__mhchem_output_scriptWithFont:n {#4}
+                          }
+                      }
+                    \tl_if_empty:nF {#6}
+                      {
+                        { \vphantom { \__mhchem_output_withFont:n { X } } }
+                        \c_math_subscript_token
+                          {
+                            \smash[t] { \__mhchem_output_scriptWithFont:n {#6} }
+                          }
+                      }
+                    \tl_if_empty:nF {#5#7}
+                      {
+                        { \vphantom { \__mhchem_output_withFont:n { X } } }
+                        ^ {
+                            \__mhchem_output_scriptWithFont:n {#5#7}
+                          }
+                      }
+                  }
+              }
+          }
+      }
+    \group_end:
+  }
+\cs_new_protected:Npn \__mhchem_output_coreFive_llap:n #1
+  {
+    \mathchoice
+      {\llap{\ensuremath{\displaystyle#1}}}
+      {\llap{\ensuremath{\textstyle#1}}}
+      {\llap{\ensuremath{\scriptstyle#1}}}
+      {\llap{\ensuremath{\scriptscriptstyle#1}}}
+  }
+%%% @minispace
+\newlength\mhchem@minispace@tmp
+\newcommand*\mhchem@minispace{%
+  \setlength{\mhchem@minispace@tmp}{0pt-\widthof{${}^8\c_math_subscript_token8$}+%
+    \widthof{$\text{C}^8\c_math_subscript_token8$}-\widthof{$\text{C}^{}\c_math_subscript_token{}$}}%
+  \kern\mhchem@minispace@tmp%
+}
+%%% @minibackspace
+\newlength\mhchem@minibackspace@tmp
+\newcommand*\mhchem@minibackspace{%
+  \setlength{\mhchem@minibackspace@tmp}{0pt-\widthof{${}\c_math_subscript_token{2}{}\c_math_subscript_token{2}$}+\widthof{${}\c_math_subscript_token{22}$}}%
+  \kern\mhchem@minibackspace@tmp%
+}
+
+\cs_new_protected:Npn \__mhchem_output_withFont:n #1
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { \__mhchem_output_escapeFromMathToRomanMath:n {#1} }
+      { \__mhchem_output_escapeFromMathToText:n {#1} }
+  }
+\cs_new_protected:Npn \__mhchem_output_scriptWithFont:n #1
+  {
+    \int_compare:nT
+      { \l__mhchem_option_version_int > 3 }
+      {
+        \thinmuskip=0mu
+        \medmuskip=0mu
+        \thickmuskip=0mu
+      }
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      {
+        \int_compare:nTF
+          { \l__mhchem_option_version_int < 2 }
+          {#1}
+          { \__mhchem_output_escapeFromMathToRomanMath:n {#1} }
+      }
+      { \__mhchem_output_escapeFromMathToText:n {#1} }
+  }
+\cs_new_protected:Npn \__mhchem_output_escapeFromMathToText:n #1
+  { \text { \mhchem@hook@beforeText #1 } }
+\cs_new_protected:Npn \__mhchem_output_escapeToRomanMath:n #1
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { \__mhchem_output_escapeFromMathToRomanMath:n {#1} }
+      { \__mhchem_output_escapeFromTextToRomanMath:n {#1} }
+  }
+\cs_new_protected:Npn \__mhchem_output_escapeFromTextToRomanMath:n #1
+  { \ensuremath { \__mhchem_output_escapeFromMathToRomanMath:n {#1} } }
+\cs_new_protected:Npn \__mhchem_output_escapeFromMathToRomanMath:n #1
+  { \mhchem@option@mathFont { \mhchem@hook@beforeRomanMath #1 } }
+\cs_new_protected:Npn \__mhchem_output_escapeFromTextToItalicText:n #1
+  { \group_begin: \itshape \mhchem@hook@beforeItalicText #1 \group_end: \/ }
+\cs_new_protected:Npn \__mhchem_output_escapeToItalicMath:n #1
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { \__mhchem_output_escapeFromMathToItalicMath:n {#1} }
+      { \__mhchem_output_escapeFromTextToItalicMath:n {#1} }
+  }
+\cs_new_protected:Npn \__mhchem_output_escapeFromMathToItalicMath:n #1
+  {
+    \text { \__mhchem_output_escapeFromTextToItalicMath:n {#1} }
+  }
+\cs_new_protected:Npn \__mhchem_output_escapeFromTextToItalicMath:n #1
+  {
+    \ensuremath
+      {
+        \mhchem@hook@beforeItalicMath
+        \bool_if:NT \l__mhchem_cg_isScript_bool
+          {
+            \medmuskip=0mu
+            \thinmuskip=0mu
+            \thickmuskip=0mu
+          }
+        #1
+      }
+  }
+
+\cs_new_protected:Npn \__mhchem_output_skipAfterAmount:
+  { \, }
+\cs_new_protected:Npn \__mhchem_output_skipBeforeStateOfAggregation:
+  { \bool_if:NF \g__mhchem_cf_lastElementWithScript_bool { \hspace{0.2ex} } }
+\cs_new_protected:Npn \__mhchem_output_minus:
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { - }
+      { \mhchem@option@textminus }
+  }
+\cs_new_protected:Npn \__mhchem_output_operatorPlus:
+  {
+    \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+      { \ensuremath { {}+{} } }
+      {
+        \bool_if:NTF \l__mhchem_output_isMathMode_bool
+          { {}+{} }
+          { \nobreak \hspace{0.5ex plus 0.3ex minus 0.3ex} + \hspace{0.5ex plus 0.3ex minus 0.3ex} }
+      }
+  }
+\cs_new_protected:Npn \__mhchem_output_operatorMinus:
+  {
+    \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+      { \ensuremath { {}-{} } }
+      {
+        \bool_if:NTF \l__mhchem_output_isMathMode_bool
+          { \nobreak \hspace{0.5ex plus 0.3ex minus 0.1ex} {-} \hspace{0.5ex plus 0.3ex minus 0.1ex} }
+          { \nobreak \hspace{0.6ex plus 0.3ex minus 0.1ex} -- \hspace{0.6ex plus 0.3ex minus 0.1ex} }
+      }
+  }
+\cs_new_protected:Npn \__mhchem_output_operatorEquals:
+  {
+    \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+      { {}={} }
+      {
+        \bool_if:NTF \l__mhchem_output_isMathMode_bool
+          { \nobreak \hspace{0.5ex plus 0.3ex minus 0.1ex} {=} \hspace{0.5ex plus 0.3ex minus 0.1ex} }
+          { \nobreak \hspace{0.6ex plus 0.3ex minus 0.1ex} = \hspace{0.6ex plus 0.3ex minus 0.1ex} }
+      }
+  }
+\cs_new_protected:Npn \__mhchem_output_operatorPlusMinus:
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { {}\pm{} }
+      { \nobreak \ensuremath { {}\pm{} } }
+  }
+\cs_new_protected:Npn \__mhchem_output_electronDot:
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { \mhchem@option@textElectronDot }
+      { \mhchem@option@textElectronDot }
+  }
+\cs_new_protected:Npn \__mhchem_output_additionCompound:
+  {
+    \ensuremath { \,{\mhchem@option@cdot}\, }
+  }
+\cs_new_protected:Npn \__mhchem_output_verticalBar:
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { | }
+      { \text{\textbar} }
+  }
+\cs_new_protected:Npn \__mhchem_output_excited:
+  {
+    \bool_if:NTF \l__mhchem_output_isMathMode_bool
+      { \ast }
+      { \smash{\raisebox{-0.4em}{\scalebox{1.3}{*}}} }
+  }
+\cs_new_protected:Npn \__mhchem_output_commaDecimal:
+  { \__mhchem_output_withFont:n { , } }
+\cs_new_protected:Npn \__mhchem_output_commaEnumeration:
+  { \__mhchem_output_withFont:n { , } \ensuremath { \mkern3mu } }
+\cs_new_protected:Npn \__mhchem_output_commaAuto:
+  {
+    \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+      { \__mhchem_output_commaDecimal: }
+      { \__mhchem_output_commaEnumeration: }
+  }
+\cs_new_protected:Npn \__mhchem_output_commaEnumerationSmall:
+  { \__mhchem_output_withFont:n { , } \ensuremath { \mkern1mu } }
+\cs_new_protected:Npn \__mhchem_output_commaAutoSmall:
+  {
+    \__mhchem_regex_peek:NTF \l__mhchem_regex_digit_pregex
+      { \__mhchem_output_commaDecimal: }
+      { \__mhchem_output_commaEnumerationSmall: }
+  }
+
+\cs_new_protected:Npn \__mhchem_output_greek:n #1
+  {
+    \group_begin:
+    \cs_set_eq:NN \alpha \__mhchem_output_greek_orig_alpha
+    \cs_set_eq:NN \beta \__mhchem_output_greek_orig_beta
+    \cs_set_eq:NN \gamma \__mhchem_output_greek_orig_gamma
+    \cs_set_eq:NN \delta \__mhchem_output_greek_orig_delta
+    \cs_set_eq:NN \epsilon \__mhchem_output_greek_orig_epsilon
+    \cs_set_eq:NN \zeta \__mhchem_output_greek_orig_zeta
+    \cs_set_eq:NN \eta \__mhchem_output_greek_orig_eta
+    \cs_set_eq:NN \theta \__mhchem_output_greek_orig_theta
+    \cs_set_eq:NN \iota \__mhchem_output_greek_orig_iota
+    \cs_set_eq:NN \kappa \__mhchem_output_greek_orig_kappa
+    \cs_set_eq:NN \lambda \__mhchem_output_greek_orig_lambda
+    \cs_set_eq:NN \mu \__mhchem_output_greek_orig_mu
+    \cs_set_eq:NN \nu \__mhchem_output_greek_orig_nu
+    \cs_set_eq:NN \xi \__mhchem_output_greek_orig_xi
+    \cs_set_eq:NN \omicron \__mhchem_output_greek_orig_omicron
+    \cs_set_eq:NN \pi \__mhchem_output_greek_orig_pi
+    \cs_set_eq:NN \rho \__mhchem_output_greek_orig_rho
+    \cs_set_eq:NN \sigma \__mhchem_output_greek_orig_sigma
+    \cs_set_eq:NN \tau \__mhchem_output_greek_orig_tau
+    \cs_set_eq:NN \upsilon \__mhchem_output_greek_orig_upsilon
+    \cs_set_eq:NN \phi \__mhchem_output_greek_orig_phi
+    \cs_set_eq:NN \chi \__mhchem_output_greek_orig_chi
+    \cs_set_eq:NN \psi \__mhchem_output_greek_orig_psi
+    \cs_set_eq:NN \omega \__mhchem_output_greek_orig_omega
+    \cs_set_eq:NN \Alpha \__mhchem_output_greek_orig_Alpha
+    \cs_set_eq:NN \Beta \__mhchem_output_greek_orig_Beta
+    \cs_set_eq:NN \Gamma \__mhchem_output_greek_orig_Gamma
+    \cs_set_eq:NN \Delta \__mhchem_output_greek_orig_Delta
+    \cs_set_eq:NN \Epsilon \__mhchem_output_greek_orig_Epsilon
+    \cs_set_eq:NN \Zeta \__mhchem_output_greek_orig_Zeta
+    \cs_set_eq:NN \Eta \__mhchem_output_greek_orig_Eta
+    \cs_set_eq:NN \Theta \__mhchem_output_greek_orig_Theta
+    \cs_set_eq:NN \Iota \__mhchem_output_greek_orig_Iota
+    \cs_set_eq:NN \Kappa \__mhchem_output_greek_orig_Kappa
+    \cs_set_eq:NN \Lambda \__mhchem_output_greek_orig_Lambda
+    \cs_set_eq:NN \Mu \__mhchem_output_greek_orig_Mu
+    \cs_set_eq:NN \Nu \__mhchem_output_greek_orig_Nu
+    \cs_set_eq:NN \Xi \__mhchem_output_greek_orig_Xi
+    \cs_set_eq:NN \Omicron \__mhchem_output_greek_orig_Omicron
+    \cs_set_eq:NN \Pi \__mhchem_output_greek_orig_Pi
+    \cs_set_eq:NN \Rho \__mhchem_output_greek_orig_Rho
+    \cs_set_eq:NN \Sigma \__mhchem_output_greek_orig_Sigma
+    \cs_set_eq:NN \Tau \__mhchem_output_greek_orig_Tau
+    \cs_set_eq:NN \Upsilon \__mhchem_output_greek_orig_Upsilon
+    \cs_set_eq:NN \Phi \__mhchem_output_greek_orig_Phi
+    \cs_set_eq:NN \Chi \__mhchem_output_greek_orig_Chi
+    \cs_set_eq:NN \Psi \__mhchem_output_greek_orig_Psi
+    \cs_set_eq:NN \Omega \__mhchem_output_greek_orig_Omega
+    \bool_if:NTF \l__mhchem_cg_withinMathTokens_bool
+      {
+        { \chemgreek_get_from_mapping:nn { default } {#1} }
+      }
+      {
+        \mode_if_math:TF
+          { \chemgreek_get_from_mapping:nn { mhchem-math } {#1} }
+          { \chemgreek_get_from_mapping:nn { mhchem-text } {#1} }
+      }
+    \group_end:
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   bonds   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_new_protected:Npn \__mhchem_output_bond_single:
+  {
+    \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+      { {\ensuremath{-}} }
+      {
+        \bool_if:NTF \l__mhchem_output_isMathMode_bool
+          { {\ensuremath{-}} }
+        { \text{\mhchem@option@textminus} }
+      }
+  }
+\cs_new_protected:Npn \__mhchem_output_bond_double:
+  {
+    \rlap { \protect \raisebox { .2ex }{ \__mhchem_output_bond_single: } }
+    \protect \raisebox { -.2ex }{ \__mhchem_output_bond_single: }
+  }
+\cs_new_protected:Npn \__mhchem_output_bond_triple:
+  {
+    \rlap { \protect \raisebox { .4ex } { \__mhchem_output_bond_single: } }
+    \rlap{ \__mhchem_output_bond_single: }
+    \protect \raisebox { -.4ex } { \__mhchem_output_bond_single: }
+  }
+\cs_new_protected:Npn \__mhchem_output_bond_half:
+  {
+    \mhchem@setbondwidth
+    \mhchem@halfbond
+  }
+\cs_new_protected:Npn \__mhchem_output_bond_oneAndHalf:
+  {
+    \mhchem@setbondwidth
+    \rlap{\protect\raisebox{.2ex}{\mhchem@halfbond}}
+    \protect\raisebox{-.2ex}{\__mhchem_output_bond_single:}
+  }
+\cs_new_protected:Npn \__mhchem_output_bond_twoAndHalf:
+  {
+    \mhchem@setbondwidth
+    \rlap{\protect\raisebox{.4ex}{\mhchem@halfbond}}
+    \rlap{\__mhchem_output_bond_single:}
+    \protect\raisebox{-.4ex}{\__mhchem_output_bond_single:}
+  }
+\cs_new_protected:Npn \__mhchem_output_bond_twoAndHalff:
+  {
+    \mhchem@setbondwidth
+    \rlap{\protect\raisebox{.4ex}{\__mhchem_output_bond_single:}}
+    \rlap{\mhchem@halfbond}
+    \protect\raisebox{-.4ex}{\__mhchem_output_bond_single:}
+  }
+\cs_new_protected:Npn \__mhchem_output_bond_dotdotdot:
+  { {\cdot}{\cdot}{\cdot} }
+\cs_new_protected:Npn \__mhchem_output_bond_dotdotdotdot:
+ { {\cdot}{\cdot}{\cdot}{\cdot} }
+\cs_new_protected:Npn \__mhchem_output_bond_rightArrow:
+  { {\rightarrow} }
+\cs_new_protected:Npn \__mhchem_output_bond_leftArrow:
+  { {\leftarrow} }
+
+\newlength\mhchem@bondwidth%
+\newlength\mhchem@bondheight%
+\newlength\mhchem@smallbondwidth@tmpA%
+\newlength\mhchem@smallbondwidth@tmpB%
+\newlength\mhchem@smallbondwidth%
+\newlength\mhchem@bondtmp@minussidebearingleft
+\newlength\mhchem@bondtmp@minussidebearingright
+
+\def\mhchem@setbondwidth{%
+  \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+    {
+      \setlength\mhchem@bondtmp@minussidebearingleft{\mhchem@option@minusmathsidebearingleft}
+      \setlength\mhchem@bondtmp@minussidebearingright{\mhchem@option@minusmathsidebearingright}
+    }
+    {
+      \bool_if:NTF \l__mhchem_output_isMathMode_bool
+        {
+          \setlength\mhchem@bondtmp@minussidebearingleft{\mhchem@option@minusmathsidebearingleft}
+          \setlength\mhchem@bondtmp@minussidebearingright{\mhchem@option@minusmathsidebearingright}
+        }
+        {
+          \setlength\mhchem@bondtmp@minussidebearingleft{\mhchem@option@minustextsidebearingleft}
+          \setlength\mhchem@bondtmp@minussidebearingright{\mhchem@option@minustextsidebearingright}
+        }
+    }
+  \setlength\mhchem@bondwidth{\widthof{\__mhchem_output_bond_single:}}%
+  \setlength\mhchem@bondheight{\heightof{\__mhchem_output_bond_single:}}%
+  \setlength\mhchem@smallbondwidth@tmpA{%
+    \mhchem@bondwidth-\mhchem@bondtmp@minussidebearingleft-\mhchem@bondtmp@minussidebearingright}%
+  \setlength\mhchem@smallbondwidth@tmpB{%
+    \widthof{\__mhchem_output_bond_single:\__mhchem_output_bond_single:\__mhchem_output_bond_single:}-\mhchem@bondtmp@minussidebearingleft-%
+    \mhchem@bondtmp@minussidebearingright}%
+  \setlength\mhchem@smallbondwidth{\mhchem@bondwidth*%
+    \ratio{\mhchem@smallbondwidth@tmpA}{\mhchem@smallbondwidth@tmpB}}%
+}
+\def\mhchem@halfbond{\rlap{\hspace{\mhchem@bondtmp@minussidebearingleft}%
+                     \resizebox{\mhchem@smallbondwidth}{\mhchem@bondheight}{\__mhchem_output_bond_single:}\unskip%
+                     \resizebox{\mhchem@smallbondwidth}{\mhchem@bondheight}{\__mhchem_output_bond_single:}%
+                     \resizebox{\mhchem@smallbondwidth}{\mhchem@bondheight}{\__mhchem_output_bond_single:}}%
+                     \phantom{\__mhchem_output_bond_single:}}%
+
+\msg_new:nnn { mhchem } { bond / unknown }
+  { Unknown~bond~type~in~\string\bond~(#1) }
+
+\ExplSyntaxOff
+\ExplSyntaxOn % with special tilde
+\char_set_catcode_letter:n { 126 } % tilde
+\cs_new_protected:Npn \mhchem@bond #1
+  {
+    \ensuremath
+      {
+        \str_case:nnF {#1}
+          {
+            { - } { \__mhchem_output_bond_single: }
+            { 1 } { \__mhchem_output_bond_single: }
+            { = } { \__mhchem_output_bond_double: }
+            { 2 } { \__mhchem_output_bond_double: }
+            { ## } { \__mhchem_output_bond_triple: }
+            { 3 } { \__mhchem_output_bond_triple: }
+            { ~ } { \__mhchem_output_bond_half: }
+            { ~- } { \__mhchem_output_bond_oneAndHalf: }
+            { ~-- } { \__mhchem_output_bond_twoAndHalf: }
+            { ~= } { \__mhchem_output_bond_twoAndHalf: }
+            { -~- } { \__mhchem_output_bond_twoAndHalff: }
+            { ... } { \__mhchem_output_bond_dotdotdot: }
+            { .... } { \__mhchem_output_bond_dotdotdotdot: }
+            { -> } { \__mhchem_output_bond_rightArrow: }
+            { <- } { \__mhchem_output_bond_leftArrow: }
+          }
+          {
+            \msg_error:nnx { mhchem } { bond / unknown } {#1}
+          }
+      }
+  }
+\ExplSyntaxOff  % end of Expl with tilde
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   Package Options   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ExplSyntaxOn
+
+\tl_new:N \l__mhchem_option_tmpa_tl
+\msg_new:nnn { mhchem } { options / version-too-high }
+  {
+    You~are~using~version~4.xx~of~mhchem,
+    but~you~entered~a~higher~version~number~that~is~not~supported~yet.
+  }
+
+\def\mhchem@option@mathFont{\mathrm}
+\def\mhchem@option@textFont{}
+\def\mhchem@hook@beforeCe{}
+\def\mhchem@hook@afterCe{}
+\def\mhchem@hook@beforeText{}
+\def\mhchem@hook@beforeItalicText{}
+\def\mhchem@hook@beforeRomanMath{}
+\def\mhchem@hook@beforeItalicMath{}
+\bool_new:N \l__mhchem_option_layoutWasSet_bool
+\bool_set_false:N \l__mhchem_option_layoutWasSet_bool
+\bool_new:N \l__mhchem_option_superscriptsStacked_bool
+\bool_new:N \l__mhchem_option_subscriptsDeep_bool
+\cs_new_protected:Npn \mhchem@option@textElectronDot {}
+\cs_new_protected:Npn \mhchem@option@cdot {}
+\bool_new:N \l__mhchem_option_textgreekSelectedByUser_bool
+\bool_set_false:N \l__mhchem_option_textgreekSelectedByUser_bool
+\bool_new:N \l__mhchem_option_mathgreekSelectedByUser_bool
+\bool_set_false:N \l__mhchem_option_mathgreekSelectedByUser_bool
+
+\keys_define:nn { mhchem }
+  {
+    version .int_set:N = \l__mhchem_option_version_int,
+    version .value_required:n = true,
+    version .initial:n = { -1 },
+    version .default:n = { -1 },
+
+    textfontcommand .code:n = { \def\mhchem@option@textFont{#1} },
+    textfontname .code:n = { \def\mhchem@option@textFont{\csname#1\endcsname} },
+    mathfontcommand .code:n = { \def\mhchem@option@mathFont{#1} },
+    mathfontname .code:n = { \def\mhchem@option@mathFont{\csname#1\endcsname} },
+    font .choice:,
+    font / sf .code:n =
+      {
+        \def\mhchem@option@textFont{\sffamily}
+        \def\mhchem@option@mathFont{\mathsf}
+      },
+    font / .code:n =
+      {
+        \def\mhchem@option@textFont{}
+        \def\mhchem@option@mathFont{\mathrm}
+      },
+
+    text-greek .code:n =
+      {
+        \chemgreek_declare_mapping_alias:nn { mhchem-text } {#1}
+        \bool_set_true:N \l__mhchem_option_textgreekSelectedByUser_bool
+      },
+    math-greek .code:n =
+      {
+        \chemgreek_declare_mapping_alias:nn { mhchem-math } {#1}
+        \bool_set_true:N \l__mhchem_option_mathgreekSelectedByUser_bool
+      },
+
+    layout .choice:,
+    layout / stacked .code:n =
+      {
+        \bool_set_true:N \l__mhchem_option_layoutWasSet_bool
+        \bool_set_true:N \l__mhchem_option_superscriptsStacked_bool
+      },
+    layout / staggered-deep .code:n =
+      {
+        \bool_set_true:N \l__mhchem_option_layoutWasSet_bool
+        \bool_set_false:N \l__mhchem_option_superscriptsStacked_bool
+        \bool_set_true:N \l__mhchem_option_subscriptsDeep_bool
+      },
+    layout / staggered-flat .code:n =
+      {
+        \bool_set_true:N \l__mhchem_option_layoutWasSet_bool
+        \bool_set_false:N \l__mhchem_option_superscriptsStacked_bool
+        \bool_set_false:N \l__mhchem_option_subscriptsDeep_bool
+      },
+
+    minus-sidebearing-left .dim_set:N = \mhchem@option@minusmathsidebearingleft,
+    minus-sidebearing-right .dim_set:N = \mhchem@option@minusmathsidebearingright,
+    minus-math-sidebearing-left .dim_set:N = \mhchem@option@minusmathsidebearingleft,
+    minus-math-sidebearing-left .initial:n = { 0.06em },
+    minus-math-sidebearing-right .dim_set:N = \mhchem@option@minusmathsidebearingright,
+    minus-math-sidebearing-right .initial:n = { 0.11em },
+    minus-text-sidebearing-left .dim_set:N = \mhchem@option@minustextsidebearingleft,
+    minus-text-sidebearing-left .initial:n = { 0.10em },
+    minus-text-sidebearing-right .dim_set:N = \mhchem@option@minustextsidebearingright,
+    minus-text-sidebearing-right .initial:n = { 0.16em },
+
+    arrows .code:n =
+      {
+        \str_case:nnF {#1}
+          {
+            { font }
+              { \tl_set:Nn \l__mhchem_option_arrowType_tl {#1} }
+          }
+          {
+            \regex_match:nnTF
+              { \A pgf .* \Z }
+              {#1}
+              { \__mhchem_arrow_init_pgf: {#1} }
+              {
+                { \msg_error:nnn { mhchem } { error-arrow-type } {#1} }
+              }
+          }
+      },
+    arrows .initial:n = { font },
+
+    textminus .tl_set:N = \mhchem@option@textminus,
+    textminus .initial:n = { \hspace{0.3ex} -- \hspace{0.3ex} },
+
+    cdot .tl_set:N = \mhchem@option@cdot,
+    cdot .initial:n = { \cdot },
+    textelectrondot .tl_set:N = \mhchem@option@textElectronDot,
+    textelectrondot .initial:n =
+      {
+        \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+          { \ensuremath{\textbf{\fontfamily{cmr}\selectfont\textperiodcentered}} }
+          { \ensuremath { \bullet } }
+      },
+
+  }
+
+\newcommand*\mhchemoptions[1]
+  { \keys_set:nn { mhchem } {#1} }
+
+\bool_new:N \l__mhchem_option_inPreamble_bool
+\bool_set_true:N \l__mhchem_option_inPreamble_bool
+\ProcessKeysPackageOptions{mhchem}
+\bool_set_false:N \l__mhchem_option_inPreamble_bool
+
+\int_compare:nT { -1 = \l__mhchem_option_version_int }
+  {
+    \PackageWarningNoLine { mhchem }
+      {
+        You~did~not~specify~a~'version'~option~for~the~mhchem\MessageBreak
+        package.~Please~write~\string\usepackage[version=4]{mhchem}\MessageBreak
+        in~your~preamble~(or~any~lower~number~for\MessageBreak
+        compatibility~mode),~because~you~might~get~slightly\MessageBreak
+        different~output~with~the~same~input~in~future~versions
+      }
+    \int_set:Nn \l__mhchem_option_version_int { 4 }
+  }
+% else
+  {
+    \int_compare:nT { \l__mhchem_option_version_int > 4 }
+      {
+        \msg_error:nn { mhchem } { options / version-too-high }
+      }
+  }
+\bool_if:NF \l__mhchem_option_layoutWasSet_bool
+  {
+    \int_compare:nTF { \l__mhchem_option_version_int < 4 }
+      { \mhchemoptions{layout=staggered-deep} }
+      { \mhchemoptions{layout=staggered-flat} }
+  }
+
+\AtBeginDocument
+  {
+    \bool_if:nF \l__mhchem_option_textgreekSelectedByUser_bool
+      {
+        \chemgreek_declare_mapping_alias:nn { mhchem-text } { \l_chemgreek_active_mapping_tl }
+      }
+    \bool_if:nF \l__mhchem_option_mathgreekSelectedByUser_bool
+      {
+        \chemgreek_declare_mapping_alias:nn { mhchem-math } { \l_chemgreek_active_mapping_tl }
+      }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   legacy   %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\int_compare:nT { \l__mhchem_option_version_int < 4 }
+  {
+    \newcommand*\cmath[1]{\__mhchem_output_escapeFromMathToItalicMath:n{#1}}
+    \DeclareRobustCommand\cf[2][]{\mhchem@cf[#1]{#2}}
+    \DeclareRobustCommand\cee[1]{\mhchem@cee{#1}}
+  }
+

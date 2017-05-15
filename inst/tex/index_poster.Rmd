@@ -1,0 +1,180 @@
+---
+title: "R bookdown+: Authoring varied types of books and documents with R bookdown"
+author: "Peng Zhao"
+email: "pzhao@pzhao.net"
+institute: "Institute of Ecology, Univ. Innsbruck"
+longinstitute: "Institute of Ecology, University of Innsbruck, Austria"
+web: "pzhao.org"
+logo: "images/bookdownplus-logo.pdf"
+backimg: "images/bookdownplus-logo.pdf"
+bibliofiles: "bib/bib.bib"
+posteroptions: width=90,height=110,scale=1.2 #,grid # portrait
+#posteroptions: width=110,height=90,scale=1.2 #,grid # landscape
+headerheight: 13cm
+colorstyle:
+# large, Large, LARGE, huge, Huge, veryHuge, VeryHuge, VERYHuge
+titlefont: size=\veryHuge,series=\bfseries
+authorfont: size=\huge
+institutefont: size=\Large
+knit: (function(input, encoding, make = TRUE) { source('tex/makefile-renderer.R', local = TRUE) })
+---
+
+%% smart
+%% to=latex
+%% template=tex/poster.tex
+%% filter=tex/poster-filters.py
+%% biblatex
+
+```{r packages-and-options, cache=FALSE}
+library('ggplot2')
+library('knitr')
+theme_set(theme_grey(base_size=10))
+knitr::opts_chunk$set(fig.width = 16, fig.height = 4)
+```
+
+[columns=2]
+
+[column]
+
+# Introduction
+
+### Motivation
+
+`R bookdown` [@R-bookdown] is an excellent R [@R-base] package for authoring books on programming languages. It has the potential to do much more than authoring R books if users costumize self-defined templates. However, the development of templates is difficult and unnecessary. Therefore I developed `bookdown+` [@R-bdp].
+
+### Features
+
+`R bookdown+` is a collection of multiple templates. With `bookdown+` you can easily
+
+- write a laboratory journal, or a personal diary,
+- draw a monthly or weekly or conference calendar,
+- record guitar chords,
+- write a mail in an elegant layout,
+- and, of course, write academic articles in your favourite way,
+- with chemical molecular formulae and equations,
+- even in Chinese,
+- and more wonders will come soon.
+
+This poster you are viewing now is produced by `R bookdown+`.
+
+<!--
+
+- Standard abreviations \\eg and \\ie for \eg and \ie
+- Units like \pps{900}
+- **Highlights** and *highlights*
+
+-->
+
+# Quick start
+
+Before starting, you have to install R, RStudio, bookdown package, and other software and packages (\ie `Pandoc`, \LaTeX, `rmarkdown`, `rticle`, `knitr`, etc.) which bookdown depends on. See the official manual of bookdown ^[https://bookdown.org/yihui/bookdown/] for details.
+
+[Download `bookdown+`](https://github.com/dapengde/bookdown-plus/archive/master.zip) ^[https://github.com/dapengde/bookdown-plus] package as a zip file from Github. Unzip it to a folder in your PC. Double click a file named `_start.Rproj`, which will be opened by RStudio.
+
+Open `_runme.R` and run it. The explanation is as follows,
+
+1. Specify the title and the author of your book or document.
+2. Choose a template out of the available templates. Run `fun/build.R`.
+3. Press `ctrl+shift+b` to build a demo book, which you can find in `book/`. Write your own text in `body.Rmd`, and build your own lovely book. 
+
+# Graphs
+
+Using `bookdown` or `rmarkdown`, users can insert figures into a document in a friendly way. Just embed the R scripts into your `.Rmd` file(s) and compile it/them with knitr package, and the figures will appear automatically with high resolution and reproductivity.
+
+<!--
+
+```{r co2, cache = TRUE, echo = FALSE, fig.cap='Carbon dioxide concentration, observed at Mauna Loa.'}
+plot(co2)
+```
+
+-->
+
+```{r iris, cache=TRUE, echo=FALSE, fig.cap='IRIS data plotted with R ggplot2 package.'}
+ggplot(iris, aes(Sepal.Length, Petal.Length)) +
+    geom_point(aes(color = Species)) +
+    facet_wrap(~ Species)
+```
+
+<!-- Comments -->
+
+
+# Table
+
+Similarly to graphs, tables can be inserted either with R script or with markdown syntax.
+
+<!--
+
+header x  header y
+--------- ----------
+x1        y1
+x2        y2
+
+-->
+
+```{r tab1, tidy=FALSE, echo=FALSE}
+knitr::kable(
+  head(iris, 3), caption = 'IRIS data as an example.',
+  booktabs = TRUE
+)
+```
+
+# Bibliography
+
+\printbibliography
+
+
+[column]
+
+# Book types supported by `bookdown+`
+
+Some sample pages are displayed as follows. More details can be found in the tutorial book [@R-bdp].
+
+
+\begin{figure}[htp]
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}\hfill
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}\hfill
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}
+\end{figure}    
+
+\begin{figure}[htp]
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}\hfill
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}\hfill
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}
+\end{figure}    
+
+\begin{figure}[htp]
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}\hfill
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}\hfill
+  \includegraphics[width=.33\textwidth]{images/mail.pdf}
+\end{figure}    
+
+
+# Take-home message
+
+- `R bookdown+` is an extension of `bookdown` for academic and literal writing, especially for reproducible reports.
+
+- `R bookdown+` is still being developed. Feel free to join me either in contributing templates to [**my Github repo**](https://github.com/dapengde/bookdown-plus) ^[https://github.com/dapengde/bookdown-plus], or in writing the tutorial of R bookdown+ [@R-bdp].
+
+<!--\vskip0.5cm
+
+[/columns]
+
+
+[columns=2]
+
+[column]
+
+-->
+
+# Acknowledgements
+
+Many thanks to Dr. Yihui Xie for his amazing generosity and incredible patience in helping me get into the world of R bookdown.
+
+The open source codes from Github and R community are much appreciated.
+
+\vskip1.5cm
+
+
+<!--\vskip4.4cm-->
+
+[/columns]

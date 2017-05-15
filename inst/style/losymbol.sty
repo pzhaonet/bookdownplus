@@ -1,0 +1,67 @@
+%------------------8<--------------------8<------------8<--------------
+%losymbol.sty by gerry van dooren, may 1992, revised august 1992.
+% elecgd@urc.tue.nl
+%
+%definition is nearly analogous to the setup for list of figures
+%and list of tables; use same definition using \@starttoc,
+%however default extension is now .los
+%
+%MODIFICATIONS:
+%
+%1. losymbol.sty can now always be used, without paying attention to the
+%   style file used in de main document (using if undefined) <aug 1992>.
+%
+%2. It appeared that, if the list of symbols is larger than one page,
+%   the pagenumber of the list in the table of contents was the last page
+%   of the list of symbols. This is also repaired by interchanging the
+%   \addcontentsline{} and the \starttoc{} statements <july 1992>.
+%
+%PROBLEMS ENCOUNTERED:
+%
+%1. If the explanation of the symbols is longer than the width of the
+%   right column, the linespacing is not uniform anymore. The solution
+%   to this problem is not yet found <july 1992>.
+%
+\def\losymbolsname{Notations}
+\def\listofsymbols{\@ifundefined{chapter}{%
+		\section*{\thispagestyle{empty}\losymbolsname \@mkboth
+		{\uppercase{\losymbolsname}}{\uppercase{\losymbolsname}}}
+                %\addcontentsline{toc}{section}{\losymbolsname}
+		\@starttoc{los}
+	}{%
+		\chapter*{\thispagestyle{empty}\losymbolsname \@mkboth
+		{\uppercase{\losymbolsname}}{\uppercase{\losymbolsname}}}
+                %\addcontentsline{toc}{chapter}{\losymbolsname}
+		\@starttoc{los}
+	}
+}
+%
+%command for putting text in file \jobname.loa is \addsymbol
+%command that is used for actually producing text is called
+%\makenicesymbolline
+\def\addsymbol#1#2{%
+\addtocontents{los}{\protect \makenicesymbolline{#1}{#2}}}
+%
+%physical dimensions of columns
+%
+\newdimen\@lcsym %width of left column
+\@lcsym=3cm      %default 3cm
+%
+\newdimen\@mcsym %width of mid column (space)
+\@mcsym=1.5cm      %default 2cm
+%
+\newdimen\@rcsym %width of right column
+\@rcsym=\hsize   %initial width=textwidth
+%
+\advance\@rcsym by -\@lcsym %subtract lcsym
+\advance\@rcsym by -\@mcsym %subtract mid
+%
+%command for producing the actual line uses standard minipages
+%to cope with long definitions
+%
+\def\makenicesymbolline#1#2{%
+\begin{minipage}[t]{\@lcsym}#1\end{minipage}%
+$\hspace{\@mcsym}$%
+\begin{minipage}[t]{\@rcsym}#2\end{minipage}\newline}
+%
+%end of losymbol.sty

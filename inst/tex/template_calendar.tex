@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Monthly Calendar
+% LaTeX Template
+%
+% This template has been downloaded from:
+% http://www.latextemplates.com
+%
+% Original calendar style author:
+% Evan Sultanik (http://www.sultanik.com/LaTeX_calendar_style)
+%
+% Important note:
+% This template requires the calendar.sty file to be in the same directory as the
+% .tex file. The calendar.sty file provides the necessary structure to create the
+% calendar.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[landscape,a4paper]{article}
+
+\usepackage{style/calendar} % Use the calendar.sty style
+
+\usepackage[landscape,margin=0.5in]{geometry}
+
+\begin{document}
+
+\pagestyle{empty} % Removes the page number from the bottom of the page
+
+\noindent
+
+\StartingDayNumber=1 % Calendar starting day, default of 1 means Sunday, 2 for Monday, etc
+
+%----------------------------------------------------------------------------------------
+%	MONTH AND YEAR SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{center}
+\textsc{\LARGE July}\\ % Month
+\textsc{\large 2017} % Year
+\end{center}
+
+%----------------------------------------------------------------------------------------
+
+\begin{calendar}{\hsize}
+
+\include{body}
+
+\finishCalendar
+\end{calendar}
+\end{document}

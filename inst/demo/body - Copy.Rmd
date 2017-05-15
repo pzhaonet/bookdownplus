@@ -1,0 +1,47 @@
+# Introduction
+
+_italic_ **bold** **_italic and bold_** `code` R^2^ CO~2~ [my website](http://pzhao.org) <myemail@pzhao.org>^[footnote, not real] @R-base Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum @R-bookdown.
+
+> orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+
+# Materials and methods
+
+## Sites
+
+Fig. \@ref(fig:img1) is a place holder.
+
+```{r img1, fig.cap='this is the caption', out.width='80%', fig.align='center', echo=FALSE}
+knitr::include_graphics("images/img.png")
+```
+
+## Models
+
+Eq. \@ref(eq:mc2) is an equation.
+
+\begin{equation} 
+E = mc^2
+  (\#eq:mc2)
+\end{equation} 
+
+It can be written as $E = mc^2$.
+
+# Results
+Fig. \@ref(fig:fig1) psum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+
+```{r fig1, fig.cap='caption', out.width='80%', fig.align='center', echo=FALSE}
+plot(cars)
+```
+
+Tab. \@ref(tab:tab1) psum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+
+```{r tab1, tidy=FALSE, echo=FALSE}
+knitr::kable(
+  head(iris, 20), caption = 'Here is a nice table!',
+  booktabs = TRUE
+)
+```
+
+# Conclusions
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum

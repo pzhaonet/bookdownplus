@@ -1,0 +1,1368 @@
+%% hpstatement.sty
+%% Copyright 2004-2016 Martin Hensel
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License version 1.3c
+% which is included as lppl-1-3c.txt.
+%
+% This work has the LPPL maintenance status "maintained".
+% The Current Maintainer of this work is Martin Hensel.
+%
+% ( In order to fight spam, the maintainer's contact      )
+% ( information is "encrypted" with ROT13.                )
+% ( If you do not know ROT13 yet and have no tool for     )
+% ( decryption, simply do an Internet search for "ROT13". )
+%
+% ,---[ ROT 13 ]---
+% | Gur Pheerag Znvagnvare bs guvf jbex vf Znegva Urafry
+% |   jub pna or pbagnpgrq ivn
+% |     zupurz@ZnegvaUrafry.qr
+% |   be ivn znvy
+% |     Znegva Urafry
+% |     Cbfgfge. 20
+% |     09232 Unegznaafqbes
+% |     Treznal
+% `----------
+%
+% This work consists of all files listed in manifest.txt.
+%
+%
+% Sources for the H and P statements are:
+%
+% - Regulation (EC) No 1272/2008 of the European Parliament and of the 
+%   Council of 16 December 2008 on classification, labelling and
+%   packaging of substances and mixtures, amending and repealing
+%   Directives 67/548/EEC and 1999/45/EC, and amending Regulation (EC)
+%   No 1907/2006
+%   http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2008:353:0001:1355:EN:PDF
+%
+% - a database with the extracted phrases, kindly provided by the author
+%   of http://schoolscout24.de/cgi-bin/hpp/hppinput.cgi
+%
+% - Commission Regulation (EU) No 286/2011 of 10 March 2011 amending,
+%   for the purposes of its adaptation to technical and scientific
+%   progress, Regulation (EC) No 1272/2008 of the European Parliament
+%   and of the Council on classification, labelling and packaging of
+%   substances and mixtures
+%   http://new.eur-lex.europa.eu/legal-content/EN/TXT/?qid=1369907325497\&uri=CELEX:32011R0286
+%
+% The statements themselves, therefore, are not subject to the LPPL.
+%
+%
+\ProvidesPackage{hpstatement}[2016/02/09 v1.02 H and P statements (mhchem bundle)]
+\RequirePackage{babel}
+\RequirePackage{twoopt}
+\RequirePackage{ifthen}
+\RequirePackage{textcomp}
+
+\def\mhchem@hp@number{\PackageError{hpstatement}{%
+  You have to specify an H or P statement number\MessageBreak%
+  when you use \string\hpnumber\space for the first time\MessageBreak%
+  (e.g. \string\hpnumber{H200})}{}}
+\def\mhchem@hp@statement{\PackageError{hpstatement}{%
+  You have to specify an H or P statement number\MessageBreak%
+  when you use \string\hpstatement\space for the first time\MessageBreak%
+  (e.g. \string\hpstatement{H200})}{}}
+
+\newcommand*\mhchem@hp@iflanguagename[1]{%- from Heiko Oberdiek and Markus Kohm in de.comp.text.tex
+  \begingroup
+    \edef\x{#1}%
+    \ifnum\language=0
+      \def\y{english}%
+    \else
+      \edef\y{\languagename}%
+    \fi
+    \@onelevel@sanitize\x
+    \@onelevel@sanitize\y
+  \expandafter\endgroup
+  \ifx\x\y
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+}
+
+\newcommandtwoopt*\hpnumber[3][][]{%  #1,#2 optional statement parameters, #3 statement number
+  \ifthenelse{\equal{#3}{}}{%
+  }{%
+    \mhchem@hp@main[{#1}][{#2}]{#3}%
+  }%
+  \mhchem@hp@number%
+}
+
+\newcommandtwoopt*\hpstatement[3][][]{%  #1,#2 optional statement parameters, #3 statement number
+  \ifthenelse{\equal{#3}{}}{%
+  }{%
+    \mhchem@hp@main[{#1}][{#2}]{#3}%
+  }%
+  \mhchem@hp@statement%
+}
+
+% populates hp@statement and hp@number
+\newcommandtwoopt*\mhchem@hp@main[3][][]{%  #1,#2 optional statement parameters, #3 statement number
+  \def\mhchem@hp@arguments{error}%
+  \ifthenelse{\equal{#1}{}}{%
+    \def\mhchem@hp@arguments{0}%
+  }{%
+    \ifthenelse{\equal{#2}{}}{%
+      \def\mhchem@hp@arguments{1}%
+    }{%
+      \def\mhchem@hp@arguments{2}%
+    }%
+  }%
+  %
+  \let\mhchem@hp@statement\relax%
+  \mhchem@hp@main@i{#1}{#2}{#3-\mhchem@hp@arguments}%
+  \ifx\relax\mhchem@hp@statement%
+    \mhchem@hp@main@i{#1}{#2}{#3-error}%
+    \ifx\relax\mhchem@hp@statement%
+      \gdef\mhchem@hp@statement{%
+        \PackageError{hpstatement}{H or P statement "#3"\MessageBreak%
+          is not defined}{}%
+      }%
+    \fi%
+  \fi%
+  \ifthenelse{\equal{\mhchem@hp@statement}{}}{%
+    \gdef\mhchem@hp@statement{%
+      \PackageError{hpstatement}{H or P statement "#3"\MessageBreak%
+        is not defined for your language}{}%
+    }%
+  }{}%
+}
+\newcommand*\mhchem@hp@main@i[3]{%
+  \mhchem@hp@iflanguagename{english}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{USenglish}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{american}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{UKenglish}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{british}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{canadian}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{australian}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{newzealand}{\mhchem@hp@data@english{#1}{#2}{#3}}{%
+  %
+  \mhchem@hp@iflanguagename{french}{\mhchem@hp@data@french{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{francais}{\mhchem@hp@data@french{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{canadien}{\mhchem@hp@data@french{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{acadian}{\mhchem@hp@data@french{#1}{#2}{#3}}{%
+  %
+  \mhchem@hp@iflanguagename{ngerman}{\mhchem@hp@data@ngerman{#1}{#2}{#3}}{%
+  \mhchem@hp@iflanguagename{naustrian}{\mhchem@hp@data@ngerman{#1}{#2}{#3}}{%
+  }}}}}}}}}}}}}}%
+}
+
+\newcommand*\mhchem@hp@ii[4]{%
+% #1 number to look for, entered by USER + arguments
+% #2 number to compare to, e.g. P230.1-1
+% #3 formatted number to output
+% #4 text (or error message)
+  \ifthenelse{\equal{#1}{#2}}{%  if input number corresponds to entry
+    \gdef\mhchem@hp@number{#3}%  set number
+    \gdef\mhchem@hp@statement{#4}%  set statement
+  }{}%
+}
+
+\newcommand*\mhchem@hp@data@english[3]{%
+\mhchem@hp@ii{#3}{EUH001-0}{EUH001}{Explosive when dry.}%
+\mhchem@hp@ii{#3}{EUH006-0}{EUH006}{Explosive with or without contact with air.}%
+\mhchem@hp@ii{#3}{EUH014-0}{EUH014}{Reacts violently with water.}%
+\mhchem@hp@ii{#3}{EUH018.0-0}{EUH018}{In use may form flammable/explosive vapour-air mixture.}%
+\mhchem@hp@ii{#3}{EUH018-error}{EUH018}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{EUH018.1-0}{EUH018}{In use may form flammable vapour-air mixture.}%
+\mhchem@hp@ii{#3}{EUH018.2-0}{EUH018}{In use may form explosive vapour-air mixture.}%
+\mhchem@hp@ii{#3}{EUH019-0}{EUH019}{May form explosive peroxides.}%
+\mhchem@hp@ii{#3}{EUH029-0}{EUH029}{Contact with water liberates toxic gas.}%
+\mhchem@hp@ii{#3}{EUH031-0}{EUH031}{Contact with acids liberates toxic gas.}%
+\mhchem@hp@ii{#3}{EUH032-0}{EUH032}{Contact with acids liberates very toxic gas.}%
+\mhchem@hp@ii{#3}{EUH044-0}{EUH044}{Risk of explosion if heated under confinement.}%
+\mhchem@hp@ii{#3}{EUH059-0}{EUH059}{Hazardous to the ozone layer.}%
+\mhchem@hp@ii{#3}{EUH066-0}{EUH066}{Repeated exposure may cause skin dryness or cracking.}%
+\mhchem@hp@ii{#3}{EUH070-0}{EUH070}{Toxic by eye contact.}%
+\mhchem@hp@ii{#3}{EUH071-0}{EUH071}{Corrosive to the respiratory tract.}%
+\mhchem@hp@ii{#3}{EUH201-0}{EUH201}{Contains lead. Should not be used on surfaces liable to be chewed or sucked by children.}%
+\mhchem@hp@ii{#3}{EUH201A-0}{EUH201A}{Warning! Contains lead.}%
+\mhchem@hp@ii{#3}{EUH202-0}{EUH202}{Cyanoacrylate. Danger. Bonds skin and eyes in seconds. Keep out of the reach of children.}%
+\mhchem@hp@ii{#3}{EUH203-0}{EUH203}{Contains chromium (VI). May produce an allergic reaction.}%
+\mhchem@hp@ii{#3}{EUH204-0}{EUH204}{Contains isocyanates. May produce an allergic reaction.}%
+\mhchem@hp@ii{#3}{EUH205-0}{EUH205}{Contains epoxy constituents. May produce an allergic reaction.}%
+\mhchem@hp@ii{#3}{EUH206-0}{EUH206}{Warning! Do not use together with other products. May release dangerous gases (chlorine).}%
+\mhchem@hp@ii{#3}{EUH207-0}{EUH207}{Warning! Contains cadmium. Dangerous fumes are formed during use. See information supplied by the manufacturer. Comply with the safety instructions.}%
+\mhchem@hp@ii{#3}{EUH208.0-0}{EUH208}{Contains \textless{}name of sensitising substance\textgreater{}. May produce an allergic reaction.}%
+\mhchem@hp@ii{#3}{EUH208-error}{EUH208}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{EUH208-1}{EUH208}{Contains #1. May produce an allergic reaction.}%
+\mhchem@hp@ii{#3}{EUH209-0}{EUH209}{Can become highly flammable in use.}%
+\mhchem@hp@ii{#3}{EUH209A-0}{EUH209A}{Can become flammable in use.}%
+\mhchem@hp@ii{#3}{EUH210-0}{EUH210}{Safety data sheet available on request.}%
+\mhchem@hp@ii{#3}{EUH401-0}{EUH401}{To avoid risks to human health and the environment, comply with the instructions for use.}%
+\mhchem@hp@ii{#3}{H200-0}{H200}{Unstable explosives.}%
+\mhchem@hp@ii{#3}{H201-0}{H201}{Explosive; mass explosion hazard.}%
+\mhchem@hp@ii{#3}{H202-0}{H202}{Explosive, severe projection hazard.}%
+\mhchem@hp@ii{#3}{H203-0}{H203}{Explosive; fire, blast or projection hazard.}%
+\mhchem@hp@ii{#3}{H204-0}{H204}{Fire or projection hazard.}%
+\mhchem@hp@ii{#3}{H205-0}{H205}{May mass explode in fire.}%
+\mhchem@hp@ii{#3}{H220-0}{H220}{Extremely flammable gas.}%
+\mhchem@hp@ii{#3}{H221-0}{H221}{Flammable gas.}%
+\mhchem@hp@ii{#3}{H222-0}{H222}{Extremely flammable aerosol.}%
+\mhchem@hp@ii{#3}{H223-0}{H223}{Flammable aerosol.}%
+\mhchem@hp@ii{#3}{H224-0}{H224}{Extremely flammable liquid and vapour.}%
+\mhchem@hp@ii{#3}{H225-0}{H225}{Highly flammable liquid and vapour.}%
+\mhchem@hp@ii{#3}{H226-0}{H226}{Flammable liquid and vapour.}%
+\mhchem@hp@ii{#3}{H228-0}{H228}{Flammable solid.}%
+\mhchem@hp@ii{#3}{H240-0}{H240}{Heating may cause an explosion.}%
+\mhchem@hp@ii{#3}{H241-0}{H241}{Heating may cause a fire or explosion.}%
+\mhchem@hp@ii{#3}{H242-0}{H242}{Heating may cause a fire.}%
+\mhchem@hp@ii{#3}{H250-0}{H250}{Catches fire spontaneously if exposed to air.}%
+\mhchem@hp@ii{#3}{H251-0}{H251}{Self-heating: may catch fire.}%
+\mhchem@hp@ii{#3}{H252-0}{H252}{Self-heating in large quantities; may catch fire.}%
+\mhchem@hp@ii{#3}{H260-0}{H260}{In contact with water releases flammable gases which may ignite spontaneously.}%
+\mhchem@hp@ii{#3}{H261-0}{H261}{In contact with water releases flammable gases.}%
+\mhchem@hp@ii{#3}{H270-0}{H270}{May cause or intensify fire; oxidiser.}%
+\mhchem@hp@ii{#3}{H271-0}{H271}{May cause fire or explosion; strong oxidiser.}%
+\mhchem@hp@ii{#3}{H272-0}{H272}{May intensify fire; oxidiser.}%
+\mhchem@hp@ii{#3}{H280-0}{H280}{Contains gas under pressure; may explode if heated.}%
+\mhchem@hp@ii{#3}{H281-0}{H281}{Contains refrigerated gas; may cause cryogenic burns or injury.}%
+\mhchem@hp@ii{#3}{H290-0}{H290}{May be corrosive to metals.}%
+\mhchem@hp@ii{#3}{H300-0}{H300}{Fatal if swallowed.}%
+\mhchem@hp@ii{#3}{H301-0}{H301}{Toxic if swallowed.}%
+\mhchem@hp@ii{#3}{H302-0}{H302}{Harmful if swallowed.}%
+\mhchem@hp@ii{#3}{H304-0}{H304}{May be fatal if swallowed and enters airways.}%
+\mhchem@hp@ii{#3}{H310-0}{H310}{Fatal in contact with skin.}%
+\mhchem@hp@ii{#3}{H311-0}{H311}{Toxic in contact with skin.}%
+\mhchem@hp@ii{#3}{H312-0}{H312}{Harmful in contact with skin.}%
+\mhchem@hp@ii{#3}{H314-0}{H314}{Causes severe skin burns and eye damage.}%
+\mhchem@hp@ii{#3}{H315-0}{H315}{Causes skin irritation.}%
+\mhchem@hp@ii{#3}{H317-0}{H317}{May cause an allergic skin reaction.}%
+\mhchem@hp@ii{#3}{H318-0}{H318}{Causes serious eye damage.}%
+\mhchem@hp@ii{#3}{H319-0}{H319}{Causes serious eye irritation.}%
+\mhchem@hp@ii{#3}{H330-0}{H330}{Fatal if inhaled.}%
+\mhchem@hp@ii{#3}{H331-0}{H331}{Toxic if inhaled.}%
+\mhchem@hp@ii{#3}{H332-0}{H332}{Harmful if inhaled.}%
+\mhchem@hp@ii{#3}{H334-0}{H334}{May cause allergy or asthma symptoms or breathing difficulties if inhaled.}%
+\mhchem@hp@ii{#3}{H335-0}{H335}{May cause respiratory irritation.}%
+\mhchem@hp@ii{#3}{H336-0}{H336}{May cause drowsiness or dizziness.}%
+\mhchem@hp@ii{#3}{H340.0-0}{H340}{May cause genetic defects \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H340-error}{H340}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H340-0}{H340}{May cause genetic defects.}%
+\mhchem@hp@ii{#3}{H340-1}{H340}{May cause genetic defects#1.}%
+\mhchem@hp@ii{#3}{H341.0-0}{H341}{Suspected of causing genetic defects \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H341-error}{H341}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H341-0}{H341}{Suspected of causing genetic defects.}%
+\mhchem@hp@ii{#3}{H341-1}{H341}{Suspected of causing genetic defects#1.}%
+\mhchem@hp@ii{#3}{H350.0-0}{H350}{May cause cancer \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H350-error}{H350}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H350-0}{H350}{May cause cancer.}%
+\mhchem@hp@ii{#3}{H350-1}{H350}{May cause cancer#1.}%
+\mhchem@hp@ii{#3}{H350i-0}{H350i}{May cause cancer by inhalation.}%
+\mhchem@hp@ii{#3}{H351.0-0}{H351}{Suspected of causing cancer \textless{}state route of exposure if it is conclusively proven that no other routs of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H351-error}{H351}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H351-0}{H351}{Suspected of causing cancer.}%
+\mhchem@hp@ii{#3}{H351-1}{H351}{Suspected of causing cancer#1.}%
+\mhchem@hp@ii{#3}{H360.0-0}{H360}{May damage fertility or the unborn child \textless{}state specific effect if known \textgreater{} \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H360-error}{H360}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H360-0}{H360}{May damage fertility or the unborn child.}%
+\mhchem@hp@ii{#3}{H360-1}{H360}{May damage fertility or the unborn child#1.}%
+\mhchem@hp@ii{#3}{H360F-0}{H360F}{May damage fertility.}%
+\mhchem@hp@ii{#3}{H360D-0}{H360D}{May damage the unborn child.}%
+\mhchem@hp@ii{#3}{H361f-0}{H361f}{Suspected of damaging fertility.}%
+\mhchem@hp@ii{#3}{H361d-0}{H361d}{Suspected of damaging the unborn child.}%
+\mhchem@hp@ii{#3}{H360FD-0}{H360FD}{May damage fertility. May damage the unborn child.}%
+\mhchem@hp@ii{#3}{H361fd-0}{H361fd}{Suspected of damaging fertility. Suspected of damaging the unborn child.}%
+\mhchem@hp@ii{#3}{H360Fd-0}{H360Fd}{May damage fertility. Suspected of damaging the unborn child.}%
+\mhchem@hp@ii{#3}{H360Df-0}{H360Df}{May damage the unborn child. Suspected of damaging fertility.}%
+\mhchem@hp@ii{#3}{H361.0-0}{H361}{Suspected of damaging fertility or the unborn child \textless{}state specific effect if known\textgreater{} \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H361-error}{H361}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H361-0}{H361}{Suspected of damaging fertility or the unborn child.}%
+\mhchem@hp@ii{#3}{H361-1}{H361}{Suspected of damaging fertility or the unborn child#1.}%
+\mhchem@hp@ii{#3}{H362-0}{H362}{May cause harm to breast-fed children.}%
+\mhchem@hp@ii{#3}{H370.0-0}{H370}{Causes damage to organs \textless{}or state all organs affected, if known\textgreater{} \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H370-error}{H370}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H370-0}{H370}{Causes damage to organs.}%
+\mhchem@hp@ii{#3}{H370-1}{H370}{Causes damage to #1.}%
+\mhchem@hp@ii{#3}{H370-2}{H370}{Causes damage to #1#2.}%
+\mhchem@hp@ii{#3}{H371.0-0}{H371}{May cause damage to organs \textless{}or state all organs affected, if known\textgreater{} \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H371-error}{H371}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H371-0}{H371}{May cause damage to organs.}%
+\mhchem@hp@ii{#3}{H371-1}{H371}{May cause damage to #1.}%
+\mhchem@hp@ii{#3}{H371-2}{H371}{May cause damage to #1#2.}%
+\mhchem@hp@ii{#3}{H372.0-0}{H372}{Causes damage to organs \textless{}or state all organs affected, if known\textgreater{} through prolonged or repeated exposure \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H372-error}{H372}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H372-0}{H372}{Causes damage to organs through prolonged or repeated exposure.}%
+\mhchem@hp@ii{#3}{H372-1}{H372}{Causes damage to #1 through prolonged or repeated exposure.}%
+\mhchem@hp@ii{#3}{H372-2}{H372}{Causes damage to #1 through prolonged or repeated exposure#2.}%
+\mhchem@hp@ii{#3}{H373.0-0}{H373}{May cause damage to organs \textless{}or state all organs affected, if known\textgreater{} through prolonged or repeated exposure \textless{}state route of exposure if it is conclusively proven that no other routes of exposure cause the hazard\textgreater{}.}%
+\mhchem@hp@ii{#3}{H373-error}{H373}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H373-0}{H373}{May cause damage to organs through prolonged or repeated exposure.}%
+\mhchem@hp@ii{#3}{H373-1}{H373}{May cause damage to #1 through prolonged or repeated exposure.}%
+\mhchem@hp@ii{#3}{H373-2}{H373}{May cause damage to #1 through prolonged or repeated exposure#2.}%
+\mhchem@hp@ii{#3}{H300+H310-0}{H300\,+\,\hskip\z@skip{}H310}{Fatal if swallowed or in contact with skin}%
+\mhchem@hp@ii{#3}{H300+H330-0}{H300\,+\,\hskip\z@skip{}H330}{Fatal if swallowed or if inhaled}%
+\mhchem@hp@ii{#3}{H310+H330-0}{H310\,+\,\hskip\z@skip{}H330}{Fatal in contact with skin or if inhaled}%
+\mhchem@hp@ii{#3}{H300+H310+H330-0}{H300\,+\,\hskip\z@skip{}H310\,+\,\hskip\z@skip{}H330}{Fatal if swallowed, in contact with skin or if inhaled}%
+\mhchem@hp@ii{#3}{H301+H311-0}{H301\,+\,\hskip\z@skip{}H311}{Toxic if swallowed or in contact with skin}%
+\mhchem@hp@ii{#3}{H301+H331-0}{H301\,+\,\hskip\z@skip{}H331}{Toxic if swallowed or if inhaled}%
+\mhchem@hp@ii{#3}{H311+H331-0}{H311\,+\,\hskip\z@skip{}H331}{Toxic in contact with skin or if inhaled}%
+\mhchem@hp@ii{#3}{H301+H311+H331-0}{H301\,+\,\hskip\z@skip{}H311\,+\,\hskip\z@skip{}H331}{Toxic if swallowed, in contact with skin or if inhaled}%
+\mhchem@hp@ii{#3}{H302+H312-0}{H302\,+\,\hskip\z@skip{}H312}{Harmful if swallowed or in contact with skin}%
+\mhchem@hp@ii{#3}{H302+H332-0}{H302\,+\,\hskip\z@skip{}H332}{Harmful if swallowed or if inhaled}%
+\mhchem@hp@ii{#3}{H312+H332-0}{H312\,+\,\hskip\z@skip{}H332}{Harmful in contact with skin or if inhaled}%
+\mhchem@hp@ii{#3}{H301+H312+H332-0}{H301\,+\,\hskip\z@skip{}H312\,+\,\hskip\z@skip{}H332}{Harmful if swallowed, in contact with skin or if inhaled}%
+\mhchem@hp@ii{#3}{H400-0}{H400}{Very toxic to aquatic life.}%
+\mhchem@hp@ii{#3}{H410-0}{H410}{Very toxic to aquatic life with long lasting effects.}%
+\mhchem@hp@ii{#3}{H411-0}{H411}{Toxic to aquatic life with long lasting effects.}%
+\mhchem@hp@ii{#3}{H412-0}{H412}{Harmful to aquatic life with long lasting effects.}%
+\mhchem@hp@ii{#3}{H413-0}{H413}{May cause long lasting harmful effects to aquatic life.}%
+\mhchem@hp@ii{#3}{H420-0}{H420}{Harms public health and the environment by destroying ozone in the upper atmosphere.}%
+\mhchem@hp@ii{#3}{P101-0}{P101}{If medical advice is needed, have product container or label at hand.}%
+\mhchem@hp@ii{#3}{P101.nolabel-error}{P101}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P101.nolabel-1}{P101}{If medical advice is needed, have product container or #1 at hand.}%
+\mhchem@hp@ii{#3}{P102-0}{P102}{Keep out of reach of children.}%
+\mhchem@hp@ii{#3}{P103-0}{P103}{Read label before use.}%
+\mhchem@hp@ii{#3}{P103.nolabel-error}{P103}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P103.nolabel-1}{P103}{Read #1 before use.}%
+\mhchem@hp@ii{#3}{P201-0}{P201}{Obtain special instructions before use.}%
+\mhchem@hp@ii{#3}{P202-0}{P202}{Do not handle until all safety precautions have been read and understood.}%
+\mhchem@hp@ii{#3}{P210.0-0}{P210}{Keep away from heat/sparks/open flames/hot surfaces. -- No smoking.}%
+\mhchem@hp@ii{#3}{P210-error}{P210}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P210-1}{P210}{Keep away from #1. -- No smoking.}%
+\mhchem@hp@ii{#3}{P210.1-0}{P210}{Keep away from heat. -- No smoking.}%
+\mhchem@hp@ii{#3}{P210.2-0}{P210}{Keep away from sparks. -- No smoking.}%
+\mhchem@hp@ii{#3}{P210.3-0}{P210}{Keep away from open flames. -- No smoking.}%
+\mhchem@hp@ii{#3}{P210.4-0}{P210}{Keep away from hot surfaces. -- No smoking.}%
+\mhchem@hp@ii{#3}{P211-0}{P211}{Do not spray on an open flame or other ignition source.}%
+\mhchem@hp@ii{#3}{P220.0.0-0}{P220}{Keep/Store away from clothing/\textellipsis{}/combustible materials.}%
+\mhchem@hp@ii{#3}{P220-error}{P220}{\PackageError{hpstatement}{Selection and selection/argument missing.\MessageBreak This statement has 1) a mandatory selection\MessageBreak and 2) a selection or text-argument.\MessageBreak Please append .1.1, ... to the number to make a\MessageBreak selection. Or append .1 or .2 with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.0-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.0.1-1}{P220}{Keep/Store away from #1 materials.}%
+\mhchem@hp@ii{#3}{P220.0.2-0}{P220}{Keep/Store away from clothing materials.}%
+\mhchem@hp@ii{#3}{P220.0.3-0}{P220}{Keep/Store away from combustible materials.}%
+\mhchem@hp@ii{#3}{P220.1.0-0}{P220}{Keep away from clothing/\textellipsis{}/combustible materials.}%
+\mhchem@hp@ii{#3}{P220.1-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.1-1}{P220}{Keep away from #1.}%
+\mhchem@hp@ii{#3}{P220.1.1-0}{P220}{Keep away from clothing.}%
+\mhchem@hp@ii{#3}{P220.1.2-0}{P220}{Keep away from combustible materials.}%
+\mhchem@hp@ii{#3}{P220.2.0-0}{P220}{Store away from clothing/\textellipsis{}/combustible materials.}%
+\mhchem@hp@ii{#3}{P220.2-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.2-1}{P220}{Store away from #1.}%
+\mhchem@hp@ii{#3}{P220.2.1-0}{P220}{Store away from clothing.}%
+\mhchem@hp@ii{#3}{P220.2.2-0}{P220}{Store away from combustible materials.}%
+\mhchem@hp@ii{#3}{P221.0-0}{P221}{Take any precaution to avoid mixing with combustibles\textellipsis{}}%
+\mhchem@hp@ii{#3}{P221-error}{P221}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P221-1}{P221}{Take any precaution to avoid mixing with #1.}%
+\mhchem@hp@ii{#3}{P221.1-0}{P221}{Take any precaution to avoid mixing with combustibles.}%
+\mhchem@hp@ii{#3}{P222-0}{P222}{Do not allow contact with air.}%
+\mhchem@hp@ii{#3}{P223-0}{P223}{Keep away from any possible contact with water, because of violent reaction and possible flash fire.}%
+\mhchem@hp@ii{#3}{P230.0-0}{P230}{Keep wetted with\textellipsis{}}%
+\mhchem@hp@ii{#3}{P230-error}{P230}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P230-1}{P230}{Keep wetted with #1.}%
+\mhchem@hp@ii{#3}{P231-0}{P231}{Handle under inert gas.}%
+\mhchem@hp@ii{#3}{P231+P232-0}{P231\,+\,\hskip\z@skip{}P232}{Handle under inert gas. Protect from moisture.}%
+\mhchem@hp@ii{#3}{P232-0}{P232}{Protect from moisture.}%
+\mhchem@hp@ii{#3}{P233-0}{P233}{Keep container tightly closed.}%
+\mhchem@hp@ii{#3}{P234-0}{P234}{Keep only in original container.}%
+\mhchem@hp@ii{#3}{P235-0}{P235}{Keep cool.}%
+\mhchem@hp@ii{#3}{P235+P410-0}{P235\,+\,\hskip\z@skip{}P410}{Keep cool. Protect from sunlight.}%
+\mhchem@hp@ii{#3}{P240-0}{P240}{Ground/bond container and receiving equipment.}%
+\mhchem@hp@ii{#3}{P241.0-0}{P241}{Use explosion-proof electrical/ventilating/lighting/\textellipsis{}/equipment.}%
+\mhchem@hp@ii{#3}{P241-error}{P241}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P241-1}{P241}{Use explosion-proof #1.}%
+\mhchem@hp@ii{#3}{P241.1-0}{P241}{Use explosion-proof electrical equipment.}%
+\mhchem@hp@ii{#3}{P241.2-0}{P241}{Use explosion-proof ventilating equipment.}%
+\mhchem@hp@ii{#3}{P241.3-0}{P241}{Use explosion-proof lighting equipment.}%
+\mhchem@hp@ii{#3}{P242-0}{P242}{Use only non-sparking tools.}%
+\mhchem@hp@ii{#3}{P243-0}{P243}{Take precautionary measures against static discharge.}%
+\mhchem@hp@ii{#3}{P244-0}{P244}{Keep reduction valves free from grease and oil.}%
+\mhchem@hp@ii{#3}{P250.0-0}{P250}{Do not subject to grinding/shock/\textellipsis{}/friction.}%
+\mhchem@hp@ii{#3}{P250-error}{P250}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P250-1}{P250}{Do not subject to #1.}%
+\mhchem@hp@ii{#3}{P250.1-0}{P250}{Do not subject to grinding.}%
+\mhchem@hp@ii{#3}{P250.2-0}{P250}{Do not subject to shock.}%
+\mhchem@hp@ii{#3}{P250.3-0}{P250}{Do not subject to friction.}%
+\mhchem@hp@ii{#3}{P251-0}{P251}{Pressurized container: Do not pierce or burn, even after use.}%
+\mhchem@hp@ii{#3}{P260.0-0}{P260}{Do not breathe dust/fume/gas/mist/vapours/spray.}%
+\mhchem@hp@ii{#3}{P260-error}{P260}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P260-1}{P260}{Do not breathe #1.}%
+\mhchem@hp@ii{#3}{P260.1-0}{P260}{Do not breathe dust.}%
+\mhchem@hp@ii{#3}{P260.2-0}{P260}{Do not breathe fume.}%
+\mhchem@hp@ii{#3}{P260.3-0}{P260}{Do not breathe gas.}%
+\mhchem@hp@ii{#3}{P260.4-0}{P260}{Do not breathe mist.}%
+\mhchem@hp@ii{#3}{P260.5-0}{P260}{Do not breathe vapours.}%
+\mhchem@hp@ii{#3}{P260.6-0}{P260}{Do not breathe spray.}%
+\mhchem@hp@ii{#3}{P261-0}{P261}{Avoid breathing dust/fume/gas/mist/vapours/spray.}%
+\mhchem@hp@ii{#3}{P262-0}{P262}{Do not get in eyes, on skin, or on clothing.}%
+\mhchem@hp@ii{#3}{P263.0-0}{P263}{Avoid contact during pregnancy/while nursing.}%
+\mhchem@hp@ii{#3}{P263-error}{P263}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P263-1}{P263}{Avoid contact #1.}%
+\mhchem@hp@ii{#3}{P263.1-0}{P263}{Avoid contact during pregnancy.}%
+\mhchem@hp@ii{#3}{P263.2-0}{P263}{Avoid contact while nursing.}%
+\mhchem@hp@ii{#3}{P264.0-0}{P264}{Wash \textellipsis{} thoroughly after handling.}%
+\mhchem@hp@ii{#3}{P264-error}{P264}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P264-1}{P264}{Wash #1 thoroughly after handling.}%
+\mhchem@hp@ii{#3}{P270-0}{P270}{Do no eat, drink or smoke when using this product.}%
+\mhchem@hp@ii{#3}{P271-0}{P271}{Use only outdoors or in a well-ventilated area.}%
+\mhchem@hp@ii{#3}{P272-0}{P272}{Contaminated work clothing should not be allowed out of the workplace.}%
+\mhchem@hp@ii{#3}{P273-0}{P273}{Avoid release to the environment.}%
+\mhchem@hp@ii{#3}{P280.0-0}{P280}{Wear protective gloves/protective clothing/eye protection/face protection.}%
+\mhchem@hp@ii{#3}{P280-error}{P280}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P280-1}{P280}{Wear #1.}%
+\mhchem@hp@ii{#3}{P280.1-0}{P280}{Wear protective gloves.}%
+\mhchem@hp@ii{#3}{P280.2-0}{P280}{Wear protective clothing.}%
+\mhchem@hp@ii{#3}{P280.3-0}{P280}{Wear eye protection.}%
+\mhchem@hp@ii{#3}{P280.4-0}{P280}{Wear face protection.}%
+\mhchem@hp@ii{#3}{P281-0}{P281}{Use personal protective equipment as required.}%
+\mhchem@hp@ii{#3}{P282.0-0}{P282}{Wear cold insulating gloves/face shield/eye protection.}%
+\mhchem@hp@ii{#3}{P282-error}{P282}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P282-1}{P282}{Wear #1.}%
+\mhchem@hp@ii{#3}{P282.1-0}{P282}{Wear cold insulating gloves.}%
+\mhchem@hp@ii{#3}{P282.2-0}{P282}{Wear face shield.}%
+\mhchem@hp@ii{#3}{P282.3-0}{P282}{Wear eye protection.}%
+\mhchem@hp@ii{#3}{P283.0-0}{P283}{Wear fire/flame resistant/retardant clothing.}%
+\mhchem@hp@ii{#3}{P283-error}{P283}{\PackageError{hpstatement}{Language-dependent argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak However, translations differ so much that you\MessageBreak have to state your selection as text argument [].\MessageBreak Read the manual for possible values.\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P283-1}{P283}{Wear #1 clothing.}%
+\mhchem@hp@ii{#3}{P284-0}{P284}{Wear respiratory protection.}%
+\mhchem@hp@ii{#3}{P285-0}{P285}{In case of inadequate ventilation wear respiratory protection.}%
+\mhchem@hp@ii{#3}{P301-0}{P301}{IF SWALLOWED:}%
+\mhchem@hp@ii{#3}{P301+P310-0}{P301\,+\,\hskip\z@skip{}P310}{IF SWALLOWED: Immediately call a POISON CENTER or doctor/physician.}%
+\mhchem@hp@ii{#3}{P301+P312-0}{P301\,+\,\hskip\z@skip{}P312}{IF SWALLOWED: Call a POISON CENTER or doctor/physician if you feel unwell.}%
+\mhchem@hp@ii{#3}{P301+P330+P331-0}{P301\,+\,\hskip\z@skip{}P330\,+\,\hskip\z@skip{}P331}{IF SWALLOWED: rinse mouth. Do NOT induce vomiting.}%
+\mhchem@hp@ii{#3}{P302-0}{P302}{IF ON SKIN:}%
+\mhchem@hp@ii{#3}{P302+P334.0-0}{P302\,+\,\hskip\z@skip{}P334}{IF ON SKIN: Immerse in cool water/wrap in wet bandages.}%
+\mhchem@hp@ii{#3}{P302+P334-error}{P302\,+\,\hskip\z@skip{}P334}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P302+P334-1}{P302\,+\,\hskip\z@skip{}P334}{IF ON SKIN: #1.}%
+\mhchem@hp@ii{#3}{P302+P334.1-0}{P302\,+\,\hskip\z@skip{}P334}{IF ON SKIN: Immerse in cool water.}%
+\mhchem@hp@ii{#3}{P302+P334.2-0}{P302\,+\,\hskip\z@skip{}P334}{IF ON SKIN: Wrap in wet bandages.}%
+\mhchem@hp@ii{#3}{P302+P350-0}{P302\,+\,\hskip\z@skip{}P350}{IF ON SKIN: Gently wash with plenty of soap and water.}%
+\mhchem@hp@ii{#3}{P302+P352-0}{P302\,+\,\hskip\z@skip{}P352}{IF ON SKIN: Wash with plenty of soap and water.}%
+\mhchem@hp@ii{#3}{P303-0}{P303}{IF ON SKIN (or hair):}%
+\mhchem@hp@ii{#3}{P303+P361+P353-0}{P303\,+\,\hskip\z@skip{}P361\,+\,\hskip\z@skip{}P353}{IF ON SKIN (or hair): Remove/Take off immediately all contaminated clothing. Rinse skin with water/shower.}%
+\mhchem@hp@ii{#3}{P304-0}{P304}{IF INHALED:}%
+\mhchem@hp@ii{#3}{P304+P340-0}{P304\,+\,\hskip\z@skip{}P340}{IF INHALED: Remove victim to fresh air and keep at rest in a position comfortable for breathing.}%
+\mhchem@hp@ii{#3}{P304+P341-0}{P304\,+\,\hskip\z@skip{}P341}{IF INHALED: If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing.}%
+\mhchem@hp@ii{#3}{P305-0}{P305}{IF IN EYES:}%
+\mhchem@hp@ii{#3}{P305+P351+P338-0}{P305\,+\,\hskip\z@skip{}P351\,+\,\hskip\z@skip{}P338}{IF IN EYES: Rinse cautiously with water for several minutes. Remove contact lenses, if present and easy to do. Continue rinsing.}%
+\mhchem@hp@ii{#3}{P306-0}{P306}{IF ON CLOTHING:}%
+\mhchem@hp@ii{#3}{P306+P360-0}{P306\,+\,\hskip\z@skip{}P360}{IF ON CLOTHING: rinse immediately contaminated clothing and skin with plenty of water before removing clothes.}%
+\mhchem@hp@ii{#3}{P307-0}{P307}{IF exposed:}%
+\mhchem@hp@ii{#3}{P307+P311-0}{P307\,+\,\hskip\z@skip{}P311}{IF exposed: Call a POISON CENTER or doctor/physician.}%
+\mhchem@hp@ii{#3}{P308-0}{P308}{IF exposed or concerned:}%
+\mhchem@hp@ii{#3}{P308+P313-0}{P308\,+\,\hskip\z@skip{}P313}{IF exposed or concerned: Get medical advice/attention.}%
+\mhchem@hp@ii{#3}{P309-0}{P309}{IF exposed or if you feel unwell:}%
+\mhchem@hp@ii{#3}{P309+P311-0}{P309\,+\,\hskip\z@skip{}P311}{IF exposed or if you feel unwell: Call a POISON CENTER or doctor/physician.}%
+\mhchem@hp@ii{#3}{P310-0}{P310}{Immediately call a POISON CENTER or doctor/physician.}%
+\mhchem@hp@ii{#3}{P311-0}{P311}{Call a POISON CENTER or doctor/physician.}%
+\mhchem@hp@ii{#3}{P312-0}{P312}{Call a POISON CENTER or doctor/physician if you feel unwell.}%
+\mhchem@hp@ii{#3}{P313-0}{P313}{Get medical advice/attention.}%
+\mhchem@hp@ii{#3}{P314-0}{P314}{Get medical advice/attention if you feel unwell.}%
+\mhchem@hp@ii{#3}{P315-0}{P315}{Get immediate medical advice/attention.}%
+\mhchem@hp@ii{#3}{P320.0-0}{P320}{Specific treatment is urgent (see \textellipsis{} on this label).}%
+\mhchem@hp@ii{#3}{P320-error}{P320}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P320-1}{P320}{Specific treatment is urgent (see #1 on this label).}%
+\mhchem@hp@ii{#3}{P320.nolabel-error}{P320}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P320.nolabel-1}{P320}{Specific treatment is urgent (see #1).}%
+\mhchem@hp@ii{#3}{P321.0-0}{P321}{Specific treatment (see \textellipsis{} on this label).}%
+\mhchem@hp@ii{#3}{P321-error}{P321}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P321-1}{P321}{Specific treatment (see #1 on this label).}%
+\mhchem@hp@ii{#3}{P321.nolabel-error}{P321}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P321.nolabel-1}{P321}{Specific treatment (see #1).}%
+\mhchem@hp@ii{#3}{P322.0-0}{P322}{Specific measures (see \textellipsis{} on this label).}%
+\mhchem@hp@ii{#3}{P322-error}{P322}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P322-1}{P322}{Specific measures (see #1 on this label).}%
+\mhchem@hp@ii{#3}{P322.nolabel-error}{P322}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P322.nolabel-1}{P322}{Specific measures (see #1).}%
+\mhchem@hp@ii{#3}{P330-0}{P330}{Rinse mouth.}%
+\mhchem@hp@ii{#3}{P331-0}{P331}{Do NOT induce vomiting.}%
+\mhchem@hp@ii{#3}{P332-0}{P332}{If skin irritation occurs:}%
+\mhchem@hp@ii{#3}{P332+P313-0}{P332\,+\,\hskip\z@skip{}P313}{If skin irritation occurs: Get medical advice/attention.}%
+\mhchem@hp@ii{#3}{P333-0}{P333}{If skin irritation or rash occurs:}%
+\mhchem@hp@ii{#3}{P333+P313-0}{P333\,+\,\hskip\z@skip{}P313}{If skin irritation or rash occurs: Get medical advice/attention.}%
+\mhchem@hp@ii{#3}{P334.0-0}{P334}{Immerse in cool water/wrap in wet bandages.}%
+\mhchem@hp@ii{#3}{P334-error}{P334}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P334.1-0}{P334}{Immerse in cool water.}%
+\mhchem@hp@ii{#3}{P334.2-0}{P334}{Wrap in wet bandages.}%
+\mhchem@hp@ii{#3}{P335-0}{P335}{Brush off loose particles from skin.}%
+\mhchem@hp@ii{#3}{P335+P334.0-0}{P335\,+\,\hskip\z@skip{}P334}{Brush off loose particles from skin. Immerse in cool water/wrap in wet bandages.}%
+\mhchem@hp@ii{#3}{P335+P334-error}{P335\,+\,\hskip\z@skip{}P334}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P335+P334.1-0}{P335\,+\,\hskip\z@skip{}P334}{Brush off loose particles from skin. Immerse in cool water.}%
+\mhchem@hp@ii{#3}{P335+P334.2-0}{P335\,+\,\hskip\z@skip{}P334}{Brush off loose particles from skin. Wrap in wet bandages.}%
+\mhchem@hp@ii{#3}{P336-0}{P336}{Thaw frosted parts with lukewarm water. Do no rub affected area.}%
+\mhchem@hp@ii{#3}{P337-0}{P337}{If eye irritation persists:}%
+\mhchem@hp@ii{#3}{P337+P313-0}{P337\,+\,\hskip\z@skip{}P313}{If eye irritation persists: Get medical advice/attention.}%
+\mhchem@hp@ii{#3}{P338-0}{P338}{Remove contact lenses, if present and easy to do. Continue rinsing.}%
+\mhchem@hp@ii{#3}{P340-0}{P340}{Remove victim to fresh air and keep at rest in a position comfortable for breathing.}%
+\mhchem@hp@ii{#3}{P341-0}{P341}{If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing.}%
+\mhchem@hp@ii{#3}{P342-0}{P342}{If experiencing respiratory symptoms:}%
+\mhchem@hp@ii{#3}{P342+P311-0}{P342\,+\,\hskip\z@skip{}P311}{If experiencing respiratory symptoms: Call a POISON CENTER or doctor/physician.}%
+\mhchem@hp@ii{#3}{P350-0}{P350}{Gently wash with plenty of soap and water.}%
+\mhchem@hp@ii{#3}{P351-0}{P351}{Rinse cautiously with water for several minutes.}%
+\mhchem@hp@ii{#3}{P352-0}{P352}{Wash with plenty of soap and water.}%
+\mhchem@hp@ii{#3}{P353-0}{P353}{Rinse skin with water/shower.}%
+\mhchem@hp@ii{#3}{P360-0}{P360}{Rinse immediately contaminated clothing and skin with plenty of water before removing clothes.}%
+\mhchem@hp@ii{#3}{P361-0}{P361}{Remove/Take off immediately all contaminated clothing.}%
+\mhchem@hp@ii{#3}{P362-0}{P362}{Take off contaminated clothing and wash before reuse.}%
+\mhchem@hp@ii{#3}{P363-0}{P363}{Wash contaminated clothing before reuse.}%
+\mhchem@hp@ii{#3}{P370-0}{P370}{In case of fire:}%
+\mhchem@hp@ii{#3}{P370+P376-0}{P370\,+\,\hskip\z@skip{}P376}{In case of fire: Stop leak if safe to do so.}%
+\mhchem@hp@ii{#3}{P370+P378.0-0}{P370\,+\,\hskip\z@skip{}P378}{In case of fire: Use \textellipsis{} for extinction.}%
+\mhchem@hp@ii{#3}{P370+P378-error}{P370\,+\,\hskip\z@skip{}P378}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P370+P378-1}{P370\,+\,\hskip\z@skip{}P378}{In case of fire: Use #1 for extinction.}%
+\mhchem@hp@ii{#3}{P370+P380-0}{P370\,+\,\hskip\z@skip{}P380}{In case of fire: Evacuate area.}%
+\mhchem@hp@ii{#3}{P370+P380+P375-0}{P370\,+\,\hskip\z@skip{}P380\,+\,\hskip\z@skip{}P375}{In case of fire: Evacuate area. Fight fire remotely due to the risk of explosion.}%
+\mhchem@hp@ii{#3}{P371-0}{P371}{In case of major fire and large quantities:}%
+\mhchem@hp@ii{#3}{P371+P380+P375-0}{P371\,+\,\hskip\z@skip{}P380\,+\,\hskip\z@skip{}P375}{In case of major fire and large quantities: Evacuate area. Fight fire remotely due to the risk of explosion.}%
+\mhchem@hp@ii{#3}{P372-0}{P372}{Explosion risk in case of fire.}%
+\mhchem@hp@ii{#3}{P373-0}{P373}{DO NOT fight fire when fire reaches explosives.}%
+\mhchem@hp@ii{#3}{P374-0}{P374}{Fight fire with normal precautions from a reasonable distance.}%
+\mhchem@hp@ii{#3}{P375-0}{P375}{Fight fire remotely due to the risk of explosion.}%
+\mhchem@hp@ii{#3}{P376-0}{P376}{Stop leak if safe to do so.}%
+\mhchem@hp@ii{#3}{P377-0}{P377}{Leaking gas fire: Do not extinguish, unless leak can be stopped safely.}%
+\mhchem@hp@ii{#3}{P378.0-0}{P378}{Use \textellipsis{} for extinction.}%
+\mhchem@hp@ii{#3}{P378-error}{P378}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P378-1}{P378}{Use #1 for extinction.}%
+\mhchem@hp@ii{#3}{P380-0}{P380}{Evacuate area.}%
+\mhchem@hp@ii{#3}{P381-0}{P381}{Eliminate all ignition sources if safe to do so.}%
+\mhchem@hp@ii{#3}{P390-0}{P390}{Absorb spillage to prevent material damage.}%
+\mhchem@hp@ii{#3}{P391-0}{P391}{Collect spillage.}%
+\mhchem@hp@ii{#3}{P401.0-0}{P401}{Store \textellipsis{}}%
+\mhchem@hp@ii{#3}{P401-error}{P401}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P401-1}{P401}{Store #1.}%
+\mhchem@hp@ii{#3}{P402-0}{P402}{Store in a dry place.}%
+\mhchem@hp@ii{#3}{P402+P404-0}{P402\,+\,\hskip\z@skip{}P404}{Store in a dry place. Store in a closed container.}%
+\mhchem@hp@ii{#3}{P403-0}{P403}{Store in a well-ventilated place.}%
+\mhchem@hp@ii{#3}{P403+P233-0}{P403\,+\,\hskip\z@skip{}P233}{Store in a well-ventilated place. Keep container tightly closed.}%
+\mhchem@hp@ii{#3}{P403+P235-0}{P403\,+\,\hskip\z@skip{}P235}{Store in a well-ventilated place. Keep cool.}%
+\mhchem@hp@ii{#3}{P404-0}{P404}{Store in a closed container.}%
+\mhchem@hp@ii{#3}{P405-0}{P405}{Store locked up.}%
+\mhchem@hp@ii{#3}{P406.0-0}{P406}{Store in corrosive resistant/\textellipsis{} container with a resistant inner liner.}%
+\mhchem@hp@ii{#3}{P406-error}{P406}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P406-1}{P406}{Store in #1 container with a resistant inner liner.}%
+\mhchem@hp@ii{#3}{P406.1-0}{P406}{Store in corrosive resistant container with a resistant inner liner.}%
+\mhchem@hp@ii{#3}{P407-0}{P407}{Maintain air gap between stacks/pallets.}%
+\mhchem@hp@ii{#3}{P410-0}{P410}{Protect from sunlight.}%
+\mhchem@hp@ii{#3}{P410+P403-0}{P410\,+\,\hskip\z@skip{}P403}{Protect from sunlight. Store in a well-ventilated place.}%
+\mhchem@hp@ii{#3}{P410+P412-0}{P410\,+\,\hskip\z@skip{}P412}{Protect from sunlight. Do no expose to temperatures exceeding 50\textdegree{}C/122\textdegree{}F.}%
+\mhchem@hp@ii{#3}{P411.0-0}{P411}{Store at temperatures not exceeding \textellipsis{}\textdegree{}C/\textellipsis{}\textdegree{}F.}%
+\mhchem@hp@ii{#3}{P411-error}{P411}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P411-1}{P411}{Store at temperatures not exceeding #1.}%
+\mhchem@hp@ii{#3}{P411+P235.0-0}{P411\,+\,\hskip\z@skip{}P235}{Store at temperatures not exceeding \textellipsis{}\textdegree{}C/\textellipsis{}\textdegree{}F. Keep cool.}%
+\mhchem@hp@ii{#3}{P411+P235-error}{P411\,+\,\hskip\z@skip{}P235}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P411+P235-1}{P411\,+\,\hskip\z@skip{}P235}{Store at temperatures not exceeding #1. Keep cool.}%
+\mhchem@hp@ii{#3}{P412-0}{P412}{Do not expose to temperatures exceeding 50\textdegree{}C/122\textdegree{}F.}%
+\mhchem@hp@ii{#3}{P413.0-0}{P413}{Store bulk masses greater than \textellipsis{}\,kg/\textellipsis{}\,lbs at temperatures not exceeding \textellipsis{}\textdegree{}C/\textellipsis{}\textdegree{}F.}%
+\mhchem@hp@ii{#3}{P413-error}{P413}{\PackageError{hpstatement}{This statement has two mandatory text arguments.\MessageBreak Please specify them with [][]}{}}%
+\mhchem@hp@ii{#3}{P413-2}{P413}{Store bulk masses greater than #1 at temperatures not exceeding #2.}%
+\mhchem@hp@ii{#3}{P420-0}{P420}{Store away from other materials.}%
+\mhchem@hp@ii{#3}{P422.0-0}{P422}{Store contents under \textellipsis{}}%
+\mhchem@hp@ii{#3}{P422-error}{P422}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P422-1}{P422}{Store contents under #1.}%
+\mhchem@hp@ii{#3}{P501.0.0-0}{P501}{Dispose of contents/container to \textellipsis{}}%
+\mhchem@hp@ii{#3}{P501.0-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.0-1}{P501}{Dispose of contents/container to #1.}%
+\mhchem@hp@ii{#3}{P501-error}{P501}{\PackageError{hpstatement}{Selection and mandatory argument missing.\MessageBreak This statement has a mandatory selection. Please\MessageBreak append .1 or .2 to the number (or use .0 for the\MessageBreak original form). Also, supply an argument with []\MessageBreak (or use an additional .0 for the original\MessageBreak form)}{}}%
+\mhchem@hp@ii{#3}{P501.1.0-0}{P501}{Dispose of contents to \textellipsis{}}%
+\mhchem@hp@ii{#3}{P501.1-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.1-1}{P501}{Dispose of contents to #1.}%
+\mhchem@hp@ii{#3}{P501.2.0-0}{P501}{Dispose of container to \textellipsis{}}%
+\mhchem@hp@ii{#3}{P501.2-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.2-1}{P501}{Dispose of container to #1.}%
+}
+\newcommand*\mhchem@hp@data@french[3]{%
+\mhchem@hp@ii{#3}{EUH001-0}{EUH001}{Explosif \`a\allowhyphens{} l'\'e\allowhyphens{}tat sec.}%
+\mhchem@hp@ii{#3}{EUH006-0}{EUH006}{Danger d'explosion en contact ou sans contact avec l'air.}%
+\mhchem@hp@ii{#3}{EUH014-0}{EUH014}{R\'e\allowhyphens{}agit violemment au contact de l'eau.}%
+\mhchem@hp@ii{#3}{EUH018.0-0}{EUH018}{Lors de l'utilisation, formation possible de m\'e\allowhyphens{}lange vapeur\allowhyphens{}-air inflammable/\hskip\z@skip{}explosif.}%
+\mhchem@hp@ii{#3}{EUH018-error}{EUH018}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{EUH018.1-0}{EUH018}{Lors de l'utilisation, formation possible de m\'e\allowhyphens{}lange vapeur\allowhyphens{}-air inflammable.}%
+\mhchem@hp@ii{#3}{EUH018.2-0}{EUH018}{Lors de l'utilisation, formation possible de m\'e\allowhyphens{}lange vapeur\allowhyphens{}-air explosif.}%
+\mhchem@hp@ii{#3}{EUH019-0}{EUH019}{Peut former des peroxydes explosifs.}%
+\mhchem@hp@ii{#3}{EUH029-0}{EUH029}{Au contact de l'eau, d\'e\allowhyphens{}gage des gaz toxiques.}%
+\mhchem@hp@ii{#3}{EUH031-0}{EUH031}{Au contact d'un acide, d\'e\allowhyphens{}gage un gaz toxique.}%
+\mhchem@hp@ii{#3}{EUH032-0}{EUH032}{Au contact d'un acide, d\'e\allowhyphens{}gage un gaz tr\`e\allowhyphens{}s toxique.}%
+\mhchem@hp@ii{#3}{EUH044-0}{EUH044}{Risque d'explosion si chauff\'e\allowhyphens{} en ambiance confin\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{EUH059-0}{EUH059}{Dangereux pour la couche d'ozone.}%
+\mhchem@hp@ii{#3}{EUH066-0}{EUH066}{L'exposition r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}e peut provoquer dess\`e\allowhyphens{}chement ou ger\c{c}\allowhyphens{}ures de la peau.}%
+\mhchem@hp@ii{#3}{EUH070-0}{EUH070}{Toxique par contact oculaire.}%
+\mhchem@hp@ii{#3}{EUH071-0}{EUH071}{Corrosif pour les voies respiratoires.}%
+\mhchem@hp@ii{#3}{EUH201-0}{EUH201}{Contient du plomb. Ne pas utiliser sur les objets susceptibles d'\^e\allowhyphens{}tre m\^a\allowhyphens{}ch\'e\allowhyphens{}s ou suc\'e\allowhyphens{}s par des enfants.}%
+\mhchem@hp@ii{#3}{EUH201A-0}{EUH201A}{Attention\thinspace ! Contient du plomb.}%
+\mhchem@hp@ii{#3}{EUH202-0}{EUH202}{Cyanoacrylate. Danger. Colle \`a\allowhyphens{} la peau et aux yeux en quelques secondes. \`A\allowhyphens{} conserver hors de port\'e\allowhyphens{}e des enfants.}%
+\mhchem@hp@ii{#3}{EUH203-0}{EUH203}{Contient du chrome (VI). Peut produire une r\'e\allowhyphens{}action allergique.}%
+\mhchem@hp@ii{#3}{EUH204-0}{EUH204}{Contient des isocyanates. Peut produire une r\'e\allowhyphens{}action allergique.}%
+\mhchem@hp@ii{#3}{EUH205-0}{EUH205}{Contient des compos\'e\allowhyphens{}s \'e\allowhyphens{}poxydiques. Peut produire une r\'e\allowhyphens{}action allergique.}%
+\mhchem@hp@ii{#3}{EUH206-0}{EUH206}{Attention\thinspace ! Ne pas utiliser en combinaison avec d'autres produits. Peut lib\'e\allowhyphens{}rer des gaz dangereux (chlore).}%
+\mhchem@hp@ii{#3}{EUH207-0}{EUH207}{Attention\thinspace ! Contient du cadmium. Des fum\'e\allowhyphens{}es dangereuses se d\'e\allowhyphens{}veloppent pendant l'utilisation. Voir les informations fournies par le fabricant. Respectez les consignes de s\'e\allowhyphens{}curit\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{EUH208.0-0}{EUH208}{Contient \textless{}nom de la substance sensibilisante\textgreater{}. Peut produire une r\'e\allowhyphens{}action allergique.}%
+\mhchem@hp@ii{#3}{EUH208-error}{EUH208}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{EUH208-1}{EUH208}{Contient #1. Peut produire une r\'e\allowhyphens{}action allergique.}%
+\mhchem@hp@ii{#3}{EUH209-0}{EUH209}{Peut devenir facilement inflammable en cours d'utilisation.}%
+\mhchem@hp@ii{#3}{EUH209A-0}{EUH209A}{Peut devenir inflammable en cours d'utilisation.}%
+\mhchem@hp@ii{#3}{EUH210-0}{EUH210}{Fiche de donn\'e\allowhyphens{}es de s\'e\allowhyphens{}curit\'e\allowhyphens{} disponible sur demande.}%
+\mhchem@hp@ii{#3}{EUH401-0}{EUH401}{Respectez les instructions d'utilisation pour \'e\allowhyphens{}viter les risques pour la sant\'e\allowhyphens{} humaine et l'environnement.}%
+\mhchem@hp@ii{#3}{H200-0}{H200}{Explosif instable.}%
+\mhchem@hp@ii{#3}{H201-0}{H201}{Explosif\thinspace ; danger d'explosion en masse.}%
+\mhchem@hp@ii{#3}{H202-0}{H202}{Explosif\thinspace ; danger s\'e\allowhyphens{}rieux de projection.}%
+\mhchem@hp@ii{#3}{H203-0}{H203}{Explosif\thinspace ; danger d'incendie, d'effet de souffle ou de projection.}%
+\mhchem@hp@ii{#3}{H204-0}{H204}{Danger d'incendie ou de projection.}%
+\mhchem@hp@ii{#3}{H205-0}{H205}{Danger d'explosion en masse en cas d'incendie.}%
+\mhchem@hp@ii{#3}{H220-0}{H220}{Gaz extr\^e\allowhyphens{}mement inflammable.}%
+\mhchem@hp@ii{#3}{H221-0}{H221}{Gaz inflammable.}%
+\mhchem@hp@ii{#3}{H222-0}{H222}{A\'e\allowhyphens{}rosol extr\^e\allowhyphens{}mement inflammable.}%
+\mhchem@hp@ii{#3}{H223-0}{H223}{A\'e\allowhyphens{}rosol inflammable.}%
+\mhchem@hp@ii{#3}{H224-0}{H224}{Liquide et vapeurs extr\^e\allowhyphens{}mement inflammables.}%
+\mhchem@hp@ii{#3}{H225-0}{H225}{Liquide et vapeurs tr\`e\allowhyphens{}s inflammables.}%
+\mhchem@hp@ii{#3}{H226-0}{H226}{Liquide et vapeurs inflammables.}%
+\mhchem@hp@ii{#3}{H228-0}{H228}{Mati\`e\allowhyphens{}re solide inflammable.}%
+\mhchem@hp@ii{#3}{H240-0}{H240}{Peut exploser sous l'effet de la chaleur.}%
+\mhchem@hp@ii{#3}{H241-0}{H241}{Peut s'enflammer ou exploser sous l'effet de la chaleur.}%
+\mhchem@hp@ii{#3}{H242-0}{H242}{Peut s'enflammer sous l'effet de la chaleur.}%
+\mhchem@hp@ii{#3}{H250-0}{H250}{S'enflamme spontan\'e\allowhyphens{}ment au contact de l'air.}%
+\mhchem@hp@ii{#3}{H251-0}{H251}{Mati\`e\allowhyphens{}re auto-\'e\allowhyphens{}chauffante\thinspace ; peut s'enflammer.}%
+\mhchem@hp@ii{#3}{H252-0}{H252}{Mati\`e\allowhyphens{}re auto-\'e\allowhyphens{}chauffante en grandes quantit\'e\allowhyphens{}s\thinspace ; peut s'enflammer.}%
+\mhchem@hp@ii{#3}{H260-0}{H260}{D\'e\allowhyphens{}gage au contact de l'eau des gaz inflammables qui peuvent s'enflammer spontan\'e\allowhyphens{}ment.}%
+\mhchem@hp@ii{#3}{H261-0}{H261}{D\'e\allowhyphens{}gage au contact de l'eau des gaz inflammables.}%
+\mhchem@hp@ii{#3}{H270-0}{H270}{Peut provoquer ou aggraver un incendie\thinspace ; comburant.}%
+\mhchem@hp@ii{#3}{H271-0}{H271}{Peut provoquer un incendie ou une explosion\thinspace ; comburant puissant.}%
+\mhchem@hp@ii{#3}{H272-0}{H272}{Peut aggraver un incendie\thinspace ; comburant.}%
+\mhchem@hp@ii{#3}{H280-0}{H280}{Contient un gaz sous pression\thinspace ; peut exploser sous l'effet de la chaleur.}%
+\mhchem@hp@ii{#3}{H281-0}{H281}{Contient un gaz r\'e\allowhyphens{}frig\'e\allowhyphens{}r\'e\allowhyphens{}\thinspace ; peut causer des br\^u\allowhyphens{}lures ou blessures cryog\'e\allowhyphens{}niques.}%
+\mhchem@hp@ii{#3}{H290-0}{H290}{Peut \^e\allowhyphens{}tre corrosif pour les m\'e\allowhyphens{}taux.}%
+\mhchem@hp@ii{#3}{H300-0}{H300}{Mortel en cas d'ingestion.}%
+\mhchem@hp@ii{#3}{H301-0}{H301}{Toxique en cas d'ingestion.}%
+\mhchem@hp@ii{#3}{H302-0}{H302}{Nocif en cas d'ingestion.}%
+\mhchem@hp@ii{#3}{H304-0}{H304}{Peut \^e\allowhyphens{}tre mortel en cas d'ingestion et de p\'e\allowhyphens{}n\'e\allowhyphens{}tration dans les voies respiratoires.}%
+\mhchem@hp@ii{#3}{H310-0}{H310}{Mortel par contact cutan\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{H311-0}{H311}{Toxique par contact cutan\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{H312-0}{H312}{Nocif par contact cutan\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{H314-0}{H314}{Provoque des br\^u\allowhyphens{}lures de la peau et des l\'e\allowhyphens{}sions oculaires graves.}%
+\mhchem@hp@ii{#3}{H315-0}{H315}{Provoque une irritation cutan\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{H317-0}{H317}{Peut provoquer une allergie cutan\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{H318-0}{H318}{Provoque des l\'e\allowhyphens{}sions oculaires graves.}%
+\mhchem@hp@ii{#3}{H319-0}{H319}{Provoque une s\'e\allowhyphens{}v\`e\allowhyphens{}re irritation des yeux.}%
+\mhchem@hp@ii{#3}{H330-0}{H330}{Mortel par inhalation.}%
+\mhchem@hp@ii{#3}{H331-0}{H331}{Toxique par inhalation.}%
+\mhchem@hp@ii{#3}{H332-0}{H332}{Nocif par inhalation.}%
+\mhchem@hp@ii{#3}{H334-0}{H334}{Peut provoquer des sympt\^o\allowhyphens{}mes allergiques ou d'asthme ou des difficult\'e\allowhyphens{}s respiratoires par inhalation.}%
+\mhchem@hp@ii{#3}{H335-0}{H335}{Peut irriter les voies respiratoires.}%
+\mhchem@hp@ii{#3}{H336-0}{H336}{Peut provoquer somnolence ou vertiges.}%
+\mhchem@hp@ii{#3}{H340.0-0}{H340}{Peut induire des anomalies g\'e\allowhyphens{}n\'e\allowhyphens{}tiques \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H340-error}{H340}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H340-0}{H340}{Peut induire des anomalies g\'e\allowhyphens{}n\'e\allowhyphens{}tiques.}%
+\mhchem@hp@ii{#3}{H340-1}{H340}{Peut induire des anomalies g\'e\allowhyphens{}n\'e\allowhyphens{}tiques#1.}%
+\mhchem@hp@ii{#3}{H341.0-0}{H341}{Susceptible d'induire des anomalies g\'e\allowhyphens{}n\'e\allowhyphens{}tiques \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H341-error}{H341}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H341-0}{H341}{Susceptible d'induire des anomalies g\'e\allowhyphens{}n\'e\allowhyphens{}tiques.}%
+\mhchem@hp@ii{#3}{H341-1}{H341}{Susceptible d'induire des anomalies g\'e\allowhyphens{}n\'e\allowhyphens{}tiques#1.}%
+\mhchem@hp@ii{#3}{H350.0-0}{H350}{Peut provoquer le cancer \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H350-error}{H350}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H350-0}{H350}{Peut provoquer le cancer.}%
+\mhchem@hp@ii{#3}{H350-1}{H350}{Peut provoquer le cancer#1.}%
+\mhchem@hp@ii{#3}{H350i-0}{H350i}{Peut provoquer le cancer par inhalation.}%
+\mhchem@hp@ii{#3}{H351.0-0}{H351}{Susceptible de provoquer le cancer \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H351-error}{H351}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H351-0}{H351}{Susceptible de provoquer le cancer.}%
+\mhchem@hp@ii{#3}{H351-1}{H351}{Susceptible de provoquer le cancer#1.}%
+\mhchem@hp@ii{#3}{H360.0-0}{H360}{Peut nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{} ou au f\oe\allowhyphens{}tus \textless{}indiquer l'effet sp\'e\allowhyphens{}cifique s'il est connu\textgreater{} \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H360-error}{H360}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H360-0}{H360}{Peut nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{} ou au f\oe\allowhyphens{}tus.}%
+\mhchem@hp@ii{#3}{H360-1}{H360}{Peut nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{} ou au f\oe\allowhyphens{}tus#1.}%
+\mhchem@hp@ii{#3}{H360F-0}{H360F}{Peut nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{H360D-0}{H360D}{Peut nuire au f\oe\allowhyphens{}tus.}%
+\mhchem@hp@ii{#3}{H361f-0}{H361f}{Susceptible de nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{H361d-0}{H361d}{Susceptible de nuire au f\oe\allowhyphens{}tus.}%
+\mhchem@hp@ii{#3}{H360FD-0}{H360FD}{Peut nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{}. Peut nuire au f\oe\allowhyphens{}tus.}%
+\mhchem@hp@ii{#3}{H361fd-0}{H361fd}{Susceptible de nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{}. Susceptible de nuire au f\oe\allowhyphens{}tus.}%
+\mhchem@hp@ii{#3}{H360Fd-0}{H360Fd}{Peut nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{}. Susceptible de nuire au f\oe\allowhyphens{}tus.}%
+\mhchem@hp@ii{#3}{H360Df-0}{H360Df}{Peut nuire au f\oe\allowhyphens{}tus. Susceptible de nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{H361.0-0}{H361}{Susceptible de nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{} ou au f\oe\allowhyphens{}tus \textless{}indiquer l'effet s'il est connu\textgreater{} \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H361-error}{H361}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H361-0}{H361}{Susceptible de nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{} ou au f\oe\allowhyphens{}tus.}%
+\mhchem@hp@ii{#3}{H361-1}{H361}{Susceptible de nuire \`a\allowhyphens{} la fertilit\'e\allowhyphens{} ou au f\oe\allowhyphens{}tus#1.}%
+\mhchem@hp@ii{#3}{H362-0}{H362}{Peut \^e\allowhyphens{}tre nocif pour les b\'e\allowhyphens{}b\'e\allowhyphens{}s nourris au lait maternel.}%
+\mhchem@hp@ii{#3}{H370.0-0}{H370}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour les organes \textless{}ou indiquer tous les organes affect\'e\allowhyphens{}s, s'ils sont connus\textgreater{} \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H370-error}{H370}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H370-0}{H370}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour les organes.}%
+\mhchem@hp@ii{#3}{H370-1}{H370}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour #1.}%
+\mhchem@hp@ii{#3}{H370-2}{H370}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour #1#2.}%
+\mhchem@hp@ii{#3}{H371.0-0}{H371}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour les organes \textless{}ou indiquer tous les organes affect\'e\allowhyphens{}s, s'ils sont connus\textgreater{} \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H371-error}{H371}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H371-0}{H371}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour les organes.}%
+\mhchem@hp@ii{#3}{H371-1}{H371}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour #1.}%
+\mhchem@hp@ii{#3}{H371-2}{H371}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour #1#2.}%
+\mhchem@hp@ii{#3}{H372.0-0}{H372}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour les organes \textless{}indiquer tous les organes affect\'e\allowhyphens{}s, s'ils sont connus\textgreater{} \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H372-error}{H372}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H372-0}{H372}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour les organes \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{H372-1}{H372}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour #1 \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{H372-2}{H372}{Risque av\'e\allowhyphens{}r\'e\allowhyphens{} d'effets graves pour #1 \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e#2.}%
+\mhchem@hp@ii{#3}{H373.0-0}{H373}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour les organes \textless{}ou indiquer tous les organes affect\'e\allowhyphens{}s, s'ils sont connus\textgreater{} \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e \textless{}indiquer la voie d'exposition s'il est formellement prouv\'e\allowhyphens{} qu'aucune autre voie d'exposition ne conduit au m\^e\allowhyphens{}me danger\textgreater{}.}%
+\mhchem@hp@ii{#3}{H373-error}{H373}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H373-0}{H373}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour les organes \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{H373-1}{H373}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour #1 \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{H373-2}{H373}{Risque pr\'e\allowhyphens{}sum\'e\allowhyphens{} d'effets graves pour #1 \`a\allowhyphens{} la suite d'expositions r\'e\allowhyphens{}p\'e\allowhyphens{}t\'e\allowhyphens{}es ou d'une exposition prolong\'e\allowhyphens{}e#2.}%
+\mhchem@hp@ii{#3}{H300+H310-0}{H300\,+\,\hskip\z@skip{}H310}{Mortel par ingestion ou par contact cutan\'e\allowhyphens{}}%
+\mhchem@hp@ii{#3}{H300+H330-0}{H300\,+\,\hskip\z@skip{}H330}{Mortel par ingestion ou par inhalation}%
+\mhchem@hp@ii{#3}{H310+H330-0}{H310\,+\,\hskip\z@skip{}H330}{Mortel par contact cutan\'e\allowhyphens{} ou par inhalation}%
+\mhchem@hp@ii{#3}{H300+H310+H330-0}{H300\,+\,\hskip\z@skip{}H310\,+\,\hskip\z@skip{}H330}{Mortel par ingestion, par contact cutan\'e\allowhyphens{} ou par inhalation}%
+\mhchem@hp@ii{#3}{H301+H311-0}{H301\,+\,\hskip\z@skip{}H311}{Toxique par ingestion ou par contact cutan\'e\allowhyphens{}}%
+\mhchem@hp@ii{#3}{H301+H331-0}{H301\,+\,\hskip\z@skip{}H331}{Toxique par ingestion ou par inhalation}%
+\mhchem@hp@ii{#3}{H311+H331-0}{H311\,+\,\hskip\z@skip{}H331}{Toxique par contact cutan\'e\allowhyphens{} ou par inhalation}%
+\mhchem@hp@ii{#3}{H301+H311+H331-0}{H301\,+\,\hskip\z@skip{}H311\,+\,\hskip\z@skip{}H331}{Toxique par ingestion, par contact cutan\'e\allowhyphens{} ou par inhalation}%
+\mhchem@hp@ii{#3}{H302+H312-0}{H302\,+\,\hskip\z@skip{}H312}{Nocif en cas d'ingestion ou de contact cutan\'e\allowhyphens{}}%
+\mhchem@hp@ii{#3}{H302+H332-0}{H302\,+\,\hskip\z@skip{}H332}{Nocif en cas d'ingestion ou d'inhalation}%
+\mhchem@hp@ii{#3}{H312+H332-0}{H312\,+\,\hskip\z@skip{}H332}{Nocif en cas de contact cutan\'e\allowhyphens{} ou d'inhalation}%
+\mhchem@hp@ii{#3}{H301+H312+H332-0}{H301\,+\,\hskip\z@skip{}H312\,+\,\hskip\z@skip{}H332}{Nocif en cas d'ingestion, de contact cutan\'e\allowhyphens{} ou d'inhalation}%
+\mhchem@hp@ii{#3}{H400-0}{H400}{Tr\`e\allowhyphens{}s toxique pour les organismes aquatiques.}%
+\mhchem@hp@ii{#3}{H410-0}{H410}{Tr\`e\allowhyphens{}s toxique pour les organismes aquatiques, entra\^i\allowhyphens{}ne des effets n\'e\allowhyphens{}fastes \`a\allowhyphens{} long terme.}%
+\mhchem@hp@ii{#3}{H411-0}{H411}{Toxique pour les organismes aquatiques, entra\^i\allowhyphens{}ne des effets n\'e\allowhyphens{}fastes \`a\allowhyphens{} long terme.}%
+\mhchem@hp@ii{#3}{H412-0}{H412}{Nocif pour les organismes aquatiques, entra\^i\allowhyphens{}ne des effets n\'e\allowhyphens{}fastes \`a\allowhyphens{} long terme.}%
+\mhchem@hp@ii{#3}{H413-0}{H413}{Peut \^e\allowhyphens{}tre nocif \`a\allowhyphens{} long terme pour les organismes aquatiques.}%
+\mhchem@hp@ii{#3}{H420-0}{H420}{Nuit \`a\allowhyphens{} la sant\'e\allowhyphens{} publique et \`a\allowhyphens{} l'environnement en d\'e\allowhyphens{}truisant l'ozone dans la haute atmosph\`e\allowhyphens{}re.}%
+\mhchem@hp@ii{#3}{P101-0}{P101}{En cas de consultation d'un m\'e\allowhyphens{}decin, garder \`a\allowhyphens{} disposition le r\'e\allowhyphens{}cipient ou l'\'e\allowhyphens{}tiquette.}%
+\mhchem@hp@ii{#3}{P101.nolabel-error}{P101}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P101.nolabel-1}{P101}{En cas de consultation d'un m\'e\allowhyphens{}decin, garder \`a\allowhyphens{} disposition le r\'e\allowhyphens{}cipient ou #1.}%
+\mhchem@hp@ii{#3}{P102-0}{P102}{Tenir hors de port\'e\allowhyphens{}e des enfants.}%
+\mhchem@hp@ii{#3}{P103-0}{P103}{Lire l'\'e\allowhyphens{}tiquette avant utilisation.}%
+\mhchem@hp@ii{#3}{P103.nolabel-error}{P103}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P103.nolabel-1}{P103}{Lire #1 avant utilisation.}%
+\mhchem@hp@ii{#3}{P201-0}{P201}{Se procurer les instructions avant utilisation.}%
+\mhchem@hp@ii{#3}{P202-0}{P202}{Ne pas manipuler avant d'avoir lu et compris toutes les pr\'e\allowhyphens{}cautions de s\'e\allowhyphens{}curit\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P210.0-0}{P210}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart de la chaleur/\hskip\z@skip{}des \'e\allowhyphens{}tincelles/\hskip\z@skip{}des flammes nues/\hskip\z@skip{}des surfaces chaudes. -- Ne pas fumer.}%
+\mhchem@hp@ii{#3}{P210-error}{P210}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P210-1}{P210}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart #1. -- Ne pas fumer.}%
+\mhchem@hp@ii{#3}{P210.1-0}{P210}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart de la chaleur. -- Ne pas fumer.}%
+\mhchem@hp@ii{#3}{P210.2-0}{P210}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart des \'e\allowhyphens{}tincelles. -- Ne pas fumer.}%
+\mhchem@hp@ii{#3}{P210.3-0}{P210}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart des flammes nues. -- Ne pas fumer.}%
+\mhchem@hp@ii{#3}{P210.4-0}{P210}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart des surfaces chaudes. -- Ne pas fumer.}%
+\mhchem@hp@ii{#3}{P211-0}{P211}{Ne pas vaporiser sur une flamme nue ou sur toute autre source d'ignition.}%
+\mhchem@hp@ii{#3}{P220.0.0-0}{P220}{Tenir/\hskip\z@skip{}stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart des v\^e\allowhyphens{}tements/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}mati\`e\allowhyphens{}res combustibles}%
+\mhchem@hp@ii{#3}{P220-error}{P220}{\PackageError{hpstatement}{Selection and selection/argument missing.\MessageBreak This statement has 1) a mandatory selection\MessageBreak and 2) a selection or text-argument.\MessageBreak Please append .1.1, ... to the number to make a\MessageBreak selection. Or append .1 or .2 with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.0-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.0.1-1}{P220}{Tenir/\hskip\z@skip{}stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart #1}%
+\mhchem@hp@ii{#3}{P220.0.2-0}{P220}{Tenir/\hskip\z@skip{}stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart des v\^e\allowhyphens{}tements}%
+\mhchem@hp@ii{#3}{P220.0.3-0}{P220}{Tenir/\hskip\z@skip{}stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart des mati\`e\allowhyphens{}res combustibles}%
+\mhchem@hp@ii{#3}{P220.1.0-0}{P220}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart des v\^e\allowhyphens{}tements/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}mati\`e\allowhyphens{}res combustibles}%
+\mhchem@hp@ii{#3}{P220.1-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.1-1}{P220}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart #1}%
+\mhchem@hp@ii{#3}{P220.1.1-0}{P220}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart des v\^e\allowhyphens{}tements}%
+\mhchem@hp@ii{#3}{P220.1.2-0}{P220}{Tenir \`a\allowhyphens{} l'\'e\allowhyphens{}cart des mati\`e\allowhyphens{}res combustibles}%
+\mhchem@hp@ii{#3}{P220.2.0-0}{P220}{Stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart des v\^e\allowhyphens{}tements/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}mati\`e\allowhyphens{}res combustibles}%
+\mhchem@hp@ii{#3}{P220.2-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.2-1}{P220}{Stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart #1}%
+\mhchem@hp@ii{#3}{P220.2.1-0}{P220}{Stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart des v\^e\allowhyphens{}tements}%
+\mhchem@hp@ii{#3}{P220.2.2-0}{P220}{Stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart des mati\`e\allowhyphens{}res combustibles}%
+\mhchem@hp@ii{#3}{P221.0-0}{P221}{Prendre toutes pr\'e\allowhyphens{}cautions pour \'e\allowhyphens{}viter de m\'e\allowhyphens{}langer avec des mati\`e\allowhyphens{}res combustibles\textellipsis{}}%
+\mhchem@hp@ii{#3}{P221-error}{P221}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P221-1}{P221}{Prendre toutes pr\'e\allowhyphens{}cautions pour \'e\allowhyphens{}viter de m\'e\allowhyphens{}langer avec #1.}%
+\mhchem@hp@ii{#3}{P221.1-0}{P221}{Prendre toutes pr\'e\allowhyphens{}cautions pour \'e\allowhyphens{}viter de m\'e\allowhyphens{}langer avec des mati\`e\allowhyphens{}res combustibles\textellipsis{}}%
+\mhchem@hp@ii{#3}{P222-0}{P222}{Ne pas laisser au contact de l'air.}%
+\mhchem@hp@ii{#3}{P223-0}{P223}{\'E\allowhyphens{}viter tout contact avec l'eau, \`a\allowhyphens{} cause du risque de r\'e\allowhyphens{}action violente et d'inflammation spontan\'e\allowhyphens{}e.}%
+\mhchem@hp@ii{#3}{P230.0-0}{P230}{Maintenir humidifi\'e\allowhyphens{} avec\textellipsis{}}%
+\mhchem@hp@ii{#3}{P230-error}{P230}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P230-1}{P230}{Maintenir humidifi\'e\allowhyphens{} avec #1.}%
+\mhchem@hp@ii{#3}{P231-0}{P231}{Manipuler sous gaz inerte.}%
+\mhchem@hp@ii{#3}{P231+P232-0}{P231\,+\,\hskip\z@skip{}P232}{Manipuler sous gaz inerte. Prot\'e\allowhyphens{}ger de l'humidit\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P232-0}{P232}{Prot\'e\allowhyphens{}ger de l'humidit\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P233-0}{P233}{Maintenir le r\'e\allowhyphens{}cipient ferm\'e\allowhyphens{} de mani\`e\allowhyphens{}re \'e\allowhyphens{}tanche.}%
+\mhchem@hp@ii{#3}{P234-0}{P234}{Conserver uniquement dans le r\'e\allowhyphens{}cipient d'origine.}%
+\mhchem@hp@ii{#3}{P235-0}{P235}{Tenir au frais.}%
+\mhchem@hp@ii{#3}{P235+P410-0}{P235\,+\,\hskip\z@skip{}P410}{Tenir au frais. Prot\'e\allowhyphens{}ger du rayonnement solaire.}%
+\mhchem@hp@ii{#3}{P240-0}{P240}{Mise \`a\allowhyphens{} la terre/\hskip\z@skip{}liaison \'e\allowhyphens{}quipotentielle du r\'e\allowhyphens{}cipient et du mat\'e\allowhyphens{}riel de r\'e\allowhyphens{}ception.}%
+\mhchem@hp@ii{#3}{P241.0-0}{P241}{Utiliser du mat\'e\allowhyphens{}riel \'e\allowhyphens{}lectrique/\hskip\z@skip{}de ventilation/\hskip\z@skip{}d'\'e\allowhyphens{}clairage/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}antid\'e\allowhyphens{}flagrant.}%
+\mhchem@hp@ii{#3}{P241-error}{P241}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P241-1}{P241}{Utiliser du mat\'e\allowhyphens{}riel #1 antid\'e\allowhyphens{}flagrant.}%
+\mhchem@hp@ii{#3}{P241.1-0}{P241}{Utiliser du mat\'e\allowhyphens{}riel \'e\allowhyphens{}lectrique antid\'e\allowhyphens{}flagrant.}%
+\mhchem@hp@ii{#3}{P241.2-0}{P241}{Utiliser de ventilation antid\'e\allowhyphens{}flagrant.}%
+\mhchem@hp@ii{#3}{P241.3-0}{P241}{Utiliser d'\'e\allowhyphens{}clairage antid\'e\allowhyphens{}flagrant.}%
+\mhchem@hp@ii{#3}{P242-0}{P242}{Ne pas utiliser d'outils produisant des \'e\allowhyphens{}tincelles.}%
+\mhchem@hp@ii{#3}{P243-0}{P243}{Prendre des mesures de pr\'e\allowhyphens{}caution contre les d\'e\allowhyphens{}charges \'e\allowhyphens{}lectrostatiques.}%
+\mhchem@hp@ii{#3}{P244-0}{P244}{S'assurer de l'absence de graisse ou d'huile sur les soupapes de r\'e\allowhyphens{}duction.}%
+\mhchem@hp@ii{#3}{P250.0-0}{P250}{\'E\allowhyphens{}viter les abrasions/\hskip\z@skip{}les chocs/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}les frottements.}%
+\mhchem@hp@ii{#3}{P250-error}{P250}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P250-1}{P250}{\'E\allowhyphens{}viter #1.}%
+\mhchem@hp@ii{#3}{P250.1-0}{P250}{\'E\allowhyphens{}viter les abrasions.}%
+\mhchem@hp@ii{#3}{P250.2-0}{P250}{\'E\allowhyphens{}viter les chocs.}%
+\mhchem@hp@ii{#3}{P250.3-0}{P250}{\'E\allowhyphens{}viter les frottements.}%
+\mhchem@hp@ii{#3}{P251-0}{P251}{R\'e\allowhyphens{}cipient sous pression\space : ne pas perforer, ni br\^u\allowhyphens{}ler, m\^e\allowhyphens{}me apr\`e\allowhyphens{}s usage.}%
+\mhchem@hp@ii{#3}{P260.0-0}{P260}{Ne pas respirer les poussi\`e\allowhyphens{}res/\hskip\z@skip{}fum\'e\allowhyphens{}es/\hskip\z@skip{}gaz/\hskip\z@skip{}brouillards/\hskip\z@skip{}vapeurs/\hskip\z@skip{}a\'e\allowhyphens{}rosols.}%
+\mhchem@hp@ii{#3}{P260-error}{P260}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P260-1}{P260}{Ne pas respirer les #1.}%
+\mhchem@hp@ii{#3}{P260.1-0}{P260}{Ne pas respirer les poussi\`e\allowhyphens{}res.}%
+\mhchem@hp@ii{#3}{P260.2-0}{P260}{Ne pas respirer les fum\'e\allowhyphens{}es.}%
+\mhchem@hp@ii{#3}{P260.3-0}{P260}{Ne pas respirer les gaz.}%
+\mhchem@hp@ii{#3}{P260.4-0}{P260}{Ne pas respirer les brouillards.}%
+\mhchem@hp@ii{#3}{P260.5-0}{P260}{Ne pas respirer les vapeurs.}%
+\mhchem@hp@ii{#3}{P260.6-0}{P260}{Ne pas respirer les a\'e\allowhyphens{}rosols.}%
+\mhchem@hp@ii{#3}{P261-0}{P261}{\'E\allowhyphens{}viter de respirer les poussi\`e\allowhyphens{}res/\hskip\z@skip{}fum\'e\allowhyphens{}es/\hskip\z@skip{}gaz/\hskip\z@skip{}brouillards/\hskip\z@skip{}vapeurs/\hskip\z@skip{}a\'e\allowhyphens{}rosols.}%
+\mhchem@hp@ii{#3}{P262-0}{P262}{\'E\allowhyphens{}viter tout contact avec les yeux, la peau ou les v\^e\allowhyphens{}tements.}%
+\mhchem@hp@ii{#3}{P263.0-0}{P263}{\'E\allowhyphens{}viter tout contact avec la substance au cours de la grossesse/\hskip\z@skip{}pendant l'allaitement.}%
+\mhchem@hp@ii{#3}{P263-error}{P263}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P263-1}{P263}{\'E\allowhyphens{}viter tout contact avec la substance #1.}%
+\mhchem@hp@ii{#3}{P263.1-0}{P263}{\'E\allowhyphens{}viter tout contact avec la substance au cours de la grossesse.}%
+\mhchem@hp@ii{#3}{P263.2-0}{P263}{\'E\allowhyphens{}viter tout contact avec la substance pendant l'allaitement.}%
+\mhchem@hp@ii{#3}{P264.0-0}{P264}{Se laver \textellipsis{} soigneusement apr\`e\allowhyphens{}s manipulation.}%
+\mhchem@hp@ii{#3}{P264-error}{P264}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P264-1}{P264}{Se laver #1 soigneusement apr\`e\allowhyphens{}s manipulation.}%
+\mhchem@hp@ii{#3}{P270-0}{P270}{Ne pas manger, boire ou fumer en manipulant ce produit.}%
+\mhchem@hp@ii{#3}{P271-0}{P271}{Utiliser seulement en plein air ou dans un endroit bien ventil\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P272-0}{P272}{Les v\^e\allowhyphens{}tements de travail contamin\'e\allowhyphens{}s ne devraient pas sortir du lieu de travail.}%
+\mhchem@hp@ii{#3}{P273-0}{P273}{\'E\allowhyphens{}viter le rejet dans l'environnement.}%
+\mhchem@hp@ii{#3}{P280.0-0}{P280}{Porter des gants de protection/\hskip\z@skip{}des v\^e\allowhyphens{}tements de protection/\hskip\z@skip{}un \'e\allowhyphens{}quipement de protection des yeux/\hskip\z@skip{}du visage.}%
+\mhchem@hp@ii{#3}{P280-error}{P280}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P280-1}{P280}{Porter #1.}%
+\mhchem@hp@ii{#3}{P280.1-0}{P280}{Porter des gants de protection.}%
+\mhchem@hp@ii{#3}{P280.2-0}{P280}{Porter des v\^e\allowhyphens{}tements de protection.}%
+\mhchem@hp@ii{#3}{P280.3-0}{P280}{Porter un \'e\allowhyphens{}quipement de protection des yeux.}%
+\mhchem@hp@ii{#3}{P280.4-0}{P280}{Porter un \'e\allowhyphens{}quipement de protection du visage.}%
+\mhchem@hp@ii{#3}{P281-0}{P281}{Utiliser l'\'e\allowhyphens{}quipement de protection individuel requis.}%
+\mhchem@hp@ii{#3}{P282.0-0}{P282}{Porter des gants isolants contre le froid/\hskip\z@skip{}un \'e\allowhyphens{}quipement de protection du visage/\hskip\z@skip{}des yeux.}%
+\mhchem@hp@ii{#3}{P282-error}{P282}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P282-1}{P282}{Porter #1.}%
+\mhchem@hp@ii{#3}{P282.1-0}{P282}{Porter des gants isolants contre le froid.}%
+\mhchem@hp@ii{#3}{P282.2-0}{P282}{Porter un \'e\allowhyphens{}quipement de protection du visage.}%
+\mhchem@hp@ii{#3}{P282.3-0}{P282}{Porter un \'e\allowhyphens{}quipement de protection des yeux.}%
+\mhchem@hp@ii{#3}{P283.0-0}{P283}{Porter des v\^e\allowhyphens{}tements r\'e\allowhyphens{}sistant au feu/\hskip\z@skip{}aux flammes/\hskip\z@skip{}ignifuges.}%
+\mhchem@hp@ii{#3}{P283-error}{P283}{\PackageError{hpstatement}{Language-dependent argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak However, translations differ so much that you\MessageBreak have to state your selection as text argument [].\MessageBreak Read the manual for possible values.\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P283-1}{P283}{Porter des v\^e\allowhyphens{}tements #1.}%
+\mhchem@hp@ii{#3}{P284-0}{P284}{Porter un \'e\allowhyphens{}quipement de protection respiratoire.}%
+\mhchem@hp@ii{#3}{P285-0}{P285}{Lorsque la ventilation du local est insuffisante, porter un \'e\allowhyphens{}quipement de protection respiratoire.}%
+\mhchem@hp@ii{#3}{P301-0}{P301}{EN CAS D'INGESTION\space :}%
+\mhchem@hp@ii{#3}{P301+P310-0}{P301\,+\,\hskip\z@skip{}P310}{EN CAS D'INGESTION\space : appeler imm\'e\allowhyphens{}diatement un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P301+P312-0}{P301\,+\,\hskip\z@skip{}P312}{EN CAS D'INGESTION\space : appeler un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin en cas de malaise.}%
+\mhchem@hp@ii{#3}{P301+P330+P331-0}{P301\,+\,\hskip\z@skip{}P330\,+\,\hskip\z@skip{}P331}{EN CAS D'INGESTION\space : rincer la bouche. NE PAS faire vomir.}%
+\mhchem@hp@ii{#3}{P302-0}{P302}{EN CAS DE CONTACT AVEC LA PEAU\space :}%
+\mhchem@hp@ii{#3}{P302+P334.0-0}{P302\,+\,\hskip\z@skip{}P334}{EN CAS DE CONTACT AVEC LA PEAU\space : rincer \`a\allowhyphens{} l'eau fra\^i\allowhyphens{}che/\hskip\z@skip{}poser une compresse humide.}%
+\mhchem@hp@ii{#3}{P302+P334-error}{P302\,+\,\hskip\z@skip{}P334}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P302+P334-1}{P302\,+\,\hskip\z@skip{}P334}{EN CAS DE CONTACT AVEC LA PEAU\space : #1.}%
+\mhchem@hp@ii{#3}{P302+P334.1-0}{P302\,+\,\hskip\z@skip{}P334}{EN CAS DE CONTACT AVEC LA PEAU\space : rincer \`a\allowhyphens{} l'eau fra\^i\allowhyphens{}che/\hskip\z@skip{}poser une compresse humide.}%
+\mhchem@hp@ii{#3}{P302+P334.2-0}{P302\,+\,\hskip\z@skip{}P334}{EN CAS DE CONTACT AVEC LA PEAU\space : poser une compresse humide.}%
+\mhchem@hp@ii{#3}{P302+P350-0}{P302\,+\,\hskip\z@skip{}P350}{EN CAS DE CONTACT AVEC LA PEAU\space : laver avec pr\'e\allowhyphens{}caution et abondamment \`a\allowhyphens{} l'eau et au savon.}%
+\mhchem@hp@ii{#3}{P302+P352-0}{P302\,+\,\hskip\z@skip{}P352}{EN CAS DE CONTACT AVEC LA PEAU\space : laver abondamment \`a\allowhyphens{} l'eau et au savon.}%
+\mhchem@hp@ii{#3}{P303-0}{P303}{EN CAS DE CONTACT AVEC LA PEAU (ou les cheveux)\space :}%
+\mhchem@hp@ii{#3}{P303+P361+P353-0}{P303\,+\,\hskip\z@skip{}P361\,+\,\hskip\z@skip{}P353}{EN CAS DE CONTACT AVEC LA PEAU (ou les cheveux)\space : enlever imm\'e\allowhyphens{}diatement les v\^e\allowhyphens{}tements contamin\'e\allowhyphens{}s. Rincer la peau \`a\allowhyphens{} l'eau/\hskip\z@skip{}se doucher.}%
+\mhchem@hp@ii{#3}{P304-0}{P304}{EN CAS D'INHALATION\space :}%
+\mhchem@hp@ii{#3}{P304+P340-0}{P304\,+\,\hskip\z@skip{}P340}{EN CAS D'INHALATION\space : transporter la victime \`a\allowhyphens{} l'ext\'e\allowhyphens{}rieur et la maintenir au repos dans une position o\`u\allowhyphens{} elle peut confortablement respirer.}%
+\mhchem@hp@ii{#3}{P304+P341-0}{P304\,+\,\hskip\z@skip{}P341}{EN CAS D'INHALATION\space : s'il y a difficult\'e\allowhyphens{} \`a\allowhyphens{} respirer, transporter la victime \`a\allowhyphens{} l'ext\'e\allowhyphens{}rieur et la maintenir au repos dans une position o\`u\allowhyphens{} elle peut confortablement respirer.}%
+\mhchem@hp@ii{#3}{P305-0}{P305}{EN CAS DE CONTACT AVEC LES YEUX\space :}%
+\mhchem@hp@ii{#3}{P305+P351+P338-0}{P305\,+\,\hskip\z@skip{}P351\,+\,\hskip\z@skip{}P338}{EN CAS DE CONTACT AVEC LES YEUX\space : rincer avec pr\'e\allowhyphens{}caution \`a\allowhyphens{} l'eau pendant plusieurs minutes. Enlever les lentilles de contact si la victime en porte et si elles peuvent \^e\allowhyphens{}tre facilement enlev\'e\allowhyphens{}es. Continuer \`a\allowhyphens{} rincer.}%
+\mhchem@hp@ii{#3}{P306-0}{P306}{EN CAS DE CONTACT AVEC LES V\^E\allowhyphens{}TEMENTS\space :}%
+\mhchem@hp@ii{#3}{P306+P360-0}{P306\,+\,\hskip\z@skip{}P360}{EN CAS DE CONTACT AVEC LES V\^E\allowhyphens{}TEMENTS\space : rincer imm\'e\allowhyphens{}diatement et abondamment avec de l'eau les v\^e\allowhyphens{}tements contamin\'e\allowhyphens{}s et la peau avant de les enlever.}%
+\mhchem@hp@ii{#3}{P307-0}{P307}{EN CAS d'exposition\space :}%
+\mhchem@hp@ii{#3}{P307+P311-0}{P307\,+\,\hskip\z@skip{}P311}{EN CAS d'exposition\space : appeler un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P308-0}{P308}{EN CAS d'exposition prouv\'e\allowhyphens{}e ou suspect\'e\allowhyphens{}e\space :}%
+\mhchem@hp@ii{#3}{P308+P313-0}{P308\,+\,\hskip\z@skip{}P313}{EN CAS d'exposition prouv\'e\allowhyphens{}e ou suspect\'e\allowhyphens{}e\space : consulter un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P309-0}{P309}{EN CAS d'exposition ou d'un malaise\space :}%
+\mhchem@hp@ii{#3}{P309+P311-0}{P309\,+\,\hskip\z@skip{}P311}{EN CAS d'exposition ou de malaise\space : appeler un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P310-0}{P310}{Appeler imm\'e\allowhyphens{}diatement un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P311-0}{P311}{Appeler un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P312-0}{P312}{Appeler un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin en cas de malaise.}%
+\mhchem@hp@ii{#3}{P313-0}{P313}{Consulter un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P314-0}{P314}{Consulter un m\'e\allowhyphens{}decin en cas de malaise.}%
+\mhchem@hp@ii{#3}{P315-0}{P315}{Consulter imm\'e\allowhyphens{}diatement un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P320.0-0}{P320}{Un traitement sp\'e\allowhyphens{}cifique est urgent (voir \textellipsis{} sur cette \'e\allowhyphens{}tiquette).}%
+\mhchem@hp@ii{#3}{P320-error}{P320}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P320-1}{P320}{Un traitement sp\'e\allowhyphens{}cifique est urgent (voir #1 sur cette \'e\allowhyphens{}tiquette).}%
+\mhchem@hp@ii{#3}{P320.nolabel-error}{P320}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P320.nolabel-1}{P320}{Un traitement sp\'e\allowhyphens{}cifique est urgent (voir #1).}%
+\mhchem@hp@ii{#3}{P321.0-0}{P321}{Traitement sp\'e\allowhyphens{}cifique (voir \textellipsis{} sur cette \'e\allowhyphens{}tiquette).}%
+\mhchem@hp@ii{#3}{P321-error}{P321}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P321-1}{P321}{Traitement sp\'e\allowhyphens{}cifique (voir #1 sur cette \'e\allowhyphens{}tiquette).}%
+\mhchem@hp@ii{#3}{P321.nolabel-error}{P321}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P321.nolabel-1}{P321}{Traitement sp\'e\allowhyphens{}cifique (voir #1).}%
+\mhchem@hp@ii{#3}{P322.0-0}{P322}{Mesures sp\'e\allowhyphens{}cifiques (voir \textellipsis{} sur cette \'e\allowhyphens{}tiquette).}%
+\mhchem@hp@ii{#3}{P322-error}{P322}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P322-1}{P322}{Mesures sp\'e\allowhyphens{}cifiques (voir #1 sur cette \'e\allowhyphens{}tiquette).}%
+\mhchem@hp@ii{#3}{P322.nolabel-error}{P322}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P322.nolabel-1}{P322}{Mesures sp\'e\allowhyphens{}cifiques (voir #1).}%
+\mhchem@hp@ii{#3}{P330-0}{P330}{Rincer la bouche.}%
+\mhchem@hp@ii{#3}{P331-0}{P331}{NE PAS faire vomir.}%
+\mhchem@hp@ii{#3}{P332-0}{P332}{En cas d'irritation cutan\'e\allowhyphens{}e\space :}%
+\mhchem@hp@ii{#3}{P332+P313-0}{P332\,+\,\hskip\z@skip{}P313}{En cas d'irritation cutan\'e\allowhyphens{}e\space : consulter un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P333-0}{P333}{En cas d'irritation ou d'\'e\allowhyphens{}ruption cutan\'e\allowhyphens{}e\space :}%
+\mhchem@hp@ii{#3}{P333+P313-0}{P333\,+\,\hskip\z@skip{}P313}{En cas d'irritation ou d'\'e\allowhyphens{}ruption cutan\'e\allowhyphens{}e\space : consulter un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P334.0-0}{P334}{Rincer \`a\allowhyphens{} l'eau fra\^i\allowhyphens{}che/\hskip\z@skip{}poser une compresse humide.}%
+\mhchem@hp@ii{#3}{P334-error}{P334}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P334.1-0}{P334}{Rincer \`a\allowhyphens{} l'eau fra\^i\allowhyphens{}che.}%
+\mhchem@hp@ii{#3}{P334.2-0}{P334}{Poser une compresse humide.}%
+\mhchem@hp@ii{#3}{P335-0}{P335}{Enlever avec pr\'e\allowhyphens{}caution les particules d\'e\allowhyphens{}pos\'e\allowhyphens{}es sur la peau.}%
+\mhchem@hp@ii{#3}{P335+P334.0-0}{P335\,+\,\hskip\z@skip{}P334}{Enlever avec pr\'e\allowhyphens{}caution les particules d\'e\allowhyphens{}pos\'e\allowhyphens{}es sur la peau. Rincer \`a\allowhyphens{} l'eau fra\^i\allowhyphens{}che/\hskip\z@skip{}poser une compresse humide.}%
+\mhchem@hp@ii{#3}{P335+P334-error}{P335\,+\,\hskip\z@skip{}P334}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P335+P334.1-0}{P335\,+\,\hskip\z@skip{}P334}{Enlever avec pr\'e\allowhyphens{}caution les particules d\'e\allowhyphens{}pos\'e\allowhyphens{}es sur la peau. Rincer \`a\allowhyphens{} l'eau fra\^i\allowhyphens{}che.}%
+\mhchem@hp@ii{#3}{P335+P334.2-0}{P335\,+\,\hskip\z@skip{}P334}{Enlever avec pr\'e\allowhyphens{}caution les particules d\'e\allowhyphens{}pos\'e\allowhyphens{}es sur la peau. Poser une compresse humide.}%
+\mhchem@hp@ii{#3}{P336-0}{P336}{D\'e\allowhyphens{}geler les parties gel\'e\allowhyphens{}es avec de l'eau ti\`e\allowhyphens{}de. Ne pas frotter les zones touch\'e\allowhyphens{}es.}%
+\mhchem@hp@ii{#3}{P337-0}{P337}{Si l'irritation oculaire persiste\space :}%
+\mhchem@hp@ii{#3}{P337+P313-0}{P337\,+\,\hskip\z@skip{}P313}{Si l'irritation oculaire persiste\space : consulter un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P338-0}{P338}{Enlever les lentilles de contact si la victime en porte et si elles peuvent \^e\allowhyphens{}tre facilement enlev\'e\allowhyphens{}es. Continuer \`a\allowhyphens{} rincer.}%
+\mhchem@hp@ii{#3}{P340-0}{P340}{Transporter la victime \`a\allowhyphens{} l'ext\'e\allowhyphens{}rieur et la maintenir au repos dans une position o\`u\allowhyphens{} elle peut confortablement respirer.}%
+\mhchem@hp@ii{#3}{P341-0}{P341}{S'il y a difficult\'e\allowhyphens{} \`a\allowhyphens{} respirer, transporter la victime \`a\allowhyphens{} l'ext\'e\allowhyphens{}rieur et la maintenir au repos dans une position o\`u\allowhyphens{} elle peut confortablement respirer.}%
+\mhchem@hp@ii{#3}{P342-0}{P342}{En cas de sympt\^o\allowhyphens{}mes respiratoires\space :}%
+\mhchem@hp@ii{#3}{P342+P311-0}{P342\,+\,\hskip\z@skip{}P311}{En cas de sympt\^o\allowhyphens{}mes respiratoires\space : appeler un CENTRE ANTIPOISON ou un m\'e\allowhyphens{}decin.}%
+\mhchem@hp@ii{#3}{P350-0}{P350}{Laver avec pr\'e\allowhyphens{}caution et abondamment \`a\allowhyphens{} l'eau et au savon.}%
+\mhchem@hp@ii{#3}{P351-0}{P351}{Rincer avec pr\'e\allowhyphens{}caution \`a\allowhyphens{} l'eau pendant plusieurs minutes.}%
+\mhchem@hp@ii{#3}{P352-0}{P352}{Laver abondamment \`a\allowhyphens{} l'eau et au savon.}%
+\mhchem@hp@ii{#3}{P353-0}{P353}{Rincer la peau \`a\allowhyphens{} l'eau/\hskip\z@skip{}se doucher.}%
+\mhchem@hp@ii{#3}{P360-0}{P360}{Rincer imm\'e\allowhyphens{}diatement et abondamment avec de l'eau les v\^e\allowhyphens{}tements contamin\'e\allowhyphens{}s et la peau avant de les enlever.}%
+\mhchem@hp@ii{#3}{P361-0}{P361}{Enlever imm\'e\allowhyphens{}diatement les v\^e\allowhyphens{}tements contamin\'e\allowhyphens{}s.}%
+\mhchem@hp@ii{#3}{P362-0}{P362}{Enlever les v\^e\allowhyphens{}tements contamin\'e\allowhyphens{}s et les laver avant r\'e\allowhyphens{}utilisation}%
+\mhchem@hp@ii{#3}{P363-0}{P363}{Laver les v\^e\allowhyphens{}tements contamin\'e\allowhyphens{}s avant r\'e\allowhyphens{}utilisation.}%
+\mhchem@hp@ii{#3}{P370-0}{P370}{En cas d'incendie\space :}%
+\mhchem@hp@ii{#3}{P370+P376-0}{P370\,+\,\hskip\z@skip{}P376}{En cas d'incendie\space : obturer la fuite si cela peut se faire sans danger.}%
+\mhchem@hp@ii{#3}{P370+P378.0-0}{P370\,+\,\hskip\z@skip{}P378}{En cas d'incendie\space : utiliser \textellipsis{} pour l'extinction.}%
+\mhchem@hp@ii{#3}{P370+P378-error}{P370\,+\,\hskip\z@skip{}P378}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P370+P378-1}{P370\,+\,\hskip\z@skip{}P378}{En cas d'incendie\space : utiliser #1 pour l'extinction.}%
+\mhchem@hp@ii{#3}{P370+P380-0}{P370\,+\,\hskip\z@skip{}P380}{En cas d'incendie\space : \'e\allowhyphens{}vacuer la zone.}%
+\mhchem@hp@ii{#3}{P370+P380+P375-0}{P370\,+\,\hskip\z@skip{}P380\,+\,\hskip\z@skip{}P375}{En cas d'incendie\space : \'e\allowhyphens{}vacuer la zone. Combattre l'incendie \`a\allowhyphens{} distance \`a\allowhyphens{} cause du risque d'explosion.}%
+\mhchem@hp@ii{#3}{P371-0}{P371}{En cas d'incendie important et s'il s'agit de grandes quantit\'e\allowhyphens{}s\space :}%
+\mhchem@hp@ii{#3}{P371+P380+P375-0}{P371\,+\,\hskip\z@skip{}P380\,+\,\hskip\z@skip{}P375}{En cas d'incendie important et s'il s'agit de grandes quantit\'e\allowhyphens{}s\space : \'e\allowhyphens{}vacuer la zone. Combattre l'incendie \`a\allowhyphens{} distance \`a\allowhyphens{} cause du risque d'explosion.}%
+\mhchem@hp@ii{#3}{P372-0}{P372}{Risque d'explosion en cas d'incendie.}%
+\mhchem@hp@ii{#3}{P373-0}{P373}{NE PAS combattre l'incendie lorsque le feu atteint les explosifs.}%
+\mhchem@hp@ii{#3}{P374-0}{P374}{Combattre l'incendie \`a\allowhyphens{} distance en prenant les pr\'e\allowhyphens{}cautions normales.}%
+\mhchem@hp@ii{#3}{P375-0}{P375}{Combattre l'incendie \`a\allowhyphens{} distance \`a\allowhyphens{} cause du risque d'explosion.}%
+\mhchem@hp@ii{#3}{P376-0}{P376}{Obturer la fuite si cela peut se faire sans danger.}%
+\mhchem@hp@ii{#3}{P377-0}{P377}{Fuite de gaz enflamm\'e\allowhyphens{}\space : Ne pas \'e\allowhyphens{}teindre si la fuite ne peut pas \^e\allowhyphens{}tre arr\^e\allowhyphens{}t\'e\allowhyphens{}e sans danger.}%
+\mhchem@hp@ii{#3}{P378.0-0}{P378}{Utiliser \textellipsis{} pour l'extinction.}%
+\mhchem@hp@ii{#3}{P378-error}{P378}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P378-1}{P378}{Utiliser #1 pour l'extinction.}%
+\mhchem@hp@ii{#3}{P380-0}{P380}{\'E\allowhyphens{}vacuer la zone.}%
+\mhchem@hp@ii{#3}{P381-0}{P381}{\'E\allowhyphens{}liminer toutes les sources d'ignition si cela est faisable sans danger.}%
+\mhchem@hp@ii{#3}{P390-0}{P390}{Absorber toute substance r\'e\allowhyphens{}pandue pour \'e\allowhyphens{}viter qu'elle attaque les mat\'e\allowhyphens{}riaux environnants.}%
+\mhchem@hp@ii{#3}{P391-0}{P391}{Recueillir le produit r\'e\allowhyphens{}pandu.}%
+\mhchem@hp@ii{#3}{P401.0-0}{P401}{Stocker \textellipsis{}}%
+\mhchem@hp@ii{#3}{P401-error}{P401}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P401-1}{P401}{Stocker #1.}%
+\mhchem@hp@ii{#3}{P402-0}{P402}{Stocker dans un endroit sec.}%
+\mhchem@hp@ii{#3}{P402+P404-0}{P402\,+\,\hskip\z@skip{}P404}{Stocker dans un endroit sec. Stocker dans un r\'e\allowhyphens{}cipient ferm\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P403-0}{P403}{Stocker dans un endroit bien ventil\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P403+P233-0}{P403\,+\,\hskip\z@skip{}P233}{Stocker dans un endroit bien ventil\'e\allowhyphens{}. Maintenir le r\'e\allowhyphens{}cipient ferm\'e\allowhyphens{} de mani\`e\allowhyphens{}re \'e\allowhyphens{}tanche.}%
+\mhchem@hp@ii{#3}{P403+P235-0}{P403\,+\,\hskip\z@skip{}P235}{Stocker dans un endroit bien ventil\'e\allowhyphens{}. Tenir au frais.}%
+\mhchem@hp@ii{#3}{P404-0}{P404}{Stocker dans un r\'e\allowhyphens{}cipient ferm\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P405-0}{P405}{Garder sous clef.}%
+\mhchem@hp@ii{#3}{P406.0-0}{P406}{Stocker dans un r\'e\allowhyphens{}cipient r\'e\allowhyphens{}sistant \`a\allowhyphens{} la corrosion/\hskip\z@skip{}r\'e\allowhyphens{}cipient en \textellipsis{} avec doublure int\'e\allowhyphens{}rieure r\'e\allowhyphens{}sistant \`a\allowhyphens{} la corrosion.}%
+\mhchem@hp@ii{#3}{P406-error}{P406}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P406-1}{P406}{Stocker dans un r\'e\allowhyphens{}cipient #1 avec doublure int\'e\allowhyphens{}rieure r\'e\allowhyphens{}sistant \`a\allowhyphens{} la corrosion.}%
+\mhchem@hp@ii{#3}{P406.1-0}{P406}{Stocker dans un r\'e\allowhyphens{}cipient r\'e\allowhyphens{}sistant \`a\allowhyphens{} la corrosion avec doublure int\'e\allowhyphens{}rieure r\'e\allowhyphens{}sistant \`a\allowhyphens{} la corrosion.}%
+\mhchem@hp@ii{#3}{P407-0}{P407}{Maintenir un intervalle d'air entre les piles/\hskip\z@skip{}palettes.}%
+\mhchem@hp@ii{#3}{P410-0}{P410}{Prot\'e\allowhyphens{}ger du rayonnement solaire.}%
+\mhchem@hp@ii{#3}{P410+P403-0}{P410\,+\,\hskip\z@skip{}P403}{Prot\'e\allowhyphens{}ger du rayonnement solaire. Stocker dans un endroit bien ventil\'e\allowhyphens{}.}%
+\mhchem@hp@ii{#3}{P410+P412-0}{P410\,+\,\hskip\z@skip{}P412}{Prot\'e\allowhyphens{}ger du rayonnement solaire. Ne pas exposer \`a\allowhyphens{} une temp\'e\allowhyphens{}rature sup\'e\allowhyphens{}rieure \`a\allowhyphens{} 50\textdegree{}C/\hskip\z@skip{} 122 \textdegree{}F.}%
+\mhchem@hp@ii{#3}{P411.0-0}{P411}{Stocker \`a\allowhyphens{} une temp\'e\allowhyphens{}rature ne d\'e\allowhyphens{}passant pas \textellipsis{}\textdegree{}C/\hskip\z@skip{}\textellipsis{} \textdegree{}F.}%
+\mhchem@hp@ii{#3}{P411-error}{P411}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P411-1}{P411}{Stocker \`a\allowhyphens{} une temp\'e\allowhyphens{}rature ne d\'e\allowhyphens{}passant pas #1.}%
+\mhchem@hp@ii{#3}{P411+P235.0-0}{P411\,+\,\hskip\z@skip{}P235}{Stocker \`a\allowhyphens{} une temp\'e\allowhyphens{}rature ne d\'e\allowhyphens{}passant pas \textellipsis{}\textdegree{}C/\hskip\z@skip{}\textellipsis{} \textdegree{}F. Tenir au frais.}%
+\mhchem@hp@ii{#3}{P411+P235-error}{P411\,+\,\hskip\z@skip{}P235}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P411+P235-1}{P411\,+\,\hskip\z@skip{}P235}{Stocker \`a\allowhyphens{} une temp\'e\allowhyphens{}rature ne d\'e\allowhyphens{}passant pas #1. Tenir au frais.}%
+\mhchem@hp@ii{#3}{P412-0}{P412}{Ne pas exposer \`a\allowhyphens{} une temp\'e\allowhyphens{}rature sup\'e\allowhyphens{}rieure \`a\allowhyphens{} 50\textdegree{}C/\hskip\z@skip{}122 \textdegree{}F.}%
+\mhchem@hp@ii{#3}{P413.0-0}{P413}{Stocker les quantit\'e\allowhyphens{}s en vrac de plus de \textellipsis{}\,kg/\hskip\z@skip{}\textellipsis{} lb \`a\allowhyphens{} une temp\'e\allowhyphens{}rature ne d\'e\allowhyphens{}passant pas \textellipsis{}\textdegree{}C/\hskip\z@skip{}\textellipsis{} \textdegree{}F.}%
+\mhchem@hp@ii{#3}{P413-error}{P413}{\PackageError{hpstatement}{This statement has two mandatory text arguments.\MessageBreak Please specify them with [][]}{}}%
+\mhchem@hp@ii{#3}{P413-2}{P413}{Stocker les quantit\'e\allowhyphens{}s en vrac de plus de #1 \`a\allowhyphens{} une temp\'e\allowhyphens{}rature ne d\'e\allowhyphens{}passant pas #2.}%
+\mhchem@hp@ii{#3}{P420-0}{P420}{Stocker \`a\allowhyphens{} l'\'e\allowhyphens{}cart des autres mati\`e\allowhyphens{}res.}%
+\mhchem@hp@ii{#3}{P422.0-0}{P422}{Stocker le contenu sous \textellipsis{}}%
+\mhchem@hp@ii{#3}{P422-error}{P422}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P422-1}{P422}{Stocker le contenu sous #1.}%
+\mhchem@hp@ii{#3}{P501.0.0-0}{P501}{\'E\allowhyphens{}liminer le contenu/\hskip\z@skip{}r\'e\allowhyphens{}cipient dans \textellipsis{}}%
+\mhchem@hp@ii{#3}{P501.0-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.0-1}{P501}{\'E\allowhyphens{}liminer le contenu/\hskip\z@skip{}r\'e\allowhyphens{}cipient dans #1.}%
+\mhchem@hp@ii{#3}{P501-error}{P501}{\PackageError{hpstatement}{Selection and mandatory argument missing.\MessageBreak This statement has a mandatory selection. Please\MessageBreak append .1 or .2 to the number (or use .0 for the\MessageBreak original form). Also, supply an argument with []\MessageBreak (or use an additional .0 for the original\MessageBreak form)}{}}%
+\mhchem@hp@ii{#3}{P501.1.0-0}{P501}{\'E\allowhyphens{}liminer le contenu dans \textellipsis{}}%
+\mhchem@hp@ii{#3}{P501.1-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.1-1}{P501}{\'E\allowhyphens{}liminer le contenu dans #1.}%
+\mhchem@hp@ii{#3}{P501.2.0-0}{P501}{\'E\allowhyphens{}liminer le r\'e\allowhyphens{}cipient dans \textellipsis{}}%
+\mhchem@hp@ii{#3}{P501.2-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.2-1}{P501}{\'E\allowhyphens{}liminer le r\'e\allowhyphens{}cipient dans #1.}%
+}
+\newcommand*\mhchem@hp@data@ngerman[3]{%
+\mhchem@hp@ii{#3}{EUH001-0}{EUH001}{In trockenem Zustand explosiv.}%
+\mhchem@hp@ii{#3}{EUH006-0}{EUH006}{Mit und ohne Luft explosionsf\"a\allowhyphens{}hig.}%
+\mhchem@hp@ii{#3}{EUH014-0}{EUH014}{Reagiert heftig mit Wasser.}%
+\mhchem@hp@ii{#3}{EUH018.0-0}{EUH018}{Kann bei Verwendung explosionsf\"a\allowhyphens{}hige/\hskip\z@skip{}entz\"u\allowhyphens{}ndbare Dampf/\hskip\z@skip{}Luft-Gemische bilden.}%
+\mhchem@hp@ii{#3}{EUH018-error}{EUH018}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{EUH018.1-0}{EUH018}{Kann bei Verwendung explosionsf\"a\allowhyphens{}hige Dampf/\hskip\z@skip{}Luft-Gemische bilden.}%
+\mhchem@hp@ii{#3}{EUH018.2-0}{EUH018}{Kann bei Verwendung entz\"u\allowhyphens{}ndbare Dampf/\hskip\z@skip{}Luft-Gemische bilden.}%
+\mhchem@hp@ii{#3}{EUH019-0}{EUH019}{Kann explosionsf\"a\allowhyphens{}hige Peroxide bilden.}%
+\mhchem@hp@ii{#3}{EUH029-0}{EUH029}{Entwickelt bei Ber\"u\allowhyphens{}hrung mit Wasser giftige Gase.}%
+\mhchem@hp@ii{#3}{EUH031-0}{EUH031}{Entwickelt bei Ber\"u\allowhyphens{}hrung mit S\"a\allowhyphens{}ure giftige Gase.}%
+\mhchem@hp@ii{#3}{EUH032-0}{EUH032}{Entwickelt bei Ber\"u\allowhyphens{}hrung mit S\"a\allowhyphens{}ure sehr giftige Gase.}%
+\mhchem@hp@ii{#3}{EUH044-0}{EUH044}{Explosionsgefahr bei Erhitzen unter Einschluss.}%
+\mhchem@hp@ii{#3}{EUH059-0}{EUH059}{Die Ozonschicht sch\"a\allowhyphens{}digend.}%
+\mhchem@hp@ii{#3}{EUH066-0}{EUH066}{Wiederholter Kontakt kann zu spr\"o\allowhyphens{}der oder rissiger Haut f\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{EUH070-0}{EUH070}{Giftig bei Ber\"u\allowhyphens{}hrung mit den Augen.}%
+\mhchem@hp@ii{#3}{EUH071-0}{EUH071}{Wirkt \"a\allowhyphens{}tzend auf die Atemwege.}%
+\mhchem@hp@ii{#3}{EUH201-0}{EUH201}{Enth\"a\allowhyphens{}lt Blei. Nicht f\"u\allowhyphens{}r den Anstrich von Gegenst\"a\allowhyphens{}nden verwenden, die von Kindern gekaut oder gelutscht werden k\"o\allowhyphens{}nnten.}%
+\mhchem@hp@ii{#3}{EUH201A-0}{EUH201A}{Achtung! Enth\"a\allowhyphens{}lt Blei.}%
+\mhchem@hp@ii{#3}{EUH202-0}{EUH202}{Cyanacrylat. Gefahr. Klebt innerhalb von Sekunden Haut und Augenlider zusammen. Darf nicht in die H\"a\allowhyphens{}nde von Kindern gelangen.}%
+\mhchem@hp@ii{#3}{EUH203-0}{EUH203}{Enth\"a\allowhyphens{}lt Chrom (VI). Kann allergische Reaktionen hervorrufen.}%
+\mhchem@hp@ii{#3}{EUH204-0}{EUH204}{Enth\"a\allowhyphens{}lt Isocyanate. Kann allergische Reaktionen hervorrufen.}%
+\mhchem@hp@ii{#3}{EUH205-0}{EUH205}{Enth\"a\allowhyphens{}lt epoxidhaltige Verbindungen. Kann allergische Reaktionen hervorrufen.}%
+\mhchem@hp@ii{#3}{EUH206-0}{EUH206}{Achtung! Nicht zusammen mit anderen Produkten verwenden, da gef\"a\allowhyphens{}hrliche Gase (Chlor) freigesetzt werden k\"o\allowhyphens{}nnen.}%
+\mhchem@hp@ii{#3}{EUH207-0}{EUH207}{Achtung! Enth\"a\allowhyphens{}lt Cadmium. Bei der Verwendung entstehen gef\"a\allowhyphens{}hrliche D\"a\allowhyphens{}mpfe. Hinweise des Herstellers beachten. Sicherheitsanweisungen einhalten.}%
+\mhchem@hp@ii{#3}{EUH208.0-0}{EUH208}{Enth\"a\allowhyphens{}lt \textless{}Name des sensibilisierenden Stoffes\textgreater{}. Kann allergische Reaktionen hervorrufen.}%
+\mhchem@hp@ii{#3}{EUH208-error}{EUH208}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{EUH208-1}{EUH208}{Enth\"a\allowhyphens{}lt #1. Kann allergische Reaktionen hervorrufen.}%
+\mhchem@hp@ii{#3}{EUH209-0}{EUH209}{Kann bei Verwendung leicht entz\"u\allowhyphens{}ndbar werden.}%
+\mhchem@hp@ii{#3}{EUH209A-0}{EUH209A}{Kann bei Verwendung entz\"u\allowhyphens{}ndbar werden.}%
+\mhchem@hp@ii{#3}{EUH210-0}{EUH210}{Sicherheitsdatenblatt auf Anfrage erh\"a\allowhyphens{}ltlich.}%
+\mhchem@hp@ii{#3}{EUH401-0}{EUH401}{Zur Vermeidung von Risiken f\"u\allowhyphens{}r Mensch und Umwelt die Gebrauchsanleitung einhalten.}%
+\mhchem@hp@ii{#3}{H200-0}{H200}{Instabil, explosiv.}%
+\mhchem@hp@ii{#3}{H201-0}{H201}{Explosiv, Gefahr der Massenexplosion.}%
+\mhchem@hp@ii{#3}{H202-0}{H202}{Explosiv; gro\ss{}e Gefahr durch Splitter, Spreng- und Wurfst\"u\allowhyphens{}cke.}%
+\mhchem@hp@ii{#3}{H203-0}{H203}{Explosiv; Gefahr durch Feuer, Luftdruck oder Splitter, Spreng- und Wurfst\"u\allowhyphens{}cke.}%
+\mhchem@hp@ii{#3}{H204-0}{H204}{Gefahr durch Feuer oder Splitter, Spreng- und Wurfst\"u\allowhyphens{}cke.}%
+\mhchem@hp@ii{#3}{H205-0}{H205}{Gefahr der Massenexplosion bei Feuer.}%
+\mhchem@hp@ii{#3}{H220-0}{H220}{Extrem entz\"u\allowhyphens{}ndbares Gas.}%
+\mhchem@hp@ii{#3}{H221-0}{H221}{Entz\"u\allowhyphens{}ndbares Gas.}%
+\mhchem@hp@ii{#3}{H222-0}{H222}{Extrem entz\"u\allowhyphens{}ndbares Aerosol.}%
+\mhchem@hp@ii{#3}{H223-0}{H223}{Entz\"u\allowhyphens{}ndbares Aerosol.}%
+\mhchem@hp@ii{#3}{H224-0}{H224}{Fl\"u\allowhyphens{}ssigkeit und Dampf extrem entz\"u\allowhyphens{}ndbar.}%
+\mhchem@hp@ii{#3}{H225-0}{H225}{Fl\"u\allowhyphens{}ssigkeit und Dampf leicht entz\"u\allowhyphens{}ndbar.}%
+\mhchem@hp@ii{#3}{H226-0}{H226}{Fl\"u\allowhyphens{}ssigkeit und Dampf entz\"u\allowhyphens{}ndbar.}%
+\mhchem@hp@ii{#3}{H228-0}{H228}{Entz\"u\allowhyphens{}ndbarer Feststoff.}%
+\mhchem@hp@ii{#3}{H240-0}{H240}{Erw\"a\allowhyphens{}rmung kann Explosion verursachen.}%
+\mhchem@hp@ii{#3}{H241-0}{H241}{Erw\"a\allowhyphens{}rmung kann Brand oder Explosion verursachen.}%
+\mhchem@hp@ii{#3}{H242-0}{H242}{Erw\"a\allowhyphens{}rmung kann Brand verursachen.}%
+\mhchem@hp@ii{#3}{H250-0}{H250}{Entz\"u\allowhyphens{}ndet sich in Ber\"u\allowhyphens{}hrung mit Luft von selbst.}%
+\mhchem@hp@ii{#3}{H251-0}{H251}{Selbsterhitzungsf\"a\allowhyphens{}hig; kann in Brand geraten.}%
+\mhchem@hp@ii{#3}{H252-0}{H252}{In gro\ss{}en Mengen selbsterhitzungsf\"a\allowhyphens{}hig; kann in Brand geraten.}%
+\mhchem@hp@ii{#3}{H260-0}{H260}{In Ber\"u\allowhyphens{}hrung mit Wasser entstehen entz\"u\allowhyphens{}ndbare Gase, die sich spontan entz\"u\allowhyphens{}nden k\"o\allowhyphens{}nnen.}%
+\mhchem@hp@ii{#3}{H261-0}{H261}{In Ber\"u\allowhyphens{}hrung mit Wasser entstehen entz\"u\allowhyphens{}ndbare Gase.}%
+\mhchem@hp@ii{#3}{H270-0}{H270}{Kann Brand verursachen oder verst\"a\allowhyphens{}rken; Oxidationsmittel.}%
+\mhchem@hp@ii{#3}{H271-0}{H271}{Kann Brand oder Explosion verursachen; starkes Oxidationsmittel.}%
+\mhchem@hp@ii{#3}{H272-0}{H272}{Kann Brand verst\"a\allowhyphens{}rken; Oxidationsmittel.}%
+\mhchem@hp@ii{#3}{H280-0}{H280}{Enth\"a\allowhyphens{}lt Gas unter Druck; kann bei Erw\"a\allowhyphens{}rmung explodieren.}%
+\mhchem@hp@ii{#3}{H281-0}{H281}{Enth\"a\allowhyphens{}lt tiefkaltes Gas; kann K\"a\allowhyphens{}lteverbrennungen oder -Verletzungen verursachen.}%
+\mhchem@hp@ii{#3}{H290-0}{H290}{Kann gegen\"u\allowhyphens{}ber Metallen korrosiv sein.}%
+\mhchem@hp@ii{#3}{H300-0}{H300}{Lebensgefahr bei Verschlucken.}%
+\mhchem@hp@ii{#3}{H301-0}{H301}{Giftig bei Verschlucken.}%
+\mhchem@hp@ii{#3}{H302-0}{H302}{Gesundheitssch\"a\allowhyphens{}dlich bei Verschlucken.}%
+\mhchem@hp@ii{#3}{H304-0}{H304}{Kann bei Verschlucken und Eindringen in die Atemwege t\"o\allowhyphens{}dlich sein.}%
+\mhchem@hp@ii{#3}{H310-0}{H310}{Lebensgefahr bei Hautkontakt.}%
+\mhchem@hp@ii{#3}{H311-0}{H311}{Giftig bei Hautkontakt.}%
+\mhchem@hp@ii{#3}{H312-0}{H312}{Gesundheitssch\"a\allowhyphens{}dlich bei Hautkontakt.}%
+\mhchem@hp@ii{#3}{H314-0}{H314}{Verursacht schwere Ver\"a\allowhyphens{}tzungen der Haut und schwere Augensch\"a\allowhyphens{}den.}%
+\mhchem@hp@ii{#3}{H315-0}{H315}{Verursacht Hautreizungen.}%
+\mhchem@hp@ii{#3}{H317-0}{H317}{Kann allergische Hautreaktionen verursachen.}%
+\mhchem@hp@ii{#3}{H318-0}{H318}{Verursacht schwere Augensch\"a\allowhyphens{}den.}%
+\mhchem@hp@ii{#3}{H319-0}{H319}{Verursacht schwere Augenreizung.}%
+\mhchem@hp@ii{#3}{H330-0}{H330}{Lebensgefahr bei Einatmen.}%
+\mhchem@hp@ii{#3}{H331-0}{H331}{Giftig bei Einatmen.}%
+\mhchem@hp@ii{#3}{H332-0}{H332}{Gesundheitssch\"a\allowhyphens{}dlich bei Einatmen.}%
+\mhchem@hp@ii{#3}{H334-0}{H334}{Kann bei Einatmen Allergie, asthmaartige Symptome oder Atembeschwerden verursachen.}%
+\mhchem@hp@ii{#3}{H335-0}{H335}{Kann die Atemwege reizen.}%
+\mhchem@hp@ii{#3}{H336-0}{H336}{Kann Schl\"a\allowhyphens{}frigkeit und Benommenheit verursachen.}%
+\mhchem@hp@ii{#3}{H340.0-0}{H340}{Kann genetische Defekte verursachen \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H340-error}{H340}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H340-0}{H340}{Kann genetische Defekte verursachen.}%
+\mhchem@hp@ii{#3}{H340-1}{H340}{Kann genetische Defekte verursachen#1.}%
+\mhchem@hp@ii{#3}{H341.0-0}{H341}{Kann vermutlich genetische Defekte verursachen \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H341-error}{H341}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H341-0}{H341}{Kann vermutlich genetische Defekte verursachen.}%
+\mhchem@hp@ii{#3}{H341-1}{H341}{Kann vermutlich genetische Defekte verursachen#1.}%
+\mhchem@hp@ii{#3}{H350.0-0}{H350}{Kann Krebs erzeugen \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H350-error}{H350}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H350-0}{H350}{Kann Krebs erzeugen.}%
+\mhchem@hp@ii{#3}{H350-1}{H350}{Kann Krebs erzeugen#1.}%
+\mhchem@hp@ii{#3}{H350i-0}{H350i}{Kann bei Einatmen Krebs erzeugen.}%
+\mhchem@hp@ii{#3}{H351.0-0}{H351}{Kann vermutlich Krebs erzeugen \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H351-error}{H351}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H351-0}{H351}{Kann vermutlich Krebs erzeugen.}%
+\mhchem@hp@ii{#3}{H351-1}{H351}{Kann vermutlich Krebs erzeugen#1.}%
+\mhchem@hp@ii{#3}{H360.0-0}{H360}{Kann die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen oder das Kind im Mutterleib sch\"a\allowhyphens{}digen \textless{}konkrete Wirkung angeben, sofern bekannt\textgreater{} \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass die Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H360-error}{H360}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H360-0}{H360}{Kann die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen oder das Kind im Mutterleib sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H360-1}{H360}{Kann die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen oder das Kind im Mutterleib sch\"a\allowhyphens{}digen#1.}%
+\mhchem@hp@ii{#3}{H360F-0}{H360F}{Kann die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen.}%
+\mhchem@hp@ii{#3}{H360D-0}{H360D}{Kann das Kind im Mutterleib sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H361f-0}{H361f}{Kann vermutlich die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen.}%
+\mhchem@hp@ii{#3}{H361d-0}{H361d}{Kann vermutlich das Kind im Mutterleib sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H360FD-0}{H360FD}{Kann die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen. Kann das Kind im Mutterleib sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H361fd-0}{H361fd}{Kann vermutlich die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen. Kann vermutlich das Kind im Mutterleib sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H360Fd-0}{H360Fd}{Kann die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen. Kann vermutlich das Kind im Mutterleib sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H360Df-0}{H360Df}{Kann das Kind im Mutterleib sch\"a\allowhyphens{}digen. Kann vermutlich die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen.}%
+\mhchem@hp@ii{#3}{H361.0-0}{H361}{Kann vermutlich die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen oder das Kind im Mutterleib sch\"a\allowhyphens{}digen \textless{} konkrete Wirkung angebe, n sofern bekannt \textgreater{} \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass die Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H361-error}{H361}{\PackageError{hpstatement}{Too many arguments.\MessageBreak This statement has an optional text argument.\MessageBreak Please use no argument or exactly one with [].\MessageBreak Or use <number>.0 for the original form}{}}%
+\mhchem@hp@ii{#3}{H361-0}{H361}{Kann vermutlich die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen oder das Kind im Mutterleib sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H361-1}{H361}{Kann vermutlich die Fruchtbarkeit beeintr\"a\allowhyphens{}chtigen oder das Kind im Mutterleib sch\"a\allowhyphens{}digen#1}%
+\mhchem@hp@ii{#3}{H362-0}{H362}{Kann S\"a\allowhyphens{}uglinge \"u\allowhyphens{}ber die Muttermilch sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H370.0-0}{H370}{Sch\"a\allowhyphens{}digt die Organe \textless{}oder alle betroffenen Organe nennen, sofern bekannt\textgreater{} \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H370-error}{H370}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H370-0}{H370}{Sch\"a\allowhyphens{}digt die Organe.}%
+\mhchem@hp@ii{#3}{H370-1}{H370}{Sch\"a\allowhyphens{}digt #1.}%
+\mhchem@hp@ii{#3}{H370-2}{H370}{Sch\"a\allowhyphens{}digt #1#2..}%
+\mhchem@hp@ii{#3}{H371.0-0}{H371}{Kann die Organe sch\"a\allowhyphens{}digen \textless{}oder alle betroffenen Organe nennen, sofern bekann\textgreater{} \textless{}Expositionsweg angeben, sofern schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H371-error}{H371}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H371-0}{H371}{Kann die Organe sch\"a\allowhyphens{}digen.}%
+\mhchem@hp@ii{#3}{H371-1}{H371}{Kann die Organe sch\"a\allowhyphens{}digen #1.}%
+\mhchem@hp@ii{#3}{H371-2}{H371}{Kann die Organe sch\"a\allowhyphens{}digen #1#2.}%
+\mhchem@hp@ii{#3}{H372.0-0}{H372}{Sch\"a\allowhyphens{}digt die Organe \textless{}alle betroffenen Organe nennen\textgreater{} bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition \textless{}Expositionsweg angeben, wenn schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H372-error}{H372}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H372-0}{H372}{Sch\"a\allowhyphens{}digt die Organe bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition.}%
+\mhchem@hp@ii{#3}{H372-1}{H372}{Sch\"a\allowhyphens{}digt #1 bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition.}%
+\mhchem@hp@ii{#3}{H372-2}{H372}{Sch\"a\allowhyphens{}digt #1 bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition#2.}%
+\mhchem@hp@ii{#3}{H373.0-0}{H373}{Kann die Organe sch\"a\allowhyphens{}digen \textless{}alle betroffenen Organe nennen, sofern bekannt\textgreater{} bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition \textless{}Expositionsweg angeben, wenn schl\"u\allowhyphens{}ssig belegt ist, dass diese Gefahr bei keinem anderen Expositionsweg besteht\textgreater{}.}%
+\mhchem@hp@ii{#3}{H373-error}{H373}{\PackageError{hpstatement}{This statement has two optional text arguments.\MessageBreak Please specify them with [][]. Or append .0\MessageBreak to the number for the original form}{}}%
+\mhchem@hp@ii{#3}{H373-0}{H373}{Kann die Organe sch\"a\allowhyphens{}digen bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition.}%
+\mhchem@hp@ii{#3}{H373-1}{H373}{Kann #1 sch\"a\allowhyphens{}digen bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition.}%
+\mhchem@hp@ii{#3}{H373-2}{H373}{Kann #1 sch\"a\allowhyphens{}digen bei l\"a\allowhyphens{}ngerer oder wiederholter Exposition#2.}%
+\mhchem@hp@ii{#3}{H300+H310-0}{H300\,+\,\hskip\z@skip{}H310}{Lebensgefahr bei Verschlucken oder Hautkontakt}%
+\mhchem@hp@ii{#3}{H300+H330-0}{H300\,+\,\hskip\z@skip{}H330}{Lebensgefahr bei Verschlucken oder Einatmen}%
+\mhchem@hp@ii{#3}{H310+H330-0}{H310\,+\,\hskip\z@skip{}H330}{Lebensgefahr bei Hautkontakt oder Einatmen}%
+\mhchem@hp@ii{#3}{H300+H310+H330-0}{H300\,+\,\hskip\z@skip{}H310\,+\,\hskip\z@skip{}H330}{Lebensgefahr bei Verschlucken, Hautkontakt oder Einatmen}%
+\mhchem@hp@ii{#3}{H301+H311-0}{H301\,+\,\hskip\z@skip{}H311}{Giftig bei Verschlucken oder Hautkontakt}%
+\mhchem@hp@ii{#3}{H301+H331-0}{H301\,+\,\hskip\z@skip{}H331}{Giftig bei Verschlucken oder Einatmen}%
+\mhchem@hp@ii{#3}{H311+H331-0}{H311\,+\,\hskip\z@skip{}H331}{Giftig bei Hautkontakt oder Einatmen}%
+\mhchem@hp@ii{#3}{H301+H311+H331-0}{H301\,+\,\hskip\z@skip{}H311\,+\,\hskip\z@skip{}H331}{Giftig bei Verschlucken, Hautkontakt oder Einatmen}%
+\mhchem@hp@ii{#3}{H302+H312-0}{H302\,+\,\hskip\z@skip{}H312}{Gesundheitssch\"a\allowhyphens{}dlich bei Verschlucken oder Hautkontakt}%
+\mhchem@hp@ii{#3}{H302+H332-0}{H302\,+\,\hskip\z@skip{}H332}{Gesundheitssch\"a\allowhyphens{}dlich bei Verschlucken oder Einatmen}%
+\mhchem@hp@ii{#3}{H312+H332-0}{H312\,+\,\hskip\z@skip{}H332}{Gesundheitssch\"a\allowhyphens{}dlich bei Hautkontakt oder Einatmen}%
+\mhchem@hp@ii{#3}{H301+H312+H332-0}{H301\,+\,\hskip\z@skip{}H312\,+\,\hskip\z@skip{}H332}{Gesundheitssch\"a\allowhyphens{}dlich bei Verschlucken, Hautkontakt oder Einatmen}%
+\mhchem@hp@ii{#3}{H400-0}{H400}{Sehr giftig f\"u\allowhyphens{}r Wasserorganismen.}%
+\mhchem@hp@ii{#3}{H410-0}{H410}{Sehr giftig f\"u\allowhyphens{}r Wasserorganismen mit langfristiger Wirkung.}%
+\mhchem@hp@ii{#3}{H411-0}{H411}{Giftig f\"u\allowhyphens{}r Wasserorganismen, mit langfristiger Wirkung.}%
+\mhchem@hp@ii{#3}{H412-0}{H412}{Sch\"a\allowhyphens{}dlich f\"u\allowhyphens{}r Wasserorganismen, mit langfristiger Wirkung.}%
+\mhchem@hp@ii{#3}{H413-0}{H413}{Kann f\"u\allowhyphens{}r Wasserorganismen sch\"a\allowhyphens{}dlich sein, mit langfristiger Wirkung.}%
+\mhchem@hp@ii{#3}{H420-0}{H420}{Sch\"a\allowhyphens{}digt die \"o\allowhyphens{}ffentliche Gesundheit und die Umwelt durch Ozonabbau in der \"a\allowhyphens{}u\ss{}eren Atmosph\"a\allowhyphens{}re.}%
+\mhchem@hp@ii{#3}{P101-0}{P101}{Ist \"a\allowhyphens{}rztlicher Rat erforderlich, Verpackung oder Kennzeichnungsetikett bereithalten.}%
+\mhchem@hp@ii{#3}{P101.nolabel-error}{P101}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P101.nolabel-1}{P101}{Ist \"a\allowhyphens{}rztlicher Rat erforderlich, Verpackung oder #1 bereithalten.}%
+\mhchem@hp@ii{#3}{P102-0}{P102}{Darf nicht in die H\"a\allowhyphens{}nde von Kindern gelangen.}%
+\mhchem@hp@ii{#3}{P103-0}{P103}{Vor Gebrauch Kennzeichnungsetikett lesen.}%
+\mhchem@hp@ii{#3}{P103.nolabel-error}{P103}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P103.nolabel-1}{P103}{Vor Gebrauch #1 lesen.}%
+\mhchem@hp@ii{#3}{P201-0}{P201}{Vor Gebrauch besondere Anweisungen einholen.}%
+\mhchem@hp@ii{#3}{P202-0}{P202}{Vor Gebrauch alle Sicherheitshinweise lesen und verstehen.}%
+\mhchem@hp@ii{#3}{P210.0-0}{P210}{Von Hitze/\hskip\z@skip{}Funken/\hskip\z@skip{}offener Flamme/\hskip\z@skip{}hei\ss{}en Oberfl\"a\allowhyphens{}chen fernhalten. Nicht rauchen.}%
+\mhchem@hp@ii{#3}{P210-error}{P210}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P210-1}{P210}{Von #1 fernhalten. Nicht rauchen.}%
+\mhchem@hp@ii{#3}{P210.1-0}{P210}{Von Hitze fernhalten. Nicht rauchen.}%
+\mhchem@hp@ii{#3}{P210.2-0}{P210}{Von Funken fernhalten. Nicht rauchen.}%
+\mhchem@hp@ii{#3}{P210.3-0}{P210}{Von offener Flamme fernhalten. Nicht rauchen.}%
+\mhchem@hp@ii{#3}{P210.4-0}{P210}{Von hei\ss{}en Oberfl\"a\allowhyphens{}chen fernhalten. Nicht rauchen.}%
+\mhchem@hp@ii{#3}{P211-0}{P211}{Nicht gegen offene Flamme oder andere Z\"u\allowhyphens{}ndquelle spr\"u\allowhyphens{}hen.}%
+\mhchem@hp@ii{#3}{P220.0.0-0}{P220}{Von Kleidung/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}brennbaren Materialien fernhalten/\hskip\z@skip{}entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P220-error}{P220}{\PackageError{hpstatement}{Selection and selection/argument missing.\MessageBreak This statement has 1) a mandatory selection\MessageBreak and 2) a selection or text-argument.\MessageBreak Please append .1.1, ... to the number to make a\MessageBreak selection. Or append .1 or .2 with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.0-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.0.1-1}{P220}{Von #1 fernhalten/\hskip\z@skip{}entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P220.0.2-0}{P220}{Von Kleidung fernhalten/\hskip\z@skip{}entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P220.0.3-0}{P220}{Von brennbaren Materialien fernhalten/\hskip\z@skip{}entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P220.1.0-0}{P220}{Von Kleidung/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}brennbaren Materialien fernhalten.}%
+\mhchem@hp@ii{#3}{P220.1-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.1-1}{P220}{Von #1 fernhalten.}%
+\mhchem@hp@ii{#3}{P220.1.1-0}{P220}{Von Kleidung fernhalten.}%
+\mhchem@hp@ii{#3}{P220.1.2-0}{P220}{Von brennbaren Materialien fernhalten.}%
+\mhchem@hp@ii{#3}{P220.2.0-0}{P220}{Von Kleidung/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}brennbaren Materialien entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P220.2-error}{P220}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P220.2-1}{P220}{Von #1 entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P220.2.1-0}{P220}{Von Kleidung entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P220.2.2-0}{P220}{Von brennbaren Materialien entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P221.0-0}{P221}{Mischen mit brennbaren Stoffen/\hskip\z@skip{}\textellipsis{} unbedingt verhindern.}%
+\mhchem@hp@ii{#3}{P221-error}{P221}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P221-1}{P221}{Mischen mit #1 unbedingt verhindern.}%
+\mhchem@hp@ii{#3}{P221.1-0}{P221}{Mischen mit brennbaren Stoffen unbedingt verhindern.}%
+\mhchem@hp@ii{#3}{P222-0}{P222}{Keinen Kontakt mit Luft zulassen.}%
+\mhchem@hp@ii{#3}{P223-0}{P223}{Kontakt mit Wasser wegen heftiger Reaktion und m\"o\allowhyphens{}glichem Aufflammen unbedingt verhindern.}%
+\mhchem@hp@ii{#3}{P230.0-0}{P230}{Feucht halten mit \textellipsis{}}%
+\mhchem@hp@ii{#3}{P230-error}{P230}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P230-1}{P230}{Feucht halten mit #1.}%
+\mhchem@hp@ii{#3}{P231-0}{P231}{Unter inertem Gas handhaben.}%
+\mhchem@hp@ii{#3}{P231+P232-0}{P231\,+\,\hskip\z@skip{}P232}{Unter inertem Gas handhaben. Vor Feuchtigkeit sch\"u\allowhyphens{}tzen.}%
+\mhchem@hp@ii{#3}{P232-0}{P232}{Vor Feuchtigkeit sch\"u\allowhyphens{}tzen.}%
+\mhchem@hp@ii{#3}{P233-0}{P233}{Beh\"a\allowhyphens{}lter dicht verschlossen halten.}%
+\mhchem@hp@ii{#3}{P234-0}{P234}{Nur im Originalbeh\"a\allowhyphens{}lter aufbewahren.}%
+\mhchem@hp@ii{#3}{P235-0}{P235}{K\"u\allowhyphens{}hl halten.}%
+\mhchem@hp@ii{#3}{P235+P410-0}{P235\,+\,\hskip\z@skip{}P410}{K\"u\allowhyphens{}hl halten. Vor Sonnenbestrahlung sch\"u\allowhyphens{}tzen.}%
+\mhchem@hp@ii{#3}{P240-0}{P240}{Beh\"a\allowhyphens{}lter und zu bef\"u\allowhyphens{}llende Anlage erden.}%
+\mhchem@hp@ii{#3}{P241.0-0}{P241}{Explosionsgesch\"u\allowhyphens{}tzte elektrische Ger\"a\allowhyphens{}te/\hskip\z@skip{}L\"u\allowhyphens{}ftungsanlagen/\hskip\z@skip{}Beleuchtung/\hskip\z@skip{}\textellipsis{} verwenden.}%
+\mhchem@hp@ii{#3}{P241-error}{P241}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P241-1}{P241}{Explosionsgesch\"u\allowhyphens{}tzte #1 verwenden.}%
+\mhchem@hp@ii{#3}{P241.1-0}{P241}{Explosionsgesch\"u\allowhyphens{}tzte elektrische Ger\"a\allowhyphens{}te verwenden.}%
+\mhchem@hp@ii{#3}{P241.2-0}{P241}{Explosionsgesch\"u\allowhyphens{}tzte L\"u\allowhyphens{}ftungsanlagen verwenden.}%
+\mhchem@hp@ii{#3}{P241.3-0}{P241}{Explosionsgesch\"u\allowhyphens{}tzte Beleuchtung verwenden.}%
+\mhchem@hp@ii{#3}{P242-0}{P242}{Nur funkenfreies Werkzeug verwenden.}%
+\mhchem@hp@ii{#3}{P243-0}{P243}{Ma\ss{}nahmen gegen elektrostatische Entladungen treffen.}%
+\mhchem@hp@ii{#3}{P244-0}{P244}{Druckminderer frei von Fett und \"O\allowhyphens{}l halten.}%
+\mhchem@hp@ii{#3}{P250.0-0}{P250}{Nicht schleifen/\hskip\z@skip{}sto\ss{}en/\hskip\z@skip{}\textellipsis{}/\hskip\z@skip{}reiben.}%
+\mhchem@hp@ii{#3}{P250-error}{P250}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P250-1}{P250}{Nicht #1.}%
+\mhchem@hp@ii{#3}{P250.1-0}{P250}{Nicht schleifen.}%
+\mhchem@hp@ii{#3}{P250.2-0}{P250}{Nicht sto\ss{}en.}%
+\mhchem@hp@ii{#3}{P250.3-0}{P250}{Nicht reiben.}%
+\mhchem@hp@ii{#3}{P251-0}{P251}{Beh\"a\allowhyphens{}lter steht unter Druck: Nicht durchstechen oder verbrennen, auch nicht nach der Verwendung.}%
+\mhchem@hp@ii{#3}{P260.0-0}{P260}{Staub/\hskip\z@skip{}Rauch/\hskip\z@skip{}Gas/\hskip\z@skip{}Nebel/\hskip\z@skip{}Dampf/\hskip\z@skip{}Aerosol nicht einatmen.}%
+\mhchem@hp@ii{#3}{P260-error}{P260}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P260-1}{P260}{#1 nicht einatmen.}%
+\mhchem@hp@ii{#3}{P260.1-0}{P260}{Staub nicht einatmen.}%
+\mhchem@hp@ii{#3}{P260.2-0}{P260}{Rauch nicht einatmen.}%
+\mhchem@hp@ii{#3}{P260.3-0}{P260}{Gas nicht einatmen.}%
+\mhchem@hp@ii{#3}{P260.4-0}{P260}{Nebel nicht einatmen.}%
+\mhchem@hp@ii{#3}{P260.5-0}{P260}{Dampf nicht einatmen.}%
+\mhchem@hp@ii{#3}{P260.6-0}{P260}{Aerosol nicht einatmen.}%
+\mhchem@hp@ii{#3}{P261-0}{P261}{Einatmen von Staub/\hskip\z@skip{}Rauch/\hskip\z@skip{}Gas/\hskip\z@skip{}Nebel/\hskip\z@skip{}Dampf/\hskip\z@skip{}Aerosol vermeiden.}%
+\mhchem@hp@ii{#3}{P262-0}{P262}{Nicht in die Augen, auf die Haut oder auf die Kleidung gelangen lassen.}%
+\mhchem@hp@ii{#3}{P263.0-0}{P263}{Kontakt w\"a\allowhyphens{}hrend der Schwangerschaft/\hskip\z@skip{}der Stillzeit vermeiden.}%
+\mhchem@hp@ii{#3}{P263-error}{P263}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P263-1}{P263}{Kontakt w\"a\allowhyphens{}hrend #1 vermeiden.}%
+\mhchem@hp@ii{#3}{P263.1-0}{P263}{Kontakt w\"a\allowhyphens{}hrend der Schwangerschaft vermeiden.}%
+\mhchem@hp@ii{#3}{P263.2-0}{P263}{Kontakt w\"a\allowhyphens{}hrend der Stillzeit vermeiden.}%
+\mhchem@hp@ii{#3}{P264.0-0}{P264}{Nach Gebrauch \textellipsis{} gr\"u\allowhyphens{}ndlich waschen.}%
+\mhchem@hp@ii{#3}{P264-error}{P264}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P264-1}{P264}{Nach Gebrauch #1 gr\"u\allowhyphens{}ndlich waschen.}%
+\mhchem@hp@ii{#3}{P270-0}{P270}{Bei Gebrauch nicht essen, trinken oder rauchen.}%
+\mhchem@hp@ii{#3}{P271-0}{P271}{Nur im Freien oder in gut bel\"u\allowhyphens{}fteten R\"a\allowhyphens{}umen verwenden.}%
+\mhchem@hp@ii{#3}{P272-0}{P272}{Kontaminierte Arbeitskleidung nicht au\ss{}erhalb des Arbeitsplatzes tragen.}%
+\mhchem@hp@ii{#3}{P273-0}{P273}{Freisetzung in die Umwelt vermeiden.}%
+\mhchem@hp@ii{#3}{P280.0-0}{P280}{Schutzhandschuhe/\hskip\z@skip{}Schutzkleidung/\hskip\z@skip{}Augenschutz/\hskip\z@skip{}Gesichtsschutz tragen.}%
+\mhchem@hp@ii{#3}{P280-error}{P280}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P280-1}{P280}{#1 tragen.}%
+\mhchem@hp@ii{#3}{P280.1-0}{P280}{Schutzhandschuhe tragen.}%
+\mhchem@hp@ii{#3}{P280.2-0}{P280}{Schutzkleidung tragen.}%
+\mhchem@hp@ii{#3}{P280.3-0}{P280}{Augenschutz tragen.}%
+\mhchem@hp@ii{#3}{P280.4-0}{P280}{Gesichtsschutz tragen.}%
+\mhchem@hp@ii{#3}{P281-0}{P281}{Vorgeschriebene pers\"o\allowhyphens{}nliche Schutzausr\"u\allowhyphens{}stung verwenden.}%
+\mhchem@hp@ii{#3}{P282.0-0}{P282}{Schutzhandschuhe/\hskip\z@skip{}Gesichtsschild/\hskip\z@skip{}Augenschutz mit K\"a\allowhyphens{}lteisolierung tragen.}%
+\mhchem@hp@ii{#3}{P282-error}{P282}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P282-1}{P282}{#1 tragen.}%
+\mhchem@hp@ii{#3}{P282.1-0}{P282}{Schutzhandschuhe mit K\"a\allowhyphens{}lteisolierung tragen.}%
+\mhchem@hp@ii{#3}{P282.2-0}{P282}{Gesichtsschild mit K\"a\allowhyphens{}lteisolierung tragen.}%
+\mhchem@hp@ii{#3}{P282.3-0}{P282}{Augenschutz mit K\"a\allowhyphens{}lteisolierung tragen.}%
+\mhchem@hp@ii{#3}{P283.0-0}{P283}{Schwer entflammbare/\hskip\z@skip{}flammhemmende Kleidung tragen.}%
+\mhchem@hp@ii{#3}{P283-error}{P283}{\PackageError{hpstatement}{Language-dependent argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak However, translations differ so much that you\MessageBreak have to state your selection as text argument [].\MessageBreak Read the manual for possible values.\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P283-1}{P283}{#1 tragen.}%
+\mhchem@hp@ii{#3}{P284-0}{P284}{Atemschutz tragen.}%
+\mhchem@hp@ii{#3}{P285-0}{P285}{Bei unzureichender Bel\"u\allowhyphens{}fung Atemschutz tragen.}%
+\mhchem@hp@ii{#3}{P301-0}{P301}{BEI VERSCHLUCKEN:}%
+\mhchem@hp@ii{#3}{P301+P310-0}{P301\,+\,\hskip\z@skip{}P310}{BEI VERSCHLUCKEN: Sofort GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P301+P312-0}{P301\,+\,\hskip\z@skip{}P312}{BEI VERSCHLUCKEN: Bei Unwohlsein GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P301+P330+P331-0}{P301\,+\,\hskip\z@skip{}P330\,+\,\hskip\z@skip{}P331}{BEI VERSCHLUCKEN: Mund aussp\"u\allowhyphens{}len. KEIN Erbrechen herbeif\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{P302-0}{P302}{BEI BER\"U\allowhyphens{}HRUNG MIT DER HAUT:}%
+\mhchem@hp@ii{#3}{P302+P334.0-0}{P302\,+\,\hskip\z@skip{}P334}{BEI KONTAKT MIT DER HAUT: In kaltes Wasser tauchen/\hskip\z@skip{}nassen Verband anlegen.}%
+\mhchem@hp@ii{#3}{P302+P334-error}{P302\,+\,\hskip\z@skip{}P334}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P302+P334-1}{P302\,+\,\hskip\z@skip{}P334}{BEI KONTAKT MIT DER HAUT: #1.}%
+\mhchem@hp@ii{#3}{P302+P334.1-0}{P302\,+\,\hskip\z@skip{}P334}{BEI KONTAKT MIT DER HAUT: In kaltes Wasser tauchen.}%
+\mhchem@hp@ii{#3}{P302+P334.2-0}{P302\,+\,\hskip\z@skip{}P334}{BEI KONTAKT MIT DER HAUT: Nassen Verband anlegen.}%
+\mhchem@hp@ii{#3}{P302+P350-0}{P302\,+\,\hskip\z@skip{}P350}{BEI KONTAKT MIT DER HAUT: Behutsam mit viel Wasser und Seife waschen.}%
+\mhchem@hp@ii{#3}{P302+P352-0}{P302\,+\,\hskip\z@skip{}P352}{BEI KONTAKT MIT DER HAUT: Mit viel Wasser und Seife waschen.}%
+\mhchem@hp@ii{#3}{P303-0}{P303}{BEI BER\"U\allowhyphens{}HRUNG MIT DER HAUT (oder dem Haar):}%
+\mhchem@hp@ii{#3}{P303+P361+P353-0}{P303\,+\,\hskip\z@skip{}P361\,+\,\hskip\z@skip{}P353}{BEI KONTAKT MIT DER HAUT (oder dem Haar): Alle beschmutzten, getr\"a\allowhyphens{}nkten Kleidungsst\"u\allowhyphens{}cke sofort ausziehen. Haut mit Wasser abwaschen/\hskip\z@skip{}duschen.}%
+\mhchem@hp@ii{#3}{P304-0}{P304}{BEI EINATMEN:}%
+\mhchem@hp@ii{#3}{P304+P340-0}{P304\,+\,\hskip\z@skip{}P340}{BEI EINATMEN: An die frische Luft bringen und in einer Position ruhigstellen, die das Atmen erleichtert.}%
+\mhchem@hp@ii{#3}{P304+P341-0}{P304\,+\,\hskip\z@skip{}P341}{BEI EINATMEN: Bei Atembeschwerden an die frische Luft bringen und in einer Position ruhigstellen, die das Atmen erleichtert.}%
+\mhchem@hp@ii{#3}{P305-0}{P305}{BEI KONTAKT MIT DEN AUGEN:}%
+\mhchem@hp@ii{#3}{P305+P351+P338-0}{P305\,+\,\hskip\z@skip{}P351\,+\,\hskip\z@skip{}P338}{BEI KONTAKT MIT DEN AUGEN: Einige Minuten lang behutsam mit Wasser aussp\"u\allowhyphens{}len. Eventuell vorhandene Kontaktlinsen nach M\"o\allowhyphens{}glichkeit entfernen. Weiter aussp\"u\allowhyphens{}len.}%
+\mhchem@hp@ii{#3}{P306-0}{P306}{BEI KONTAKT MIT DER KLEIDUNG:}%
+\mhchem@hp@ii{#3}{P306+P360-0}{P306\,+\,\hskip\z@skip{}P360}{BEI KONTAKT MIT DER KLEIDUNG: Kontaminierte Kleidung und Haut sofort mit viel Wasser abwaschen und danach Kleidung ausziehen.}%
+\mhchem@hp@ii{#3}{P307-0}{P307}{BEI Exposition:}%
+\mhchem@hp@ii{#3}{P307+P311-0}{P307\,+\,\hskip\z@skip{}P311}{BEI Exposition: GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P308-0}{P308}{BEI Exposition oder falls betroffen}%
+\mhchem@hp@ii{#3}{P308+P313-0}{P308\,+\,\hskip\z@skip{}P313}{BEI Exposition oder falls betroffen: \"A\allowhyphens{}rztlichen Rat einholen/\hskip\z@skip{}\"a\allowhyphens{}rztliche Hilfe hinzuziehen.}%
+\mhchem@hp@ii{#3}{P309-0}{P309}{BEI Exposition oder Unwohlsein:}%
+\mhchem@hp@ii{#3}{P309+P311-0}{P309\,+\,\hskip\z@skip{}P311}{BEI Exposition oder Unwohlsein: GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P310-0}{P310}{Sofort GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P311-0}{P311}{GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P312-0}{P312}{Bei Unwohlsein GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P313-0}{P313}{\"A\allowhyphens{}rztlichen Rat einholen/\hskip\z@skip{}\"a\allowhyphens{}rztliche Hilfe hinzuziehen.}%
+\mhchem@hp@ii{#3}{P314-0}{P314}{Bei Unwohlsein \"a\allowhyphens{}rztlichen Rat einholen/\hskip\z@skip{}\"a\allowhyphens{}rztliche Hilfe hinzuziehen.}%
+\mhchem@hp@ii{#3}{P315-0}{P315}{Sofort \"a\allowhyphens{}rztlichen Rat einholen/\hskip\z@skip{}\"a\allowhyphens{}rztliche Hilfe hinzuziehen.}%
+\mhchem@hp@ii{#3}{P320.0-0}{P320}{Besondere Behandlung dringend erforderlich (siehe \textellipsis{} auf diesem Kennzeichnungsetikett).}%
+\mhchem@hp@ii{#3}{P320-error}{P320}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P320-1}{P320}{Besondere Behandlung dringend erforderlich (siehe #1 auf diesem Kennzeichnungsetikett).}%
+\mhchem@hp@ii{#3}{P320.nolabel-error}{P320}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P320.nolabel-1}{P320}{Besondere Behandlung dringend erforderlich (siehe #1).}%
+\mhchem@hp@ii{#3}{P321.0-0}{P321}{Besondere Behandlung (siehe \textellipsis{} auf diesem Kennzeichnungsetikett).}%
+\mhchem@hp@ii{#3}{P321-error}{P321}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P321-1}{P321}{Besondere Behandlung (siehe #1 auf diesem Kennzeichnungsetikett).}%
+\mhchem@hp@ii{#3}{P321.nolabel-error}{P321}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P321.nolabel-1}{P321}{Besondere Behandlung (siehe #1).}%
+\mhchem@hp@ii{#3}{P322.0-0}{P322}{Gezielte Ma\ss{}nahmen (siehe \textellipsis{} auf diesem Kennzeichnungsetikett).}%
+\mhchem@hp@ii{#3}{P322-error}{P322}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P322-1}{P322}{Gezielte Ma\ss{}nahmen (siehe #1 auf diesem Kennzeichnungsetikett).}%
+\mhchem@hp@ii{#3}{P322.nolabel-error}{P322}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P322.nolabel-1}{P322}{Gezielte Ma\ss{}nahmen (siehe #1).}%
+\mhchem@hp@ii{#3}{P330-0}{P330}{Mund aussp\"u\allowhyphens{}len.}%
+\mhchem@hp@ii{#3}{P331-0}{P331}{KEIN Erbrechen herbeif\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{P332-0}{P332}{Bei Hautreizung:}%
+\mhchem@hp@ii{#3}{P332+P313-0}{P332\,+\,\hskip\z@skip{}P313}{Bei Hautreizung: \"A\allowhyphens{}rztlichen Rat einholen/\hskip\z@skip{}\"a\allowhyphens{}rztliche Hilfe hinzuziehen.}%
+\mhchem@hp@ii{#3}{P333-0}{P333}{Bei Hautreizung oder \leavevmode\hbox{-}ausschlag:}%
+\mhchem@hp@ii{#3}{P333+P313-0}{P333\,+\,\hskip\z@skip{}P313}{Bei Hautreizung oder \leavevmode\hbox{-}ausschlag: \"A\allowhyphens{}rztlichen Rat einholen/\hskip\z@skip{}\"a\allowhyphens{}rztliche Hilfe hinzuziehen.}%
+\mhchem@hp@ii{#3}{P334.0-0}{P334}{In kaltes Wasser tauchen/\hskip\z@skip{}nassen Verband anlegen.}%
+\mhchem@hp@ii{#3}{P334-error}{P334}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P334.1-0}{P334}{In kaltes Wasser tauchen.}%
+\mhchem@hp@ii{#3}{P334.2-0}{P334}{Nassen Verband anlegen.}%
+\mhchem@hp@ii{#3}{P335-0}{P335}{Lose Partikel von der Haut abb\"u\allowhyphens{}rsten.}%
+\mhchem@hp@ii{#3}{P335+P334.0-0}{P335\,+\,\hskip\z@skip{}P334}{Lose Partikel von der Haut abb\"u\allowhyphens{}rsten. In kaltes Wasser tauchen/\hskip\z@skip{}nassen Verband anlegen.}%
+\mhchem@hp@ii{#3}{P335+P334-error}{P335\,+\,\hskip\z@skip{}P334}{\PackageError{hpstatement}{Selection missing.\MessageBreak This statement requires a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P335+P334.1-0}{P335\,+\,\hskip\z@skip{}P334}{Lose Partikel von der Haut abb\"u\allowhyphens{}rsten. In kaltes Wasser tauchen.}%
+\mhchem@hp@ii{#3}{P335+P334.2-0}{P335\,+\,\hskip\z@skip{}P334}{Lose Partikel von der Haut abb\"u\allowhyphens{}rsten. Nassen Verband anlegen.}%
+\mhchem@hp@ii{#3}{P336-0}{P336}{Vereiste Bereiche mit lauwarmem Wasser auftauen. Betroffenen Bereich nicht reiben.}%
+\mhchem@hp@ii{#3}{P337-0}{P337}{Bei anhaltender Augenreizung:}%
+\mhchem@hp@ii{#3}{P337+P313-0}{P337\,+\,\hskip\z@skip{}P313}{Bei anhaltender Augenreizung: \"A\allowhyphens{}rztlichen Rat einholen/\hskip\z@skip{}\"a\allowhyphens{}rztliche Hilfe hinzuziehen.}%
+\mhchem@hp@ii{#3}{P338-0}{P338}{Eventuell Vorhandene Kontaktlinsen nach M\"o\allowhyphens{}glichkeit entfernen. Weiter aussp\"u\allowhyphens{}len.}%
+\mhchem@hp@ii{#3}{P340-0}{P340}{Die betroffene Person an die frische Luft bringen und in einer Position ruhigstellen, die das Atmen erleichtert.}%
+\mhchem@hp@ii{#3}{P341-0}{P341}{Bei Atembeschwerden an die frische Luft bringen und in einer Position ruhigstellen, die das Atmen erleichtert.}%
+\mhchem@hp@ii{#3}{P342-0}{P342}{Bei Symptomen der Atemwege:}%
+\mhchem@hp@ii{#3}{P342+P311-0}{P342\,+\,\hskip\z@skip{}P311}{Bei Symptomen der Atemwege: GIFTINFORMATIONSZENTRUM oder Arzt anrufen.}%
+\mhchem@hp@ii{#3}{P350-0}{P350}{Behutsam mit viel Wasser und Seife waschen.}%
+\mhchem@hp@ii{#3}{P351-0}{P351}{Einige Minuten lang behutsam mit Wasser aussp\"u\allowhyphens{}len.}%
+\mhchem@hp@ii{#3}{P352-0}{P352}{Mit viel Wasser und Seife waschen.}%
+\mhchem@hp@ii{#3}{P353-0}{P353}{Haut mit Wasser abwaschen/\hskip\z@skip{}duschen.}%
+\mhchem@hp@ii{#3}{P360-0}{P360}{Kontaminierte Kleidung und Haut sofort mit viel Wasser abwaschen und danach Kleidung ausziehen.}%
+\mhchem@hp@ii{#3}{P361-0}{P361}{Alle kontaminierten Kleidungsst\"u\allowhyphens{}cke sofort ausziehen.}%
+\mhchem@hp@ii{#3}{P362-0}{P362}{Kontaminierte Kleidung ausziehen und vor erneutem Tragen waschen.}%
+\mhchem@hp@ii{#3}{P363-0}{P363}{Kontaminierte Kleidung vor erneutem Tragen waschen.}%
+\mhchem@hp@ii{#3}{P370-0}{P370}{Bei Brand:}%
+\mhchem@hp@ii{#3}{P370+P376-0}{P370\,+\,\hskip\z@skip{}P376}{Bei Brand: Undichtigkeit beseitigen, wenn gefahrlos m\"o\allowhyphens{}glich.}%
+\mhchem@hp@ii{#3}{P370+P378.0-0}{P370\,+\,\hskip\z@skip{}P378}{Bei Brand: \textellipsis{} zum L\"o\allowhyphens{}schen verwenden.}%
+\mhchem@hp@ii{#3}{P370+P378-error}{P370\,+\,\hskip\z@skip{}P378}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P370+P378-1}{P370\,+\,\hskip\z@skip{}P378}{Bei Brand: #1 zum L\"o\allowhyphens{}schen verwenden.}%
+\mhchem@hp@ii{#3}{P370+P380-0}{P370\,+\,\hskip\z@skip{}P380}{Bei Brand: Umgebung r\"a\allowhyphens{}umen.}%
+\mhchem@hp@ii{#3}{P370+P380+P375-0}{P370\,+\,\hskip\z@skip{}P380\,+\,\hskip\z@skip{}P375}{Bei Brand: Umgebung r\"a\allowhyphens{}umen. Wegen Explosionsgefahr Brand aus der Entfernung bek\"a\allowhyphens{}mpfen.}%
+\mhchem@hp@ii{#3}{P371-0}{P371}{Bei Gro\ss{}brand und gro\ss{}en Mengen:}%
+\mhchem@hp@ii{#3}{P371+P380+P375-0}{P371\,+\,\hskip\z@skip{}P380\,+\,\hskip\z@skip{}P375}{Bei Gro\ss{}brand und gro\ss{}en Mengen: Umgebung r\"a\allowhyphens{}umen. Wegen Explosionsgefahr Brand aus der Entfernung bek\"a\allowhyphens{}mpfen.}%
+\mhchem@hp@ii{#3}{P372-0}{P372}{Explosionsgefahr bei Brand.}%
+\mhchem@hp@ii{#3}{P373-0}{P373}{KEINE Brandbek\"a\allowhyphens{}mpfung, wenn das Feuer explosive Stoffe/\hskip\z@skip{}Gemische/\hskip\z@skip{}Erzeugnisse erreicht.}%
+\mhchem@hp@ii{#3}{P374-0}{P374}{Brandbek\"a\allowhyphens{}mpfung mit \"u\allowhyphens{}blichen Vorsichtsma\ss{}nahmen aus angemessener Entfernung.}%
+\mhchem@hp@ii{#3}{P375-0}{P375}{Wegen Explosionsgefahr Brand aus der Entfernung bek\"a\allowhyphens{}mpfen.}%
+\mhchem@hp@ii{#3}{P376-0}{P376}{Undichtigkeit beseitigen, wenn gefahrlos m\"o\allowhyphens{}glich.}%
+\mhchem@hp@ii{#3}{P377-0}{P377}{Brand von ausstr\"o\allowhyphens{}mendem Gas: Nicht l\"o\allowhyphens{}schen, bis Undichtigkeit gefahrlos beseitigt werden kann.}%
+\mhchem@hp@ii{#3}{P378.0-0}{P378}{\textellipsis{} zum L\"o\allowhyphens{}schen verwenden.}%
+\mhchem@hp@ii{#3}{P378-error}{P378}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P378-1}{P378}{#1 zum L\"o\allowhyphens{}schen verwenden.}%
+\mhchem@hp@ii{#3}{P380-0}{P380}{Umgebung r\"a\allowhyphens{}umen.}%
+\mhchem@hp@ii{#3}{P381-0}{P381}{Alle Z\"u\allowhyphens{}ndquellen entfernen, wenn gefahrlos m\"o\allowhyphens{}glich.}%
+\mhchem@hp@ii{#3}{P390-0}{P390}{Versch\"u\allowhyphens{}ttete Mengen aufnehmen, um Materialsch\"a\allowhyphens{}den zu vermeiden.}%
+\mhchem@hp@ii{#3}{P391-0}{P391}{Versch\"u\allowhyphens{}ttete Mengen aufnehmen.}%
+\mhchem@hp@ii{#3}{P401.0-0}{P401}{\textellipsis{} aufbewahren.}%
+\mhchem@hp@ii{#3}{P401-error}{P401}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P401-1}{P401}{#1 aufbewahren.}%
+\mhchem@hp@ii{#3}{P402-0}{P402}{An einem trockenen Ort aufbewahren.}%
+\mhchem@hp@ii{#3}{P402+P404-0}{P402\,+\,\hskip\z@skip{}P404}{An einem trockenen Ort aufbewahren. In einem geschlossenen Beh\"a\allowhyphens{}lter aufbewahren.}%
+\mhchem@hp@ii{#3}{P403-0}{P403}{An einem gut bel\"u\allowhyphens{}fteten Ort aufbewahren.}%
+\mhchem@hp@ii{#3}{P403+P233-0}{P403\,+\,\hskip\z@skip{}P233}{An einem gut bel\"u\allowhyphens{}fteten Ort aufbewahren. Beh\"a\allowhyphens{}lter dicht verschlossen halten.}%
+\mhchem@hp@ii{#3}{P403+P235-0}{P403\,+\,\hskip\z@skip{}P235}{An einem gut bel\"u\allowhyphens{}fteten Ort aufbewahren. K\"u\allowhyphens{}hl halten.}%
+\mhchem@hp@ii{#3}{P404-0}{P404}{In einem geschlossenen Beh\"a\allowhyphens{}lter aufbewahren.}%
+\mhchem@hp@ii{#3}{P405-0}{P405}{Unter Verschluss aufbewahren.}%
+\mhchem@hp@ii{#3}{P406.0-0}{P406}{In korrosionsbest\"a\allowhyphens{}ndigem/\hskip\z@skip{}\textellipsis{} Beh\"a\allowhyphens{}lter mit widerstandsf\"a\allowhyphens{}higer Innenauskleidung aufbewahren.}%
+\mhchem@hp@ii{#3}{P406-error}{P406}{\PackageError{hpstatement}{Selection or argument missing.\MessageBreak This statement has a mandatory selection.\MessageBreak Please append .1, .2, ... to the number to make a\MessageBreak selection. Or supply a text as argument with [].\MessageBreak Or use .0 for the original form}{}}%
+\mhchem@hp@ii{#3}{P406-1}{P406}{In #1 Beh\"a\allowhyphens{}lter mit widerstandsf\"a\allowhyphens{}higer Innenauskleidung aufbewahren.}%
+\mhchem@hp@ii{#3}{P406.1-0}{P406}{In korrosionsbest\"a\allowhyphens{}ndigem Beh\"a\allowhyphens{}lter mit widerstandsf\"a\allowhyphens{}higer Innenauskleidung aufbewahren.}%
+\mhchem@hp@ii{#3}{P407-0}{P407}{Luftspalt zwischen Stapeln/\hskip\z@skip{}Paletten lassen.}%
+\mhchem@hp@ii{#3}{P410-0}{P410}{Vor Sonnenbestrahlung sch\"u\allowhyphens{}tzen.}%
+\mhchem@hp@ii{#3}{P410+P403-0}{P410\,+\,\hskip\z@skip{}P403}{Vor Sonnenbestrahlung sch\"u\allowhyphens{}tzen. An einem gut bel\"u\allowhyphens{}fteten Ort aufbewahren.}%
+\mhchem@hp@ii{#3}{P410+P412-0}{P410\,+\,\hskip\z@skip{}P412}{Vor Sonnenbestrahlung sch\"u\allowhyphens{}tzen und nicht Temperaturen \"u\allowhyphens{}ber 50\textdegree{}C/\hskip\z@skip{}122 \textdegree{}F aussetzen.}%
+\mhchem@hp@ii{#3}{P411.0-0}{P411}{Bei Temperaturen nicht \"u\allowhyphens{}ber \textellipsis{}\textdegree{}C/\hskip\z@skip{}\textellipsis{}\textdegree{}F aufbewahren.}%
+\mhchem@hp@ii{#3}{P411-error}{P411}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P411-1}{P411}{Bei Temperaturen nicht \"u\allowhyphens{}ber #1 aufbewahren.}%
+\mhchem@hp@ii{#3}{P411+P235.0-0}{P411\,+\,\hskip\z@skip{}P235}{Bei Temperaturen nicht \"u\allowhyphens{}ber \textellipsis{}\textdegree{}C/\hskip\z@skip{}\textellipsis{} \textdegree{}F aufbewahren. K\"u\allowhyphens{}hl halten.}%
+\mhchem@hp@ii{#3}{P411+P235-error}{P411\,+\,\hskip\z@skip{}P235}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P411+P235-1}{P411\,+\,\hskip\z@skip{}P235}{Bei Temperaturen nicht \"u\allowhyphens{}ber #1 aufbewahren. K\"u\allowhyphens{}hl halten.}%
+\mhchem@hp@ii{#3}{P412-0}{P412}{Nicht Temperaturen \"u\allowhyphens{}ber 50\textdegree{}C/\hskip\z@skip{}122 \textdegree{}F aussetzen.}%
+\mhchem@hp@ii{#3}{P413.0-0}{P413}{Sch\"u\allowhyphens{}ttgut in Mengen von mehr als \textellipsis{}\,kg/\hskip\z@skip{} \textellipsis{}\,lbs bei Temperaturen nicht \"u\allowhyphens{}ber \textellipsis{}\textdegree{}C/\hskip\z@skip{}\textellipsis{}\textdegree{}F aufbewahren.}%
+\mhchem@hp@ii{#3}{P413-error}{P413}{\PackageError{hpstatement}{This statement has two mandatory text arguments.\MessageBreak Please specify them with [][]}{}}%
+\mhchem@hp@ii{#3}{P413-2}{P413}{Sch\"u\allowhyphens{}ttgut in Mengen von mehr als #1 bei Temperaturen nicht \"u\allowhyphens{}ber #2 aufbewahren.}%
+\mhchem@hp@ii{#3}{P420-0}{P420}{Von anderen Materialien entfernt aufbewahren.}%
+\mhchem@hp@ii{#3}{P422.0-0}{P422}{Inhalt in/\hskip\z@skip{}unter \textellipsis{} aufbewahren}%
+\mhchem@hp@ii{#3}{P422-error}{P422}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P422-1}{P422}{Inhalt #1 aufbewahren}%
+\mhchem@hp@ii{#3}{P501.0.0-0}{P501}{Inhalt/\hskip\z@skip{}Beh\"a\allowhyphens{}lter \textellipsis{} zuf\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{P501.0-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.0-1}{P501}{Inhalt/\hskip\z@skip{}Beh\"a\allowhyphens{}lter #1 zuf\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{P501-error}{P501}{\PackageError{hpstatement}{Selection and mandatory argument missing.\MessageBreak This statement has a mandatory selection. Please\MessageBreak append .1 or .2 to the number (or use .0 for the\MessageBreak original form). Also, supply an argument with []\MessageBreak (or use an additional .0 for the original\MessageBreak form)}{}}%
+\mhchem@hp@ii{#3}{P501.1.0-0}{P501}{Inhalt \textellipsis{} zuf\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{P501.1-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.1-1}{P501}{Inhalt #1 zuf\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{P501.2.0-0}{P501}{Beh\"a\allowhyphens{}lter \textellipsis{} zuf\"u\allowhyphens{}hren.}%
+\mhchem@hp@ii{#3}{P501.2-error}{P501}{\PackageError{hpstatement}{One argument required.\MessageBreak This statement has a mandatory text argument.\MessageBreak Please specify one with []. Or use .0 for the\MessageBreak original form}{}}%
+\mhchem@hp@ii{#3}{P501.2-1}{P501}{Beh\"a\allowhyphens{}lter #1 zuf\"u\allowhyphens{}hren.}%
+}

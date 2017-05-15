@@ -1,0 +1,171 @@
+%%
+%% This is file `chemsym.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% chemsym.dtx  (with options: `paketkod')
+%% 
+%% Copyright (c) 1995-98 by Mats Dahlgren <matsd@sssk.se>.
+%% All rights reserved.  See the file `chemsym.ins' for information
+%% on how you may (re-)distribute the `chemsym' package files.
+%% You are not allowed to make any changes to this file without
+%% explicit permission from the author.
+%% 
+\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+\ProvidesPackage{chemsym}[1998/05/31 v.2.0 Chemical symbols]
+\let\h=\H
+\let\OO=\O
+\let\PP=\P
+\let\Ss=\S
+\let\re=\Re
+\let\pr=\Pr
+\@ifundefined{Sb}{\def\Sb{\protect\kemtkn{Sb}}}%
+  {\let\SB=\Sb \let\endSB=\endSb}
+\newif  \ifc@llsn  \c@llsnfalse
+\DeclareOption{collision}{\global\c@llsntrue}
+\DeclareOption*{\OptionNotUsed}
+\ProcessOptions*
+\ifc@llsn\AtEndDocument{%
+  \PackageWarningNoLine{chemsym}{Due to possible collisions with other
+  \MessageBreak packages, super- and subscrips are not avaliable
+  \MessageBreak outside math mode despite your loading of `chemsym'}}
+\else
+  \def\sprscrpt#1{\ensuremath{^{#1}}}
+  \def\sbscrpt#1{\ensuremath{_{#1}}}
+  \catcode`\^ \active
+  \catcode`\_ \active
+  \let^=\sprscrpt
+  \let_=\sbscrpt
+\fi
+\@ifundefined{cd@t}{%
+\let\cd@t=\cdot
+\def\cdot{\ensuremath{\cd@t}}}{}
+\newcommand{\nsrrm}[1]{\ensuremath{\mathrm{#1}}}
+\newcommand{\nsrrms}[2][0.1]{\ensuremath{\mathrm{#2}\kern #1em}}
+\newcommand{\kemtkn}[1]{\@ifnextchar_{\nsrrm{#1}}{\@ifnextchar^{\nsrrm{#1}}%
+  {\@ifnextchar){\nsrrm{#1}}{\@ifnextchar({\nsrrm{#1}}%
+  {\@ifnextchar]{\nsrrm{#1}}{\@ifnextchar[{\nsrrm{#1}}{\nsrrms{#1}}}}}}}}
+\renewcommand{\H}{\protect\kemtkn{H}} % modified
+\newcommand{\D}{\protect\kemtkn{D}}
+\newcommand{\He}{\protect\kemtkn{He}}
+\newcommand{\Li}{\protect\kemtkn{Li}}
+\newcommand{\Be}{\protect\kemtkn{Be}}
+%\newcommand{\B}{\protect\kemtkn{B}}
+\newcommand{\BB}{\protect\kemtkn{B}}
+\newcommand{\CC}{\protect\kemtkn{C}}
+%\newcommand{\C}{\protect\kemtkn{C}}
+\newcommand{\N}{\protect\kemtkn{N}}
+\renewcommand{\O}{\protect\kemtkn{O}} % modified
+\newcommand{\F}{\protect\kemtkn{F}}
+\newcommand{\Ne}{\protect\kemtkn{Ne}}
+\newcommand{\Na}{\protect\kemtkn{Na}}
+\newcommand{\Mg}{\protect\kemtkn{Mg}}
+\newcommand{\Al}{\protect\kemtkn{Al}}
+\newcommand{\Si}{\protect\kemtkn{Si}}
+\renewcommand{\P}{\protect\kemtkn{P}} % modified
+\renewcommand{\S}{\protect\kemtkn{S}} % modified
+\newcommand{\Cl}{\protect\kemtkn{Cl}}
+\newcommand{\Ar}{\protect\kemtkn{Ar}}
+\newcommand{\K}{\protect\kemtkn{K}}
+\newcommand{\Ca}{\protect\kemtkn{Ca}}
+\newcommand{\Sc}{\protect\kemtkn{Sc}}
+\newcommand{\Ti}{\protect\kemtkn{Ti}}
+\newcommand{\V}{\protect\kemtkn{V}}
+\newcommand{\Cr}{\protect\kemtkn{Cr}}
+\newcommand{\Mn}{\protect\kemtkn{Mn}}
+\newcommand{\Fe}{\protect\kemtkn{Fe}}
+\newcommand{\Co}{\protect\kemtkn{Co}}
+\newcommand{\Ni}{\protect\kemtkn{Ni}}
+\newcommand{\Cu}{\protect\kemtkn{Cu}}
+\newcommand{\Zn}{\protect\kemtkn{Zn}}
+\newcommand{\Ga}{\protect\kemtkn{Ga}}
+\newcommand{\Ge}{\protect\kemtkn{Ge}}
+\newcommand{\As}{\protect\kemtkn{As}}
+\newcommand{\Se}{\protect\kemtkn{Se}}
+\newcommand{\Br}{\protect\kemtkn{Br}}
+\newcommand{\Kr}{\protect\kemtkn{Kr}}
+\newcommand{\Rb}{\protect\kemtkn{Rb}}
+\newcommand{\Sr}{\protect\kemtkn{Sr}}
+\newcommand{\Y}{\protect\kemtkn{Y}}
+\newcommand{\Zr}{\protect\kemtkn{Zr}}
+\newcommand{\Nb}{\protect\kemtkn{Nb}}
+\newcommand{\Mo}{\protect\kemtkn{Mo}}
+\newcommand{\Tc}{\protect\kemtkn{Tc}}
+\newcommand{\Ru}{\protect\kemtkn{Ru}}
+\newcommand{\Rh}{\protect\kemtkn{Rh}}
+\newcommand{\Pd}{\protect\kemtkn{Pd}}
+\newcommand{\Ag}{\protect\kemtkn{Ag}}
+\newcommand{\Cd}{\protect\kemtkn{Cd}}
+\newcommand{\In}{\protect\kemtkn{In}}
+\newcommand{\Sn}{\protect\kemtkn{Sn}}
+\renewcommand{\Sb}{\protect\kemtkn{Sb}}  % modified with AMS-LaTeX
+\newcommand{\Te}{\protect\kemtkn{Te}}
+\newcommand{\I}{\protect\kemtkn{I}}
+%\newcommand{\Xe}{\protect\kemtkn{Xe}}
+\newcommand{\XXe}{\protect\kemtkn{Xe}}
+\newcommand{\Cs}{\protect\kemtkn{Cs}}
+\newcommand{\Ba}{\protect\kemtkn{Ba}}
+\newcommand{\La}{\protect\kemtkn{La}}
+\newcommand{\Ce}{\protect\kemtkn{Ce}}
+\renewcommand{\Pr}{\protect\kemtkn{Pr}} % modified
+\newcommand{\Nd}{\protect\kemtkn{Nd}}
+\newcommand{\Pm}{\protect\kemtkn{Pm}}
+\newcommand{\Sm}{\protect\kemtkn{Sm}}
+\newcommand{\Eu}{\protect\kemtkn{Eu}}
+\newcommand{\Gd}{\protect\kemtkn{Gd}}
+\newcommand{\Tb}{\protect\kemtkn{Tb}}
+\newcommand{\Dy}{\protect\kemtkn{Dy}}
+\newcommand{\Ho}{\protect\kemtkn{Ho}}
+\newcommand{\Er}{\protect\kemtkn{Er}}
+\newcommand{\Tm}{\protect\kemtkn{Tm}}
+\newcommand{\Yb}{\protect\kemtkn{Yb}}
+\newcommand{\Lu}{\protect\kemtkn{Lu}}
+\newcommand{\Hf}{\protect\kemtkn{Hf}}
+\newcommand{\Ta}{\protect\kemtkn{Ta}}
+\newcommand{\W}{\protect\kemtkn{W}}
+\renewcommand{\Re}{\protect\kemtkn{Re}} % modified
+\newcommand{\Os}{\protect\kemtkn{Os}}
+\newcommand{\Ir}{\protect\kemtkn{Ir}}
+\newcommand{\Pt}{\protect\kemtkn{Pt}}
+\newcommand{\Au}{\protect\kemtkn{Au}}
+\newcommand{\Hg}{\protect\kemtkn{Hg}}
+\newcommand{\Tl}{\protect\kemtkn{Tl}}
+\newcommand{\Pb}{\protect\kemtkn{Pb}}
+\newcommand{\Bi}{\protect\kemtkn{Bi}}
+\newcommand{\Po}{\protect\kemtkn{Po}}
+\newcommand{\At}{\protect\kemtkn{At}}
+\newcommand{\Rn}{\protect\kemtkn{Rn}}
+\newcommand{\Fr}{\protect\kemtkn{Fr}}
+\newcommand{\Ra}{\protect\kemtkn{Ra}}
+\newcommand{\Ac}{\protect\kemtkn{Ac}}
+\newcommand{\Th}{\protect\kemtkn{Th}}
+\newcommand{\Pa}{\protect\kemtkn{Pa}}
+%\newcommand{\U}{\protect\kemtkn{U}}
+\newcommand{\UU}{\protect\kemtkn{U}}
+\newcommand{\Np}{\protect\kemtkn{Np}}
+\newcommand{\Pu}{\protect\kemtkn{Pu}}
+\newcommand{\Am}{\protect\kemtkn{Am}}
+\newcommand{\Cm}{\protect\kemtkn{Cm}}
+\newcommand{\Bk}{\protect\kemtkn{Bk}}
+\newcommand{\Cf}{\protect\kemtkn{Cf}}
+\newcommand{\Es}{\protect\kemtkn{Es}}
+\newcommand{\Fm}{\protect\kemtkn{Fm}}
+\newcommand{\Md}{\protect\kemtkn{Md}}
+\newcommand{\No}{\protect\kemtkn{No}}
+\newcommand{\Lr}{\protect\kemtkn{Lr}}
+\newcommand{\Rf}{\protect\kemtkn{Rf}}
+\newcommand{\Db}{\protect\kemtkn{Db}}
+\newcommand{\Sg}{\protect\kemtkn{Sg}}
+\newcommand{\Bh}{\protect\kemtkn{Bh}}
+\newcommand{\Hs}{\protect\kemtkn{Hs}}
+\newcommand{\Mt}{\protect\kemtkn{Mt}}
+\newcommand{\Me}{\protect\kemtkn{Me}}
+\newcommand{\Et}{\protect\kemtkn{Et}}
+\newcommand{\Bu}{\protect\kemtkn{Bu}}
+\newcommand{\OH}{\protect\kemtkn{OH}}
+\newcommand{\COOH}{\protect\kemtkn{COOH}}
+\newcommand{\CH}{\protect\kemtkn{CH}}
+\endinput
+%%
+%% End of file `chemsym.sty'.

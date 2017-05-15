@@ -1,0 +1,33 @@
+--- 
+title: "麻麻说我们可以用 R Markdown 写书了"
+author: "张三"
+date: "`r Sys.Date()`"
+output:
+  bookdown::pdf_book:
+    keep_tex: yes
+    dev: "cairo_pdf"
+    latex_engine: xelatex
+    citation_package: natbib
+    template: tex/template_yihui_zh.tex
+    pandoc_args: --chapters
+    toc_depth: 3
+    toc_unnumbered: no
+    toc_appendix: yes
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+documentclass: ctexbook
+bibliography: [bib/bib.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: no
+lot: yes
+lof: yes
+geometry: [b5paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
+site: bookdown::bookdown_site
+description: "一个简单的中文书示例。"
+github-repo: yihui/bookdown-chinese
+#cover-image: images/cover.jpg
+---
+
+　　
+
+\mainmatter

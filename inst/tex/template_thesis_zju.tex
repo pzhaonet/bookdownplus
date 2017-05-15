@@ -1,0 +1,213 @@
+\documentclass[]{style/zjuthesis}
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\ImportTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
+\newcommand{\BuiltInTok}[1]{{#1}}
+\newcommand{\ExtensionTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+
+$if(natbib)$
+\usepackage{natbib}
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
+$endif$
+$if(biblatex)$
+\usepackage[$if(biblio-style)$style=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+$endif$
+
+% 该文档中首字符为“%”的均为注释行，不会在论文中出现
+
+% 论文默认为双面模式，需单面模式请将第一行换为如下所示：
+% \documentclass[oneside]{ZJUthesis}
+
+% 取消目录中链接的颜色，方便打印
+% 如需颜色，请将“false”改为“true”
+\hypersetup{colorlinks=false}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 正文字体设定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fangsong
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 论文封面部分
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 中文封面内容
+
+% 中图分类号
+\classification{$classification$}
+
+% 单位代码
+\serialnumber{$serialnumber$}
+
+% 密级，如需密级则将其前“%”去掉
+\SecretLevel{$SecretLevel$}
+
+% 学号
+\PersonalID{$PersonalID$}
+
+\title{$titleshort$}
+% 如果标题一行写不下，就写成两行，在下面的命令里写第二行，不需要两行则注释掉
+% \titletl{一行写不下写两行}
+
+%英文题目
+\Etitle{$englishtitle$}
+% 如果一行写不下，同中文题目设定，一行写不下则写两行，不需要就注释掉
+% \Etitletl{The Second Line}
+
+% 作者
+\author{$author$}
+
+\degree{$degree$}
+
+% 导师
+\supervisor{$supervisor$}
+
+% 合作导师，如果有的话，去掉注释，
+\cpsupervisor{$cpsupervisor$}
+
+% 专业名称
+\major{$major$}
+
+% 研究方向
+\researchdm{$researchdm$}
+
+% 所属学院
+\institute{$institute$}
+
+%论文提交日期
+\submitdate{$submitdate$}
+
+% 答辨日期
+\defenddate{$defenddate$}
+
+% 生成封面
+\makeCoverPage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 中文题名页内容
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 论文评阅人信息 注意两字名与三字名，两字职称与三字职称的写法，便于对齐
+% 多余的名额直接注释掉即可，比如三个评阅人，把评阅人D，E注释掉即可
+\reviewersA{$reviewersA$}
+\reviewersB{$reviewersB$}
+\reviewersC{$reviewersC$}
+\reviewersD{$reviewersD$}
+\reviewersE{$reviewersE$}
+
+% 答辩委员会信息，如果某一个单位比较长，
+% 请在其它较短后面补上{hspace{Xem}}，X是比最长的单位名少几个字
+% 如果实际人数少于6人，多余的注释掉即可
+\chairman{$chairman$}
+\commissionerA{$commissionerA$}
+\commissionerB{$commissionerB$}
+\commissionerC{$commissionerC$}
+\commissionerD{$commissionerD$}
+\commissionerE{$commissionerE$}
+
+% 生成中文题名页
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 英文封面内容，硕士论文可不要此页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 英文题名
+\englishtitle{$englishtitle$}
+% 如果题名一行写不下，就写到第二行，不需要则将其注释掉
+% \englishtitletl{The Second title Line}
+
+% 评阅人信息，名字，职称，单位尽量用简写，否则会写不下
+\EreviewersA{$EreviewersA$}
+\EreviewersB{$EreviewersB$}
+\EreviewersC{$EreviewersC$}
+\EreviewersD{$EreviewersD$}
+\EreviewersE{$EreviewersE$}
+
+% 答辩委员会信息，同样尽量用简写，否则会写不下
+\Echairman{$Echairman$}
+\EcommissionerA{$EcommissionerA$}
+\EcommissionerB{$EcommissionerB$}
+\EcommissionerC{$EcommissionerC$}
+\EcommissionerD{$EcommissionerD$}
+\EcommissionerE{$EcommissionerE$}
+
+% 生成英文封面
+\makeenglishtitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 原创声明与版权协议页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 生成原创声明与版权协议页
+\makeOSandCPRTpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 论文部分开始
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ZJUfrontmatter
+
+
+
+$body$
+
+
+$if(natbib)$
+$if(bibliography)$
+$if(biblio-title)$
+$if(book-class)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+
+$endif$
+$endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+
+$endif$
+
+\end{document}

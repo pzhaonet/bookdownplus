@@ -1,0 +1,257 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Compact Laboratory Book
+% LaTeX Template
+% Version 1.0 (4/6/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Joan Queralt Gil (http://phobos.xtec.cat/jqueralt) using the labbook class by
+% Frank Kuster (http://www.ctan.org/tex-archive/macros/latex/contrib/labbook/)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Important note:
+% This template requires the labbook.cls file to be in the same directory as the
+% .tex file. The labbook.cls file provides the necessary structure to create the
+% lab book.
+%
+% The \lipsum[#] commands throughout this template generate dummy text
+% to fill the template out. These commands should all be removed when 
+% writing lab book content.
+%
+% HOW TO USE THIS TEMPLATE 
+% Each day in the lab consists of three main things:
+%
+% 1. LABDAY: The first thing to put is the \labday{} command with a date in 
+% curly brackets, this will make a new section showing that you are working
+% on a new day.
+%
+% 2. EXPERIMENT/SUBEXPERIMENT: Next you need to specify what 
+% experiment(s) and subexperiment(s) you are working on with a 
+% \experiment{} and \subexperiment{} commands with the experiment 
+% shorthand in the curly brackets. The experiment shorthand is defined in the 
+% 'DEFINITION OF EXPERIMENTS' section below, this means you can 
+% say \experiment{pcr} and the actual text written to the PDF will be what 
+% you set the 'pcr' experiment to be. If the experiment is a one off, you can 
+% just write it in the bracket without creating a shorthand. Note: if you don't 
+% want to have an experiment, just leave this out and it won't be printed.
+%
+% 3. CONTENT: Following the experiment is the content, i.e. what progress 
+% you made on the experiment that day.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------                               
+
+\documentclass[fontsize=11pt, % Document font size
+                             paper=a4, % Document paper type
+                             twoside, % Shifts odd pages to the left for easier reading when printed, can be changed to oneside
+                             captions=tableheading,
+                             index=totoc,
+                             hyperref]{labbook}
+ 
+\usepackage[bottom=10em]{geometry} % Reduces the whitespace at the bottom of the page so more text can fit
+
+\usepackage[english]{babel} % English language
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage[utf8]{inputenc} % Uses the utf8 input encoding
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+
+\usepackage[osf]{mathpazo} % Palatino as the main font
+\linespread{1.05}\selectfont % Palatino needs some extra spacing, here 5% extra
+\usepackage[scaled=.88]{beramono} % Bera-Monospace
+\usepackage[scaled=.86]{berasans} % Bera Sans-Serif
+
+\usepackage{booktabs,array} % Packages for tables
+
+\usepackage{amsmath} % For typesetting math
+\usepackage{graphicx} % Required for including images
+\usepackage{etoolbox}
+\usepackage[norule]{footmisc} % Removes the horizontal rule from footnotes
+\usepackage{lastpage} % Counts the number of pages of the document
+
+\usepackage[dvipsnames]{xcolor}  % Allows the definition of hex colors
+\definecolor{titleblue}{rgb}{0.16,0.24,0.64} % Custom color for the title on the title page
+\definecolor{linkcolor}{rgb}{0,0,0.42} % Custom color for links - dark blue at the moment
+
+\addtokomafont{title}{\Huge\color{titleblue}} % Titles in custom blue color
+\addtokomafont{chapter}{\color{OliveGreen}} % Lab dates in olive green
+\addtokomafont{section}{\color{Sepia}} % Sections in sepia
+\addtokomafont{pagehead}{\normalfont\sffamily\color{gray}} % Header text in gray and sans serif
+\addtokomafont{caption}{\footnotesize\itshape} % Small italic font size for captions
+\addtokomafont{captionlabel}{\upshape\bfseries} % Bold for caption labels
+\addtokomafont{descriptionlabel}{\rmfamily}
+\setcapwidth[r]{10cm} % Right align caption text
+\setkomafont{footnote}{\sffamily} % Footnotes in sans serif
+
+\deffootnote[4cm]{4cm}{1em}{\textsuperscript{\thefootnotemark}} % Indent footnotes to line up with text
+
+\DeclareFixedFont{\textcap}{T1}{phv}{bx}{n}{1.5cm} % Font for main title: Helvetica 1.5 cm
+\DeclareFixedFont{\textaut}{T1}{phv}{bx}{n}{0.8cm} % Font for author name: Helvetica 0.8 cm
+
+\usepackage[nouppercase,headsepline]{scrpage2} % Provides headers and footers configuration
+\pagestyle{scrheadings} % Print the headers and footers on all pages
+\clearscrheadfoot % Clean old definitions if they exist
+
+\automark[chapter]{chapter}
+\ohead{\headmark} % Prints outer header
+
+\setlength{\headheight}{25pt} % Makes the header take up a bit of extra space for aesthetics
+\setheadsepline{.4pt} % Creates a thin rule under the header
+\addtokomafont{headsepline}{\color{lightgray}} % Colors the rule under the header light gray
+
+\ofoot[\normalfont\normalcolor{\thepage\ |\  \pageref{LastPage}}]{\normalfont\normalcolor{\thepage\ |\  \pageref{LastPage}}} % Creates an outer footer of: "current page | total pages"
+
+% These lines make it so each new lab day directly follows the previous one i.e. does not start on a new page - comment them out to separate lab days on new pages
+\makeatletter
+\patchcmd{\addchap}{\if@openright\cleardoublepage\else\clearpage\fi}{\par}{}{}
+\makeatother
+\renewcommand*{\chapterpagestyle}{scrheadings}
+
+% These lines make it so every figure and equation in the document is numbered consecutively rather than restarting at 1 for each lab day - comment them out to remove this behavior
+\usepackage{chngcntr}
+\counterwithout{figure}{labday}
+\counterwithout{equation}{labday}
+
+% Hyperlink configuration
+\usepackage[
+    pdfauthor={}, % Your name for the author field in the PDF
+    pdftitle={Laboratory Journal}, % PDF title
+    pdfsubject={}, % PDF subject
+    bookmarksopen=true,
+    linktocpage=true,
+    urlcolor=linkcolor, % Color of URLs
+    citecolor=linkcolor, % Color of citations
+    linkcolor=linkcolor, % Color of links to other pages/figures
+    backref=page,
+    pdfpagelabels=true,
+    plainpages=false,
+    colorlinks=true, % Turn off all coloring by changing this to false
+    bookmarks=true,
+    pdfview=FitB]{hyperref}
+
+\usepackage[stretch=10]{microtype} % Slightly tweak font spacing for aesthetics
+
+%\setlength\parindent{0pt} % Uncomment to remove all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	DEFINITION OF EXPERIMENTS
+%----------------------------------------------------------------------------------------
+
+% Template: \newexperiment{<abbrev>}[<short form>]{<long form>}
+% <abbrev> is the reference to use later in the .tex file in \experiment{}, the <short form> is only used in the table of contents and running title - it is optional, <long form> is what is printed in the lab book itself
+
+\newexperiment{example}[Example experiment]{This is an example experiment}
+\newexperiment{example2}[Example experiment 2]{This is another example experiment}
+\newexperiment{example3}[Example experiment 3]{This is yet another example experiment}
+
+\newsubexperiment{subexp_example}[Example sub-experiment]{This is an example sub-experiment}
+\newsubexperiment{subexp_example2}[Example sub-experiment 2]{This is another example sub-experiment}
+\newsubexperiment{subexp_example3}[Example sub-experiment 3]{This is yet another example sub-experiment}
+
+%----------------------------------------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{amsthm}
+\makeatletter
+\def\thm@space@setup{%
+  \thm@preskip=8pt plus 2pt minus 4pt
+  \thm@postskip=\thm@preskip
+}
+\makeatother
+
+$if(natbib)$
+\usepackage{natbib}
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
+$endif$
+$if(biblatex)$
+\usepackage[$if(biblio-style)$style=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+$endif$
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+% \title{\textcap{Laboratory Journal \\[1cm]  
+% \textaut{Beginning 30-05-2012}}}
+
+% \author{
+    % \textaut{John Smith}\\ \\ % Your name
+    % Master of Science % Your degree
+% }
+% \date{} % No date by default, add \today if you wish to include the publication date
+
+$if(title)$
+  \title{$title$}
+$else$
+  \title{}
+$endif$
+$if(subtitle)$
+\subtitle{$subtitle$}
+$endif$
+
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(institute)$
+\providecommand{\institute}[1]{}
+\institute{$for(institute)$$institute$$sep$ \and $endfor$}
+$endif$
+
+$if(date)$
+  \date{$date$}
+$else$
+  \date{}
+$endif$
+
+\maketitle % Title page
+
+\printindex
+\tableofcontents % Table of contents
+\newpage % Start lab look on a new page
+
+\begin{addmargin}[4cm]{0cm} % Makes the text width much shorter for a compact look
+
+\pagestyle{scrheadings} % Begin using headers
+
+%----------------------------------------------------------------------------------------
+%	LAB BOOK CONTENTS
+%----------------------------------------------------------------------------------------
+
+$body$
+
+%\include{body}
+
+%----------------------------------------------------------------------------------------
+\end{addmargin}
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+$if(natbib)$
+$if(bibliography)$
+$if(biblio-title)$
+$if(book-class)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$endif$
+$endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+$endif$
+
+\end{document}

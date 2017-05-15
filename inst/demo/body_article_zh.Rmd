@@ -1,0 +1,64 @@
+
+## 背景 {intro}
+
+[bookdown+](https://github.com/dapengde/bookdown-plus)，听起来像是跟R[@R-base]的扩展包`bookdown`[@R-bookdown]有关吧? 
+
+一点没错！我们知道，`bookdown`天生是个用来写编程书籍的称手工具。只是，这仅仅是硬币的一面。`bookdown`的功能远远不止如此。它就像一个美味的蛋糕，我等啊等啊，等着谁把它切开，实在等不及了，就自己下手吧。所以，我弄了个[bookdown+](https://github.com/dapengde/bookdown-plus)。
+
+[bookdown+](https://github.com/dapengde/bookdown-plus)是`bookdown`的扩展。我数年前收集了一些\(\LaTeX\)模板，现在我把他们整理到[bookdown+](https://github.com/dapengde/bookdown-plus)里，这样就可以开开心心在`bookdown`的环境里做喜欢的事情。[bookdown+](https://github.com/dapengde/bookdown-plus) 展示了硬币的另一面：你可以用它来写写期刊论文、化学分子式、信件、日历、甚至日记。
+
+在不久的未来，肯定会出现很多官方的bookdown模板，但是我不想等了。你要是也等不及，就跟我来一起使用或开发[bookdown+]吧！
+
+## 快速入门 {quick}
+
+### 预备 {step0}
+
+在开始前，你需要安装 R, RStudio, bookdown，和其他依赖的软件和包(例如 `Pandoc`, \(\LaTeX\), `rmarkdown`, `rticle`, `knitr`等)。详见[bookdown官方手册](https://bookdown.org/yihui/bookdown/).
+
+准备好后，从Github[下载`bookdown+`](https://github.com/dapengde/bookdown-plus/archive/master.zip)压缩文件。解压缩到你的电脑里，在得到的文件夹里找到 `_start.Rproj`文件，双击就会在RStudio里打开一个项目。
+
+文件夹里还有个`_runme.R`文件。你可以双击打开并运行。下面是对这个文件里代码的详细解释。
+
+### 第1步：标题和作者 {step1}
+
+改成你自己书的标题和作者名。
+
+```{r, eval=FALSE}
+title <- 'bookdown+: Authoring Articles, Mails, Guitar books, Chemical Molecular
+ Formulae and Equations with R bookdown'
+author <- 'Peng Zhao'
+```
+
+### 第2步: 模板 {step2}
+
+在给定的可用模板里选择你想要的。这里我们选第8个。
+
+```{r, eval=FALSE}
+templates  <- c('article',     #1, academic article
+                'article_zh',  #2, academic article in Chinese
+                'calendar',    #3, calendar, in progress
+                'chemistry',   #4, chemical molecular formulae and equations
+                'chemistry_zh',#5, in Chinese,
+                'guitar',      #6, guitar book
+                'mail',        #7, mail, in progress
+                'journal',     #8, laboratory journal, or personal diary
+                'mini',        #9, a mini demo by Yihui
+                'original',    #10, the original demo by Yihui
+                'book_zh'      #11, the demo in Chinese by Yihui
+)
+template <- templates[8]
+```
+
+运行 `fun/build.R`。
+
+```{r, eval=FALSE}
+source('fun/build.R')
+```
+
+### 第3步: 成书  {step3}
+
+现在按下 `ctrl+shift+b` 快捷键，你就会在新生成的`book/`文件里找到一本示例书。打开看看吧！
+
+你自己的文字只需在`body.Rmd`修改，写完后重复本步即可。
+
+祝你玩得愉快！

@@ -1,0 +1,190 @@
+% Preamble %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[headsepline, twoside, openright]{scrreprt}
+% \makeindex
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage[ngerman]{babel}     %deutsche Silbentrennung	
+\usepackage[english]{babel}     %deutsche Silbentrennung	
+\usepackage[automark]{scrpage2}
+\usepackage{textcomp}
+\usepackage{verbatim}
+\usepackage{pifont}
+
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\clubpenalty=10000
+
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+\pagestyle{headings}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{url}
+%\usepackage{cite}
+\usepackage[inner=3.5cm, outer = 3.5 cm]{geometry}
+\usepackage{graphicx}
+\usepackage{url}         	
+\usepackage{float}
+\usepackage{setspace}	
+\usepackage{subfigure}
+\usepackage{titleref}
+\usepackage[round,authoryear]{natbib}
+\numberwithin{equation}{chapter}
+\usepackage[bf]{caption2}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{booktabs} % 三线表
+\usepackage[figuresright]{rotating}
+\usepackage{multicol} %用于实现在同一页中实现不同的分栏
+\usepackage{style/losymbol} %添加符号列表
+%\usepackage{array} % 表格居中并且能够设置宽度
+% 压缩pdf体积
+%\pdfcompresslevel=9
+%\pdfminorversion=5
+%\pdfobjcompresslevel=3
+
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\renewcommand{\captionfont}{\small\slshape}
+\renewcommand{\contentsname}{Contents}
+%\renewcommand{\figurename}{Abb.}
+%\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+%\makeatletter \@addtoreset{figure}{section} \makeatother
+%\renewcommand{\thetable}{\arabic{section}.\arabic{table}}
+%\makeatletter \@addtoreset{table}{section} \makeatother
+
+\parindent 0pt
+\setlength{\parskip}{1em}
+% Preamble %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}             %hier beginnt das Document 2
+
+%% -----------------------------------------------------------------------------
+%% Title page
+%% -----------------------------------------------------------------------------
+\titlehead{}
+\title{$title$}
+\subject{\normalfont A dissertation submitted to the
+         \vspace{.5cm} \\
+         \scshape Bayreuth Graduate School of Mathematical and Natural Sciences (BAYNAT)\\
+                  University of Bayreuth
+         \vspace{1.0cm}\\
+         \normalfont to attain the academic degree of\\
+        \scshape Doctor of Natural Science (Dr. rer. nat.)}
+\author{\scshape $author$\\
+        M.Sc. Environmental Sciences
+        \vspace{.5cm} \\
+        born x xxx, 2000\\
+        in China}
+%\date{\vspace{.5cm} Bayreuth, \today}
+\date{\vspace{.5cm} Draft on \today}
+\publishers{supervised by \scshape Dr. J. L.}
+
+\maketitle
+\onehalfspacing
+\pagenumbering{roman}
+\tableofcontents
+\listofsymbols
+\newpage
+
+%% -----------------------------------------------------------------------------
+%% Contents %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\tableofcontents
+%Abbreviations
+%\addsymbol{~}{~}
+\addsymbol{{\bf Abbreviations}}{~}
+\addsymbol{ASL}{above sea level}
+\addsymbol{DOY}{day of the year: Jan. 1 = 1}
+\addsymbol{EBC}{energy balance closure}
+\addsymbol{ET}{evapotranspiration}
+\addsymbol{EV}{evaporation}
+\addsymbol{GPP}{gross primary productivity}
+\addsymbol{IA}{index of agreement}
+\addsymbol{LAI}{leaf area index}
+\addsymbol{MAE}{mean average error}
+\addsymbol{NEE}{net ecosystem exchange of carbon dioxide}
+\addsymbol{NRMSE}{normalized root mean square error}
+\addsymbol{NSeff}{Nash-Sutcliffe model efficiency coefficient}
+\addsymbol{PM}{Penman-Monteith}
+\addsymbol{PPFD}{photosynthetic photon flux density}
+\addsymbol{PT}{Priestley-Taylor}
+\addsymbol{RH}{relative humidity}
+\addsymbol{RMSE}{root mean square error}
+\addsymbol{rSD}{relative standard deviation}
+\addsymbol{SD}{standard deviation}
+\addsymbol{SE}{standard error}
+\addsymbol{TR}{transpiraiton}
+\addsymbol{VPD}{vapour pressure deficit}
+%Symbols
+% here is a bug of bookdown
+
+% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addchap{Summary}
+clearpage
+\addchap{Zusammenfassung}
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+
+$body$
+
+\chapter{Materials and Methods}
+\chapter{Results and discussions}
+\chapter{Conclusions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% References %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%$if(natbib)$
+%$if(bibliography)$
+%$if(biblio-title)$
+%$if(book-class)$
+%\renewcommand\bibname{$biblio-title$}
+%$else$
+%\renewcommand\refname{$biblio-title$}
+%$endif$
+%$endif$
+%\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+%$endif$
+%$endif$
+%$if(biblatex)$
+%\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+%$endif$
+
+\bibliographystyle{plainnat}
+\bibliography{bib/bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendix %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\addchap{Appendix}
+\appendix
+\makeatletter \@addtoreset{figure}{section} \makeatother
+\makeatletter \@addtoreset{table}{section} \makeatother
+\renewcommand*{\thechapter}{\Alph{section}}
+\renewcommand\thefigure{\Alph{section}.\arabic{figure}}
+\renewcommand\thetable{\Alph{section}.\arabic{table}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addchap{Acknowledgement}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Erkl\"{a}rung %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addchap{Eidesstattliche Erkl\"{a}rung}
+
+\vspace{5em}
+\noindent
+Hiermit erkl\"{a}re ich eidesstattlich, dass ich die vorliegende Arbeit selbst\"{a}ndig angerfertigt habe. Die aus fremden Quellen direkt oder indirekt \"{u}bernommenen Gedanken sind als solche kenntlich gemacht. Die Arbeit wurde bisher keiner anderen Pr\"{u}fungsbeh\"{o}rde vorgelegt und auch nicht ver\"{o}ffentlicht.  Ich bin mir bewusst, dass eine unwahre Erkl\"{a}rung rechtliche Folgen haben kann.
+
+\vspace{7em}
+\noindent
+Bayreuth, den \today
+\\[2em]
+
+$author$
+
+\noindent
+\rule[-0.1cm]{5cm}{0.01cm}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

@@ -1,0 +1,1108 @@
+% --------------------------------------------------------------------------
+% the CHEMGREEK package
+%
+%   interface for upright greek letters for use in chemistry
+%
+% --------------------------------------------------------------------------
+% Clemens Niederberger
+% --------------------------------------------------------------------------
+% https://github.org/cgnieder/chemgreek/
+% contact@mychemistry.eu
+% --------------------------------------------------------------------------
+% If you have any ideas, questions, suggestions or bugs to report, please
+% feel free to contact me.
+% --------------------------------------------------------------------------
+% Copyright 2011-2016 Clemens Niederberger
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Clemens Niederberger.
+% --------------------------------------------------------------------------
+\RequirePackage{expl3,xparse,amstext}
+\ExplSyntaxOn
+\tl_const:Nn \c_chemgreek_date_tl {2016/12/20}
+\tl_const:Nn \c_chemgreek_version_tl {1.1}
+\tl_const:Nn \c_chemgreek_info_tl {interface for upright greek letters for use in chemistry}
+
+\ProvidesExplPackage{chemgreek}
+  {\c_chemgreek_date_tl}
+  {\c_chemgreek_version_tl}
+  {\c_chemgreek_info_tl\c_space_tl (CN)}
+
+% ----------------------------------------------------------------------------
+% temporary variables:
+\seq_new:N \l__chemgreek_tmpa_seq 
+\tl_new:N  \l__chemgreek_tmpa_tl
+\tl_new:N  \l__chemgreek_tmpb_tl
+\int_new:N \l__chemgreek_tmpa_int
+\int_new:N \g__chemgreek_tmpa_int
+
+% ----------------------------------------------------------------------------
+% an l3 conditional that can test 2e's conditionals that go like
+%   \iffoo ... \else ... \fi
+% see http://tex.stackexchange.com/a/119806/5049
+\prg_new_conditional:Npnn \chemgreek_latex_if:n #1 {p,T,F,TF}
+  { \use:c { if #1 } \prg_return_true: \else: \prg_return_false: \fi: }
+
+% let's see if we can test if a package has been loaded after begin document:
+\prg_new_conditional:Npnn \chemgreek_if_package_loaded:n #1 {p,T,F,TF}
+  {
+    \cs_if_exist:cTF { ver@#1.sty }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_generate_variant:Nn \chemgreek_if_package_loaded:nTF { V }
+\cs_generate_variant:Nn \chemgreek_if_package_loaded:nF  { V }
+
+% check if a package has been loaded with a certain option:
+\prg_new_protected_conditional:Npnn \chemgreek_if_package_with:nn #1#2 {T,F,TF}
+  {
+    \cs_if_exist:cTF {opt@#1.sty}
+      {
+        \clist_if_in:cnTF {opt@#1.sty} {#2}
+          { \prg_return_true: }
+          { \prg_return_false: }
+      }
+      { \prg_return_false: }
+  }
+
+% check if a mapping needs a package:
+\tl_new:N \l__chemgreek_mapping_package_tl
+\prg_new_protected_conditional:Npnn \chemgreek_if_mapping_package:n #1 {T,F,TF}
+  {
+    \prop_get:NnN \l__chemgreek_packages_prop {#1}
+      \l__chemgreek_mapping_package_tl
+    \quark_if_no_value:VTF \l__chemgreek_mapping_package_tl
+      { \prg_return_false: }
+      { \prg_return_true: }
+  }
+
+% check if needed package has been loaded:
+\prg_new_protected_conditional:Npnn \chemgreek_if_mapping_package_loaded:n #1 {T,F,TF}
+  {
+    \chemgreek_if_mapping_package:nTF {#1}
+      {
+        \chemgreek_if_package_loaded:VTF \l__chemgreek_mapping_package_tl
+          { \prg_return_true: }
+          { \prg_return_false: }
+      }
+      { \prg_return_true: }
+  }
+
+% ----------------------------------------------------------------------------
+% messages
+\msg_new:nnn {chemgreek} {mapping-not-defined}
+  {
+    You~ chose~ the~ mapping~ `#1'~ \msg_line_context: \c_space_tl which~ has~
+    apparently~ not~ been~ defined,~ yet.~ If~ this~ is~ due~ to~ a~
+    miss-spelling~ you~ need~ to~ declare~ it~ first~ via~ \token_to_str:N
+    \newchemgreekmapping \c_space_tl or~ \token_to_str:N
+    \declarechemgreekmapping .
+  }
+
+\msg_new:nnn {chemgreek} {mapping-already-defined}
+  {
+    It~ seems~ you're~ trying~ to~ define~ the~ mapping~ `#1'~
+    \msg_line_context: .~ However,~ this~ mapping~ does~ already~ exist.~ If~
+    this~ is~ not~ due~ to~ a~ miss-spelling~ you~ need~ to~ redefine~ it~
+    via~ \token_to_str:N \renewchemgreekmapping .
+  }
+
+\msg_new:nnn {chemgreek} {mapping-active}
+  {
+    The~ mapping~ `#1'~ already~ is~ active~ \msg_line_context: .~ I'm~ doing~
+    nothing.
+  }
+
+\msg_new:nnn {chemgreek} {mapping-activated}
+  { Activating~ mapping~ `#1'~ \msg_line_context: . }
+
+\msg_new:nnn {chemgreek} {package-missing}
+  {
+    You're~ trying~ to~ activate~ the~ mapping~ `#1'~ which~ needs~ package~
+    `#2'~ loaded.~ However,~ package~ `#2'~ does~ not~ seem~ to~ be~ loaded~
+    \msg_line_context: .~ I'm~ loading~ the~ `default'~ mapping~ instead.
+  }
+
+\msg_new:nnn {chemgreek} {command-dropped}
+  {
+    The~ command~ \token_to_str:N #1  has~ been~ dropped.~ Use~ \token_to_str:N #2
+    instead~ \msg_line_context: .
+  }
+
+% ----------------------------------------------------------------------------
+% define a dropped command with hints to the corresponding new one:
+\cs_new_protected:Npn \chemgreek_define_dropped:NN #1#2
+  {
+    \cs_new_protected:Npn #1
+      { \msg_error:nnnn {chemgreek} {command-dropped} {#1} {#2} }
+  }
+\cs_generate_variant:Nn \chemgreek_define_dropped:NN { cc }
+
+% ----------------------------------------------------------------------------
+% a tokenlist constant that will be used to build the mapping property lists
+% both for uppercase and lowercase and also for setting the output macros
+\tl_const:Nn \c__chemgreek_alphabet_tl
+  {
+    { alpha }   %  1
+    { beta }    %  2
+    { gamma }   %  3
+    { delta }   %  4
+    { epsilon } %  5
+    { zeta }    %  6
+    { eta }     %  7
+    { theta }   %  8
+    { iota }    %  9
+    { kappa }   % 10
+    { lambda }  % 11
+    { mu }      % 12
+    { nu }      % 13
+    { xi }      % 14
+    { omikron } % 15
+    { pi }      % 16
+    { rho }     % 17
+    { sigma }   % 18
+    { tau }     % 19
+    { upsilon } % 20
+    { phi }     % 21
+    { chi }     % 22
+    { psi }     % 23
+    { omega }   % 24
+  }
+
+% ----------------------------------------------------------------------------
+% variants of kernel functions:
+\cs_generate_variant:Nn \prop_put:Nnn          { cxV }
+\cs_generate_variant:Nn \prop_item:Nn          { cV }
+\cs_generate_variant:Nn \tl_if_eq:nnTF         { V }
+\cs_generate_variant:Nn \msg_warning:nnnn      { nnnV }
+\cs_generate_variant:Nn \quark_if_no_value:nTF { V }
+
+% ----------------------------------------------------------------------------
+% helper function to retrieve upper- and lowercase entries while the mapping
+% happens:
+\cs_new_protected:Npn \__chemgreek_get_upper_lower:w #1 / #2 \q_stop
+  {
+    \tl_set:Nn \l__chemgreek_tmpa_tl {#1}
+    \tl_set:Nn \l__chemgreek_tmpb_tl {#2}
+  }
+
+% ----------------------------------------------------------------------------
+% a conditional for testing if a mapping exists:
+\prg_new_conditional:Npnn \chemgreek_if_mapping_exists:n #1 {p,T,F,TF}
+  {
+    \bool_if:nTF
+      {
+        \prop_if_exist_p:c { l__chemgreek_uppercase_mapping_#1_prop } &&
+        \prop_if_exist_p:c { l__chemgreek_lowercase_mapping_#1_prop }
+      }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+% a conditional for testing if a mapping is active:
+\tl_new:N \l_chemgreek_active_mapping_tl
+\prg_new_conditional:Npnn \chemgreek_if_mapping_active:n #1 {p,T,F,TF}
+  {
+    \tl_if_eq:NcTF
+      \l_chemgreek_active_mapping_tl
+      { c__chemgreek_mapping_#1_tl }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+
+% ----------------------------------------------------------------------------
+% a property lists that holds the needed package names for a mapping
+\prop_new:N \l__chemgreek_packages_prop
+
+% ----------------------------------------------------------------------------
+% a function that ensures we're in text mode:
+
+\cs_new_protected:Npn \chemgreek_text:n #1
+  { \ensuremath { \text {#1} } }
+
+% ----------------------------------------------------------------------------
+% the main mapping function:
+% #1: mapping-name
+% #2: package name
+% #3: mapping entries
+\cs_new_protected:Npn \chemgreek_declare_mapping:nnn #1#2#3
+  {
+    \prop_if_exist:cF { l__chemgreek_uppercase_mapping_#1_prop }
+      { \prop_new:c { l__chemgreek_uppercase_mapping_#1_prop } }
+    \prop_if_exist:cF { l__chemgreek_lowercase_mapping_#1_prop }
+      { \prop_new:c { l__chemgreek_lowercase_mapping_#1_prop } }
+    \tl_if_exist:cF { c__chemgreek_mapping_#1_tl }
+      { \tl_const:cn { c__chemgreek_mapping_#1_tl } {#1} }
+    \tl_if_blank:nTF {#2}
+      { \prop_remove:Nn \l__chemgreek_packages_prop {#1} }
+      { \prop_put:Nnn \l__chemgreek_packages_prop {#1} {#2} }
+    \__chemgreek_set_mapping:nn {#1} {#3}
+  }
+
+\cs_new_protected:Npn \chemgreek_new_mapping:nnn #1#2#3
+  {
+    \chemgreek_if_mapping_exists:nTF {#1}
+      { \msg_error:nnn {chemgreek} {mapping-already-defined} {#1} }
+      { \chemgreek_declare_mapping:nnn {#1} {#2} {#3} }
+  }
+
+\cs_new_protected:Npn \chemgreek_renew_mapping:nnn #1#2#3
+  {
+    \chemgreek_if_mapping_exists:nTF {#1}
+      { \chemgreek_declare_mapping:nnn {#1} {#2} {#3} }
+      { \msg_error:nnn {chemgreek} {mapping-not-defined} {#1} }
+  }
+
+\cs_new_protected:Npn \__chemgreek_set_mapping:nn #1#2
+  {
+    \prop_clear:c { l__chemgreek_lowercase_mapping_#1_prop }
+    \prop_clear:c { l__chemgreek_uppercase_mapping_#1_prop }
+    \int_zero:N \l__chemgreek_tmpa_int
+    \clist_map_inline:nn {#2}
+      {
+        \int_incr:N \l__chemgreek_tmpa_int
+        \__chemgreek_get_upper_lower:w ##1 \q_stop
+        \prop_put:cxV { l__chemgreek_lowercase_mapping_#1_prop }
+          { \tl_item:Nn \c__chemgreek_alphabet_tl { \l__chemgreek_tmpa_int } }
+          \l__chemgreek_tmpa_tl
+        \prop_put:cxV { l__chemgreek_uppercase_mapping_#1_prop }
+          { \tl_item:Nn \c__chemgreek_alphabet_tl { \l__chemgreek_tmpa_int } }
+          \l__chemgreek_tmpb_tl
+      }
+  }
+
+% aliasing mappings:
+% #1: new mapping
+% #2: existing mapping
+\cs_new_protected:Npn \chemgreek_new_mapping_alias:nn #1#2
+  {
+    \chemgreek_if_mapping_exists:nTF {#1}
+      { \msg_error:nnn {chemgreek} {mapping-already-defined} {#1} }
+      {
+        \chemgreek_if_mapping_exists:nTF {#2}
+          { \chemgreek_declare_mapping_alias:nn {#1} {#2} }
+          { \msg_error:nnn {chemgreek} {mapping-not-defined} {#2} }
+      }
+  }
+
+\cs_new_protected:Npn \chemgreek_renew_mapping_alias:nn #1#2
+  {
+    \chemgreek_if_mapping_exists:nTF {#1}
+      {
+        \chemgreek_if_mapping_exists:nTF {#2}
+          { \chemgreek_declare_mapping_alias:nn {#1} {#2} }
+          { \msg_error:nnn {chemgreek} {mapping-not-defined} {#2} }
+      }
+      { \msg_error:nnn {chemgreek} {mapping-not-defined} {#1} }
+  }
+
+\cs_new_protected:Npn \chemgreek_declare_mapping_alias:nn #1#2
+  {
+    \chemgreek_if_mapping_exists:nT {#2}
+      {
+        \prop_if_exist:cF { l__chemgreek_uppercase_mapping_#1_prop }
+          { \prop_new:c { l__chemgreek_uppercase_mapping_#1_prop } }
+        \prop_if_exist:cF { l__chemgreek_lowercase_mapping_#1_prop }
+          { \prop_new:c { l__chemgreek_lowercase_mapping_#1_prop } }
+        \prop_get:NnNT \l__chemgreek_packages_prop {#2} \l__chemgreek_tmpa_tl
+          { \prop_put:NnV \l__chemgreek_packages_prop {#1} \l__chemgreek_tmpa_tl }
+        \prop_put:Nnn \l__chemgreek_packages_prop {#1} {#2}
+        \tl_map_inline:Nn \c__chemgreek_alphabet_tl
+          {
+            \prop_put:cnx { l__chemgreek_uppercase_mapping_#1_prop } {##1}
+              { \prop_item:cn { l__chemgreek_uppercase_mapping_#2_prop } {##1} }
+            \prop_put:cnx { l__chemgreek_lowercase_mapping_#1_prop } {##1}
+              { \prop_item:cn { l__chemgreek_lowercase_mapping_#2_prop } {##1} }
+          }
+      }
+  }
+
+% ----------------------------------------------------------------------------
+% the user commands:
+
+% #1: package name (optional)
+% #2: mapping-name
+% #3: mapping entries
+\NewDocumentCommand \newchemgreekmapping { O{}mm }
+  { \chemgreek_new_mapping:nnn {#2} {#1} {#3} }
+
+\NewDocumentCommand \renewchemgreekmapping { O{}mm }
+  { \chemgreek_renew_mapping:nnn {#2} {#1} {#3} }
+
+\NewDocumentCommand \declarechemgreekmapping { O{}mm }
+  { \chemgreek_declare_mapping:nnn {#2} {#1} {#3} }
+
+% #1: new mapping
+% #2: existing mapping
+\NewDocumentCommand \newchemgreekmappingalias { mm }
+  { \chemgreek_new_mapping_alias:nn {#1} {#2} }
+
+\NewDocumentCommand \renewchemgreekmappingalias { mm }
+  { \chemgreek_renew_mapping_alias:nn {#1} {#2} }
+
+\NewDocumentCommand \declarechemgreekmappingalias { mm }
+  { \chemgreek_declare_mapping_alias:nn {#1} {#2} }
+  
+% ----------------------------------------------------------------------------
+% a function to selectively change specific entries in a mapping:
+
+% this will hold all changed mappings until they've been (re-)activated
+% logically a sequence or clist would make more sense; however,
+% \prop_if_in:Nn(TF) is expandable
+\prop_new:N \l__chemgreek_changed_mappings_prop
+
+% #1: mapping-name
+% #2: upper / lower
+% #3: entry-name
+% #4: entry
+\cs_new_protected:Npn \chemgreek_change:nnnn #1#2#3#4
+  {
+    \chemgreek_if_mapping_exists:nTF {#1}
+      {
+        \prop_put:cnn { l__chemgreek_#2 case_mapping_#1_prop }
+          {#3}
+          {#4}
+        \prop_put:Nnn \l__chemgreek_changed_mappings_prop
+          {#1}
+          {#1}
+      }
+      { \msg_error:nnn {chemgreek} {mapping-not-defined} {#1} }
+  }
+
+% the user command:
+\NewDocumentCommand \changechemgreeksymbol { mmmm }
+  { \chemgreek_change:nnnn {#1} {#2} {#3} {#4} }
+
+% ----------------------------------------------------------------------------
+\cs_new_protected:Npn \chemgreek_load_mapping_package:n #1
+  {
+    \chemgreek_if_mapping_package:nT {#1}
+      { \exp_args:NV \RequirePackage \l__chemgreek_mapping_package_tl }
+  }
+
+% a function to activate a mapping:
+% #1: mapping-name
+\cs_new_protected:Npn \chemgreek_activate_mapping:n #1
+  {
+    \chemgreek_if_mapping_exists:nTF {#1}
+      {
+        \bool_if:nTF
+          {
+            ( \chemgreek_if_mapping_active_p:n {#1} )
+            &&
+            !( \prop_if_in_p:Nn \l__chemgreek_changed_mappings_prop {#1} )
+          }
+          { \msg_info:nnn {chemgreek} {mapping-active} {#1} }
+          {
+            \chemgreek_if_mapping_package_loaded:nTF {#1}
+              { \__chemgreek_activate_mapping:n {#1} }
+              {
+                \msg_warning:nnnV {chemgreek} {package-missing}
+                  {#1}
+                  \l__chemgreek_mapping_package_tl
+                \__chemgreek_activate_mapping:n {default}
+              }            
+            \prop_get:NnNT \l__chemgreek_changed_mappings_prop
+              {#1}
+              \l__chemgreek_tmpa_tl
+              { \prop_remove:Nn \l__chemgreek_changed_mappings_prop {#1} }
+          }
+      }
+      { \msg_error:nnn {chemgreek} {mapping-not-defined} {#1} }
+  }
+\cs_generate_variant:Nn \chemgreek_activate_mapping:n { V }
+
+\cs_new_protected:Npn \__chemgreek_activate_mapping:n #1
+  {
+    \tl_set:Nn \l_chemgreek_active_mapping_tl {#1}
+    \tl_map_inline:Nn \c__chemgreek_alphabet_tl
+      {
+        \cs_set_protected:cpx
+          {
+            chem
+            \str_upper_case:f { \tl_head:n {##1} }
+            \str_lower_case:f { \tl_tail:n {##1} }
+          }
+          { \prop_item:cn { l__chemgreek_uppercase_mapping_#1_prop } {##1} }
+        \cs_set_eq:cc
+          {
+            chemgreek_
+            \str_upper_case:f { \tl_head:n {##1} }
+            \str_lower_case:f { \tl_tail:n {##1} }
+            :
+          }
+          {
+            chem
+            \str_upper_case:f { \tl_head:n {##1} }
+            \str_lower_case:f { \tl_tail:n {##1} }
+          }
+        \cs_set_protected:cpx { chem \str_lower_case:f {##1} }
+          { \prop_item:cn { l__chemgreek_lowercase_mapping_#1_prop } {##1} }
+        \cs_set_eq:cc
+          { chemgreek_ \str_lower_case:f {##1} : }
+          { chem \str_lower_case:f {##1} }
+      }
+    \msg_info:nnn {chemgreek} {mapping-activated} {#1}
+  }
+
+% #1: mapping name
+% #2: symbol name
+\cs_new_protected:Npn \chemgreek_get_from_mapping:nn #1#2
+  {
+    \tl_set:Nx \l__chemgreek_tmpa_tl
+      {
+        \str_upper_case:f { \tl_head:n {#2} }
+        \str_lower_case:f { \tl_tail:n {#2} }
+      }
+    \str_if_eq:nVTF {#2} \l__chemgreek_tmpa_tl
+      {
+        \tl_set:Nx \l__chemgreek_tmpa_tl { \str_lower_case:f {#2} }
+        \prop_item:cV
+          { l__chemgreek_uppercase_mapping_#1_prop }
+          \l__chemgreek_tmpa_tl
+      }
+      { \prop_item:cn { l__chemgreek_lowercase_mapping_#1_prop } {#2} }
+  }
+
+\NewDocumentCommand \chemgreekmappingsymbol { mm }
+  { \chemgreek_get_from_mapping:nn {#1} {#2} }
+
+% user command that also loads the needed package:
+% #1: load package
+% #2: mapping-name
+\NewDocumentCommand \activatechemgreekmapping { sm }
+  {
+    \IfBooleanT {#1} { \chemgreek_load_mapping_package:n {#2} }
+    \chemgreek_activate_mapping:n {#2}
+  }
+\@onlypreamble\activatechemgreekmapping
+
+% user command that activates a new mapping without loading the package:
+\NewDocumentCommand \selectchemgreekmapping { m }
+  { \chemgreek_activate_mapping:n {#1} }
+
+% ----------------------------------------------------------------------------
+% debugging commands:
+\cs_new_protected:Npn \chemgreek_print_mapping:n #1
+  {
+    \int_gzero:N \g__chemgreek_tmpa_int
+    \begin {tabular} {llcc}
+      pos & name & lower & upper \\
+    \tl_map_inline:Nn \c__chemgreek_alphabet_tl
+      {
+        \int_gincr:N \g__chemgreek_tmpa_int
+        \int_use:N \g__chemgreek_tmpa_int . &
+        ##1  &
+        \prop_item:cn { l__chemgreek_lowercase_mapping_#1_prop } {##1} &
+        \prop_item:cn { l__chemgreek_uppercase_mapping_#1_prop } {##1} \\
+      }
+    \end{tabular}
+  }
+
+\cs_new_eq:NN \printchemgreekmapping \chemgreek_print_mapping:n
+
+\cs_new_protected:Npn \chemgreek_show_mapping:n #1
+  {
+    \int_gzero:N \g__chemgreek_tmpa_int
+    \iow_log:n { ................................................. }
+    \iow_log:n { . ~ chemgreek~ mapping~ `#1': }
+    \tl_map_inline:Nn \c__chemgreek_alphabet_tl
+      {
+        \int_gincr:N \g__chemgreek_tmpa_int
+        \iow_log:x
+          { . ~ \int_use:N \g__chemgreek_tmpa_int . }
+        \iow_log:x
+          {
+            . \c_space_tl \c_space_tl \c_space_tl \c_space_tl \c_space_tl
+            \str_lower_case:f {##1} ~ => ~
+            \prop_item:cn { l__chemgreek_lowercase_mapping_#1_prop } {##1}
+          }
+        \iow_log:x
+          {
+            . \c_space_tl \c_space_tl \c_space_tl \c_space_tl \c_space_tl
+            \str_upper_case:f { \tl_head:n {##1} }
+            \str_lower_case:f { \tl_tail:n {##1} }
+            \c_space_tl => ~
+            \prop_item:cn { l__chemgreek_uppercase_mapping_#1_prop } {##1}
+          }
+      }
+    \iow_log:n { ................................................. }
+  }
+
+\cs_new_eq:NN \showchemgreekmapping \chemgreek_show_mapping:n
+
+\cs_new_protected:Npn \chemgreek_print_alphabet:
+  {
+    \tl_map_inline:Nn \c__chemgreek_alphabet_tl
+      {
+        \use:c { chem \str_lower_case:f {##1} }
+        \use:c
+          {
+            chem
+            \str_upper_case:f { \tl_head:n {##1} }
+            \str_lower_case:f { \tl_tail:n {##1} }
+          }
+        \c_space_tl
+      }
+    \tex_unskip:D
+  }
+
+\cs_new_eq:NN \printchemgreekalphabet \chemgreek_print_alphabet:
+
+% ----------------------------------------------------------------------------
+% drop old macro names that started with an uppercase C:
+% remove this in March 2016
+\cs_new_protected:Npn \chemgreek_drop_symbol:n #1
+  { \chemgreek_define_dropped:cc { Chem#1 } { chem#1 } }
+
+\cs_new_protected:Npn \chemgreek_drop_symbols:
+  {
+    \tl_map_inline:Nn \c__chemgreek_alphabet_tl
+      {
+        \chemgreek_drop_symbol:n {##1}
+        \chemgreek_drop_symbol:n
+          {
+            \str_upper_case:f { \tl_head:n {##1} }
+            \str_lower_case:f { \tl_tail:n {##1} }
+          }
+      }
+  }
+
+\chemgreek_drop_symbols:
+
+% ----------------------------------------------------------------------------
+% functions to format integers with greek letters; these are basically copies
+% of \int_to_alph:n
+\cs_new:Npn \chemgreek_int_to_greek:n #1
+  {
+    \int_to_symbols:nnn {#1} {24}
+      {
+        {  1 } { \chemalpha }
+        {  2 } { \chembeta }
+        {  3 } { \chemgamma }
+        {  4 } { \chemdelta }
+        {  5 } { \chemepsilon }
+        {  6 } { \chemzeta }
+        {  7 } { \chemeta }
+        {  8 } { \chemiota }
+        {  9 } { \chemtheta }
+        { 10 } { \chemkappa }
+        { 11 } { \chemlambda }
+        { 12 } { \chemmu }
+        { 13 } { \chemnu }
+        { 14 } { \chemxi }
+        { 15 } { \chemomikron }
+        { 16 } { \chempi }
+        { 17 } { \chemrho }
+        { 18 } { \chemsigma }
+        { 19 } { \chemtau }
+        { 20 } { \chemupsilon }
+        { 21 } { \chemphi }
+        { 22 } { \chemchi }
+        { 23 } { \chempsi }
+        { 24 } { \chemomega }
+      }
+  }
+
+\cs_new:Npn \chemgreek_int_to_Greek:n #1
+  {
+    \int_to_symbols:nnn {#1} {24}
+      {
+        {  1 } { \chemAlpha }
+        {  2 } { \chemBeta }
+        {  3 } { \chemGamma }
+        {  4 } { \chemDelta }
+        {  5 } { \chemEpsilon }
+        {  6 } { \chemZeta }
+        {  7 } { \chemEta }
+        {  8 } { \chemIota }
+        {  9 } { \chemTheta }
+        { 10 } { \chemKappa }
+        { 11 } { \chemLambda }
+        { 12 } { \chemMu }
+        { 13 } { \chemNu }
+        { 14 } { \chemXi }
+        { 15 } { \chemOmikron }
+        { 16 } { \chemPi }
+        { 17 } { \chemRho }
+        { 18 } { \chemSigma }
+        { 19 } { \chemTau }
+        { 20 } { \chemUpsilon }
+        { 21 } { \chemPhi }
+        { 22 } { \chemChi }
+        { 23 } { \chemPsi }
+        { 24 } { \chemOmega }
+      }
+  }
+
+% ----------------------------------------------------------------------------
+% predefine some mappings
+% default:
+\chemgreek_new_mapping:nnn {default} { }
+  {
+    \ensuremath{\alpha}   / \ensuremath{\mathrm{A}} , %  1
+    \ensuremath{\beta}    / \ensuremath{\mathrm{B}} , %  2
+    \ensuremath{\gamma}   / \ensuremath{\Gamma} ,     %  3
+    \ensuremath{\delta}   / \ensuremath{\Delta} ,     %  4
+    \ensuremath{\epsilon} / \ensuremath{\mathrm{E}} , %  5
+    \ensuremath{\zeta}    / \ensuremath{\mathrm{Z}} , %  6
+    \ensuremath{\eta}     / \ensuremath{\mathrm{H}} , %  7
+    \ensuremath{\theta}   / \ensuremath{\Theta} ,     %  8
+    \ensuremath{\iota}    / \ensuremath{\mathrm{I}} , %  9
+    \ensuremath{\kappa}   / \ensuremath{\mathrm{K}} , % 10
+    \ensuremath{\lambda}  / \ensuremath{\Lambda} ,    % 11
+    \ensuremath{\mu}      / \ensuremath{\mathrm{M}} , % 12
+    \ensuremath{\nu}      / \ensuremath{\mathrm{N}} , % 13
+    \ensuremath{\xi}      / \ensuremath{\Xi} ,        % 14
+    \ensuremath{o}        / \ensuremath{\mathrm{O}} , % 15
+    \ensuremath{\pi}      / \ensuremath{\Pi} ,        % 16
+    \ensuremath{\rho}     / \ensuremath{\mathrm{P}} , % 17
+    \ensuremath{\sigma}   / \ensuremath{\Sigma} ,     % 18
+    \ensuremath{\tau}     / \ensuremath{\mathrm{T}} , % 19
+    \ensuremath{\upsilon} / \ensuremath{\Upsilon} ,   % 20
+    \ensuremath{\phi}     / \ensuremath{\Phi} ,       % 21
+    \ensuremath{\chi}     / \ensuremath{\mathrm{X}} , % 22
+    \ensuremath{\psi}     / \ensuremath{\Psi},        % 23
+    \ensuremath{\omega}   / \ensuremath{\Omega}       % 24
+  }
+
+% default-variant:
+\chemgreek_new_mapping:nnn {var-default} { }
+  {
+    \ensuremath{\alpha}      / \ensuremath{\mathrm{A}} , %  1
+    \ensuremath{\beta}       / \ensuremath{\mathrm{B}} , %  2
+    \ensuremath{\gamma}      / \ensuremath{\Gamma} ,     %  3
+    \ensuremath{\delta}      / \ensuremath{\Delta} ,     %  4
+    \ensuremath{\varepsilon} / \ensuremath{\mathrm{E}} , %  5
+    \ensuremath{\zeta}       / \ensuremath{\mathrm{Z}} , %  6
+    \ensuremath{\eta}        / \ensuremath{\mathrm{H}} , %  7
+    \ensuremath{\vartheta}   / \ensuremath{\Theta} ,     %  8
+    \ensuremath{\iota}       / \ensuremath{\mathrm{I}} , %  9
+    \ensuremath{\kappa}      / \ensuremath{\mathrm{K}} , % 10
+    \ensuremath{\lambda}     / \ensuremath{\Lambda} ,    % 11
+    \ensuremath{\mu}         / \ensuremath{\mathrm{M}} , % 12
+    \ensuremath{\nu}         / \ensuremath{\mathrm{N}} , % 13
+    \ensuremath{\xi}         / \ensuremath{\Xi} ,        % 14
+    \ensuremath{o}           / \ensuremath{\mathrm{O}} , % 15
+    \ensuremath{\varpi}      / \ensuremath{\Pi} ,        % 16
+    \ensuremath{\varrho}     / \ensuremath{\mathrm{P}} , % 17
+    \ensuremath{\varsigma}   / \ensuremath{\Sigma} ,     % 18
+    \ensuremath{\tau}        / \ensuremath{\mathrm{T}} , % 19
+    \ensuremath{\upsilon}    / \ensuremath{\Upsilon} ,   % 20
+    \ensuremath{\varphi}     / \ensuremath{\Phi} ,       % 21
+    \ensuremath{\chi}        / \ensuremath{\mathrm{X}} , % 22
+    \ensuremath{\psi}        / \ensuremath{\Psi} ,       % 23
+    \ensuremath{\omega}      / \ensuremath{\Omega}       % 24
+  }
+
+% mathdesign:
+\chemgreek_new_mapping:nnn {mathdesign} {mathdesign}
+  {
+    \ensuremath{\alphaup}      / \ensuremath{\mathrm{A}} , %  1
+    \ensuremath{\betaup}       / \ensuremath{\mathrm{B}} , %  2
+    \ensuremath{\gammaup}      / \ensuremath{\Gammaup} ,   %  3
+    \ensuremath{\deltaup}      / \ensuremath{\Deltaup} ,   %  4
+    \ensuremath{\epsilonup}    / \ensuremath{\mathrm{E}} , %  5
+    \ensuremath{\zetaup}       / \ensuremath{\mathrm{Z}} , %  6
+    \ensuremath{\etaup}        / \ensuremath{\mathrm{H}} , %  7
+    \ensuremath{\thetaup}      / \ensuremath{\Thetaup} ,   %  8
+    \ensuremath{\iotaup}       / \ensuremath{\mathrm{I}} , %  9
+    \ensuremath{\kappaup}      / \ensuremath{\mathrm{K}} , % 10
+    \ensuremath{\lambdaup}     / \ensuremath{\Lambdaup} ,  % 11
+    \ensuremath{\muup}         / \ensuremath{\mathrm{M}} , % 12
+    \ensuremath{\nuup}         / \ensuremath{\mathrm{N}} , % 13
+    \ensuremath{\xiup}         / \ensuremath{\Xiup} ,      % 14
+    \ensuremath{\mathrm{o}}    / \ensuremath{\mathrm{O}} , % 15
+    \ensuremath{\piup}         / \ensuremath{\Piup} ,      % 16
+    \ensuremath{\rhoup}        / \ensuremath{\mathrm{R}} , % 17
+    \ensuremath{\sigmaup}      / \ensuremath{\Sigmaup} ,   % 18
+    \ensuremath{\tauup}        / \ensuremath{\mathrm{T}} , % 19
+    \ensuremath{\upsilonup}    / \ensuremath{\Upsilonup} , % 20
+    \ensuremath{\phiup}        / \ensuremath{\Phiup} ,     % 21
+    \ensuremath{\chiup}        / \ensuremath{\mathrm{X}} , % 22
+    \ensuremath{\psiup}        / \ensuremath{\Psiup} ,     % 23
+    \ensuremath{\omegaup}      / \ensuremath{\Omegaup}     % 24
+  }
+
+% textgreek:
+\chemgreek_new_mapping:nnn {textgreek} {textgreek}
+  {
+    \chemgreek_text:n {\textalpha}   / \chemgreek_text:n {\textAlpha} ,   %  1
+    \chemgreek_text:n {\textbeta}    / \chemgreek_text:n {\textBeta} ,    %  2
+    \chemgreek_text:n {\textgamma}   / \chemgreek_text:n {\textGamma} ,   %  3
+    \chemgreek_text:n {\textdelta}   / \chemgreek_text:n {\textDelta} ,   %  4
+    \chemgreek_text:n {\textepsilon} / \chemgreek_text:n {\textEpsilon} , %  5
+    \chemgreek_text:n {\textzeta}    / \chemgreek_text:n {\textZeta} ,    %  6
+    \chemgreek_text:n {\texteta}     / \chemgreek_text:n {\textEta} ,     %  7
+    \chemgreek_text:n {\texttheta}   / \chemgreek_text:n {\textTheta} ,   %  8
+    \chemgreek_text:n {\textiota}    / \chemgreek_text:n {\textIota} ,    %  9
+    \chemgreek_text:n {\textkappa}   / \chemgreek_text:n {\textKappa} ,   % 10
+    \chemgreek_text:n {\textlambda}  / \chemgreek_text:n {\textLambda} ,  % 11
+    \chemgreek_text:n {\textmugreek} / \chemgreek_text:n {\textMu} ,      % 12
+    \chemgreek_text:n {\textnu}      / \chemgreek_text:n {\textNu} ,      % 13
+    \chemgreek_text:n {\textxi}      / \chemgreek_text:n {\textXi} ,      % 14
+    \chemgreek_text:n {\textomikron} / \chemgreek_text:n {\textOmikron} , % 15
+    \chemgreek_text:n {\textpi}      / \chemgreek_text:n {\textPi} ,      % 16
+    \chemgreek_text:n {\textrho}     / \chemgreek_text:n {\textRho} ,     % 17
+    \chemgreek_text:n {\textsigma}   / \chemgreek_text:n {\textSigma} ,   % 18
+    \chemgreek_text:n {\texttau}     / \chemgreek_text:n {\textTau} ,     % 19
+    \chemgreek_text:n {\textupsilon} / \chemgreek_text:n {\textUpsilon} , % 20
+    \chemgreek_text:n {\textphi}     / \chemgreek_text:n {\textPhi} ,     % 21
+    \chemgreek_text:n {\textchi}     / \chemgreek_text:n {\textChi} ,     % 22
+    \chemgreek_text:n {\textpsi}     / \chemgreek_text:n {\textPsi} ,     % 23
+    \chemgreek_text:n {\textomega}   / \chemgreek_text:n {\textOmega}     % 24
+  }
+
+% upgreek:
+\chemgreek_new_mapping:nnn {upgreek} {upgreek}
+  {
+    \ensuremath{\upalpha}      / \ensuremath{\mathrm{A}} , %  1
+    \ensuremath{\upbeta}       / \ensuremath{\mathrm{B}} , %  2
+    \ensuremath{\upgamma}      / \ensuremath{\Upgamma} ,   %  3
+    \ensuremath{\updelta}      / \ensuremath{\Updelta} ,   %  4
+    \ensuremath{\upepsilon}    / \ensuremath{\mathrm{E}} , %  5
+    \ensuremath{\upzeta}       / \ensuremath{\mathrm{Z}} , %  6
+    \ensuremath{\upeta}        / \ensuremath{\mathrm{H}} , %  7
+    \ensuremath{\uptheta}      / \ensuremath{\Uptheta} ,   %  8
+    \ensuremath{\upiota}       / \ensuremath{\mathrm{I}} ,   %  9
+    \ensuremath{\upkappa}      / \ensuremath{\mathrm{K}} , % 10
+    \ensuremath{\uplambda}     / \ensuremath{\Uplambda} ,  % 11
+    \ensuremath{\upmu}         / \ensuremath{\mathrm{M}} , % 12
+    \ensuremath{\upnu}         / \ensuremath{\mathrm{N}} , % 13
+    \ensuremath{\upxi}         / \ensuremath{\Upxi} ,      % 14
+    \ensuremath{\mathrm{o}}    / \ensuremath{\mathrm{O}} , % 15
+    \ensuremath{\uppi}         / \ensuremath{\Uppi} ,      % 16
+    \ensuremath{\uprho}        / \ensuremath{\mathrm{R}} , % 17
+    \ensuremath{\upsigma}      / \ensuremath{\Upsigma} ,   % 18
+    \ensuremath{\uptau}        / \ensuremath{\mathrm{T}} , % 19
+    \ensuremath{\upupsilon}    / \ensuremath{\Upupsilon} , % 20
+    \ensuremath{\upphi}        / \ensuremath{\Upphi} ,     % 21
+    \ensuremath{\upchi}        / \ensuremath{\mathrm{X}} , % 22
+    \ensuremath{\uppsi}        / \ensuremath{\Uppsi} ,     % 23
+    \ensuremath{\upomega}      / \ensuremath{\Upomega}     % 24
+  }
+
+% kpfonts:
+\chemgreek_new_mapping:nnn {kpfonts} {kpfonts}
+  {
+    \ensuremath{\alphaup}      / \ensuremath{\mathrm{A}} , %  1
+    \ensuremath{\betaup}       / \ensuremath{\mathrm{B}} , %  2
+    \ensuremath{\gammaup}      / \ensuremath{\Gammaup} ,   %  3
+    \ensuremath{\deltaup}      / \ensuremath{\Deltaup} ,   %  4
+    \ensuremath{\epsilonup}    / \ensuremath{\mathrm{E}} , %  5
+    \ensuremath{\zetaup}       / \ensuremath{\mathrm{Z}} , %  6
+    \ensuremath{\etaup}        / \ensuremath{\mathrm{H}} , %  7
+    \ensuremath{\thetaup}      / \ensuremath{\Thetaup} ,   %  8
+    \ensuremath{\iotaup}       / \ensuremath{\mathrm{I}} , %  9
+    \ensuremath{\kappaup}      / \ensuremath{\mathrm{K}} , % 10
+    \ensuremath{\lambdaup}     / \ensuremath{\Lambdaup} ,  % 11
+    \ensuremath{\muup}         / \ensuremath{\mathrm{M}} , % 12
+    \ensuremath{\nuup}         / \ensuremath{\mathrm{N}} , % 13
+    \ensuremath{\xiup}         / \ensuremath{\Xiup} ,      % 14
+    \ensuremath{\mathrm{o}}    / \ensuremath{\mathrm{O}} , % 15
+    \ensuremath{\piup}         / \ensuremath{\Piup} ,      % 16
+    \ensuremath{\rhoup}        / \ensuremath{\mathrm{R}} , % 17
+    \ensuremath{\sigmaup}      / \ensuremath{\Sigmaup} ,   % 18
+    \ensuremath{\tauup}        / \ensuremath{\mathrm{T}} , % 19
+    \ensuremath{\upsilonup}    / \ensuremath{\Upsilonup} , % 20
+    \ensuremath{\phiup}        / \ensuremath{\Phiup} ,     % 21
+    \ensuremath{\chiup}        / \ensuremath{\mathrm{X}} , % 22
+    \ensuremath{\psiup}        / \ensuremath{\Psiup} ,     % 23
+    \ensuremath{\omegaup}      / \ensuremath{\Omegaup}     % 24
+  }
+
+% newtx:
+\chemgreek_new_mapping:nnn {newtx} {newtxmath}
+  {
+    \ensuremath{\upalpha}      / \ensuremath{\mathrm{A}} , %  1
+    \ensuremath{\upbeta}       / \ensuremath{\mathrm{B}} , %  2
+    \ensuremath{\upgamma}      / \ensuremath{\upGamma} ,   %  3
+    \ensuremath{\updelta}      / \ensuremath{\upDelta} ,   %  4
+    \ensuremath{\upepsilon}    / \ensuremath{\mathrm{E}} , %  5
+    \ensuremath{\upzeta}       / \ensuremath{\mathrm{Z}} , %  6
+    \ensuremath{\upeta}        / \ensuremath{\mathrm{H}} , %  7
+    \ensuremath{\uptheta}      / \ensuremath{\upTheta} ,   %  8
+    \ensuremath{\upiota}       / \ensuremath{\mathrm{I}} , %  9
+    \ensuremath{\upkappa}      / \ensuremath{\mathrm{K}} , % 10
+    \ensuremath{\uplambda}     / \ensuremath{\upLambda} ,  % 11
+    \ensuremath{\upmu}         / \ensuremath{\mathrm{M}} , % 12
+    \ensuremath{\upnu}         / \ensuremath{\mathrm{N}} , % 13
+    \ensuremath{\upxi}         / \ensuremath{\upXi} ,      % 14
+    \ensuremath{\mathrm{o}}    / \ensuremath{\mathrm{O}} , % 15
+    \ensuremath{\uppi}         / \ensuremath{\upPi} ,      % 16
+    \ensuremath{\uprho}        / \ensuremath{\mathrm{R}} , % 17
+    \ensuremath{\upsigma}      / \ensuremath{\upSigma} ,   % 18
+    \ensuremath{\uptau}        / \ensuremath{\mathrm{T}} , % 19
+    \ensuremath{\upupsilon}    / \ensuremath{\upUpsilon} , % 20
+    \ensuremath{\upphi}        / \ensuremath{\upPhi} ,     % 21
+    \ensuremath{\upchi}        / \ensuremath{\mathrm{X}} , % 22
+    \ensuremath{\uppsi}        / \ensuremath{\upPsi} ,     % 23
+    \ensuremath{\upomega}      / \ensuremath{\upOmega}     % 24
+  }
+
+% fourier:
+\cs_new:Npn \__chemgreek_lfourier:n #1
+  {
+    \chemgreek_latex_if:nTF { sloped }
+      { \ensuremath { \use:c { other #1 } } }
+      { \ensuremath { \use:c { #1 } } }
+  }
+
+\cs_new:Npn \__chemgreek_ufourier:n #1
+  {
+    \chemgreek_latex_if:nTF { sloped }
+      { \ensuremath { \use:c { #1 } } }
+      { \ensuremath { \use:c { other #1 } } }
+  }
+
+\chemgreek_new_mapping:nnn {fourier} {fourier}
+  {
+    \__chemgreek_lfourier:n {alpha}   / \ensuremath{\mathrm{A}} ,           %  1
+    \__chemgreek_lfourier:n {beta}    / \ensuremath{\mathrm{B}} ,           %  2
+    \__chemgreek_lfourier:n {gamma}   / \__chemgreek_ufourier:n {Gamma} ,   %  3
+    \__chemgreek_lfourier:n {delta}   / \__chemgreek_ufourier:n {Delta} ,   %  4
+    \__chemgreek_lfourier:n {epsilon} / \ensuremath{\mathrm{E}} ,           %  5
+    \__chemgreek_lfourier:n {zeta}    / \ensuremath{\mathrm{Z}} ,           %  6
+    \__chemgreek_lfourier:n {eta}     / \ensuremath{\mathrm{H}} ,           %  7
+    \__chemgreek_lfourier:n {theta}   / \__chemgreek_ufourier:n {Theta} ,   %  8
+    \__chemgreek_lfourier:n {iota}    / \ensuremath{\mathrm{I}} ,           %  9
+    \__chemgreek_lfourier:n {kappa}   / \ensuremath{\mathrm{K}} ,           % 10
+    \__chemgreek_lfourier:n {lambda}  / \__chemgreek_ufourier:n {Lambda} ,  % 11
+    \__chemgreek_lfourier:n {mu}      / \ensuremath{\mathrm{M}} ,           % 12
+    \__chemgreek_lfourier:n {nu}      / \ensuremath{\mathrm{N}} ,           % 13
+    \__chemgreek_lfourier:n {xi}      / \__chemgreek_ufourier:n {Xi} ,      % 14
+    \ensuremath {\mathrm{o}}          / \ensuremath{\mathrm{O}} ,           % 15
+    \__chemgreek_lfourier:n {pi}      / \__chemgreek_ufourier:n {Pi} ,      % 16
+    \__chemgreek_lfourier:n {rho}     / \ensuremath{\mathrm{R}} ,           % 17
+    \__chemgreek_lfourier:n {sigma}   / \__chemgreek_ufourier:n {Sigma} ,   % 18
+    \__chemgreek_lfourier:n {tau}     / \ensuremath{\mathrm{T}} ,           % 19
+    \__chemgreek_lfourier:n {upsilon} / \__chemgreek_ufourier:n {Upsilon} , % 20
+    \__chemgreek_lfourier:n {phi}     / \__chemgreek_ufourier:n {Phi} ,     % 21
+    \__chemgreek_lfourier:n {chi}     / \ensuremath{\mathrm{X}} ,           % 22
+    \__chemgreek_lfourier:n {psi}     / \__chemgreek_ufourier:n {Psi} ,     % 23
+    \__chemgreek_lfourier:n {omega}   / \__chemgreek_ufourier:n {Omega}     % 24
+  }
+
+% textalpha:
+\chemgreek_new_mapping:nnn {textalpha} {textalpha}
+  {
+    \chemgreek_text:n {\textalpha}   / \chemgreek_text:n {\textAlpha} ,   %  1
+    \chemgreek_text:n {\textbeta}    / \chemgreek_text:n {\textBeta} ,    %  2
+    \chemgreek_text:n {\textgamma}   / \chemgreek_text:n {\textGamma} ,   %  3
+    \chemgreek_text:n {\textdelta}   / \chemgreek_text:n {\textDelta} ,   %  4
+    \chemgreek_text:n {\textepsilon} / \chemgreek_text:n {\textEpsilon} , %  5
+    \chemgreek_text:n {\textzeta}    / \chemgreek_text:n {\textZeta} ,    %  6
+    \chemgreek_text:n {\texteta}     / \chemgreek_text:n {\textEta} ,     %  7
+    \chemgreek_text:n {\texttheta}   / \chemgreek_text:n {\textTheta} ,   %  8
+    \chemgreek_text:n {\textiota}    / \chemgreek_text:n {\textIota} ,    %  9
+    \chemgreek_text:n {\textkappa}   / \chemgreek_text:n {\textKappa} ,   % 10
+    \chemgreek_text:n {\textlambda}  / \chemgreek_text:n {\textLambda} ,  % 11
+    \chemgreek_text:n {\textmu}      / \chemgreek_text:n {\textMu} ,      % 12
+    \chemgreek_text:n {\textnu}      / \chemgreek_text:n {\textNu} ,      % 13
+    \chemgreek_text:n {\textxi}      / \chemgreek_text:n {\textXi} ,      % 14
+    \chemgreek_text:n {\textomicron} / \chemgreek_text:n {\textOmicron} , % 15
+    \chemgreek_text:n {\textpi}      / \chemgreek_text:n {\textPi} ,      % 16
+    \chemgreek_text:n {\textrho}     / \chemgreek_text:n {\textRho} ,     % 17
+    \chemgreek_text:n {\textsigma}   / \chemgreek_text:n {\textSigma} ,   % 18
+    \chemgreek_text:n {\texttau}     / \chemgreek_text:n {\textTau} ,     % 19
+    \chemgreek_text:n {\textupsilon} / \chemgreek_text:n {\textUpsilon} , % 20
+    \chemgreek_text:n {\textphi}     / \chemgreek_text:n {\textPhi} ,     % 21
+    \chemgreek_text:n {\textchi}     / \chemgreek_text:n {\textChi} ,     % 22
+    \chemgreek_text:n {\textpsi}     / \chemgreek_text:n {\textPsi} ,     % 23
+    \chemgreek_text:n {\textomega}   / \chemgreek_text:n {\textOmega}     % 24
+  }
+
+% textgreek:
+\chemgreek_new_mapping:nnn {fontspec} {fontspec}
+  {
+    \chemgreek_text:n {\symbol{"03B1}} / \chemgreek_text:n {\symbol{"0391}} , %  1
+    \chemgreek_text:n {\symbol{"03B2}} / \chemgreek_text:n {\symbol{"0392}} , %  2
+    \chemgreek_text:n {\symbol{"03B3}} / \chemgreek_text:n {\symbol{"0393}} , %  3
+    \chemgreek_text:n {\symbol{"03B4}} / \chemgreek_text:n {\symbol{"0394}} , %  4
+    \chemgreek_text:n {\symbol{"03B5}} / \chemgreek_text:n {\symbol{"0395}} , %  5
+    \chemgreek_text:n {\symbol{"03B6}} / \chemgreek_text:n {\symbol{"0396}} , %  6
+    \chemgreek_text:n {\symbol{"03B7}} / \chemgreek_text:n {\symbol{"0397}} , %  7
+    \chemgreek_text:n {\symbol{"03B8}} / \chemgreek_text:n {\symbol{"0398}} , %  8
+    \chemgreek_text:n {\symbol{"03B9}} / \chemgreek_text:n {\symbol{"0399}} , %  9
+    \chemgreek_text:n {\symbol{"03BA}} / \chemgreek_text:n {\symbol{"039A}} , % 10
+    \chemgreek_text:n {\symbol{"03BB}} / \chemgreek_text:n {\symbol{"039B}} , % 11
+    \chemgreek_text:n {\symbol{"03BC}} / \chemgreek_text:n {\symbol{"039C}} , % 12
+    \chemgreek_text:n {\symbol{"03BD}} / \chemgreek_text:n {\symbol{"039D}} , % 13
+    \chemgreek_text:n {\symbol{"03BE}} / \chemgreek_text:n {\symbol{"039E}} , % 14
+    \chemgreek_text:n {\symbol{"03BF}} / \chemgreek_text:n {\symbol{"039F}} , % 15
+    \chemgreek_text:n {\symbol{"03C0}} / \chemgreek_text:n {\symbol{"03A0}} , % 16
+    \chemgreek_text:n {\symbol{"03C1}} / \chemgreek_text:n {\symbol{"03A1}} , % 17
+    \chemgreek_text:n {\symbol{"03C3}} / \chemgreek_text:n {\symbol{"03A3}} , % 18
+    \chemgreek_text:n {\symbol{"03C4}} / \chemgreek_text:n {\symbol{"03A4}} , % 19
+    \chemgreek_text:n {\symbol{"03C5}} / \chemgreek_text:n {\symbol{"03A5}} , % 20
+    \chemgreek_text:n {\symbol{"03C6}} / \chemgreek_text:n {\symbol{"03A6}} , % 21
+    \chemgreek_text:n {\symbol{"03C7}} / \chemgreek_text:n {\symbol{"03A7}} , % 22
+    \chemgreek_text:n {\symbol{"03C8}} / \chemgreek_text:n {\symbol{"03A8}} , % 23
+    \chemgreek_text:n {\symbol{"03C9}} / \chemgreek_text:n {\symbol{"03A9}}   % 24
+  }
+
+% pxgreeks: \iftgs@itupper
+\cs_new:Npn \__chemgreek_upxgreeks:n #1
+  {
+    \chemgreek_latex_if:nTF { tgs@itupper }
+      { \ensuremath { \use:c {other#1} } }
+      { \ensuremath { \use:c {#1} } }
+  }
+
+\chemgreek_new_mapping:nnn {pxgreeks} {pxgreeks}
+  {
+    \ensuremath{\alphaup}      / \ensuremath{\mathrm{A}} ,            %  1
+    \ensuremath{\betaup}       / \ensuremath{\mathrm{B}} ,            %  2
+    \ensuremath{\gammaup}      / \__chemgreek_upxgreeks:n {Gamma} ,   %  3
+    \ensuremath{\deltaup}      / \__chemgreek_upxgreeks:n {Delta} ,   %  4
+    \ensuremath{\epsilonup}    / \ensuremath{\mathrm{E}} ,            %  5
+    \ensuremath{\zetaup}       / \ensuremath{\mathrm{Z}} ,            %  6
+    \ensuremath{\etaup}        / \ensuremath{\mathrm{H}} ,            %  7
+    \ensuremath{\thetaup}      / \__chemgreek_upxgreeks:n {Theta} ,   %  8
+    \ensuremath{\iotaup}       / \ensuremath{\mathrm{I}} ,            %  9
+    \ensuremath{\kappaup}      / \ensuremath{\mathrm{K}} ,            % 10
+    \ensuremath{\lambdaup}     / \__chemgreek_upxgreeks:n {Lambda} ,  % 11
+    \ensuremath{\muup}         / \ensuremath{\mathrm{M}} ,            % 12
+    \ensuremath{\nuup}         / \ensuremath{\mathrm{N}} ,            % 13
+    \ensuremath{\xiup}         / \__chemgreek_upxgreeks:n {Xi} ,      % 14
+    \ensuremath{\omicronup}    / \ensuremath{\mathrm{O}} ,            % 15
+    \ensuremath{\piup}         / \__chemgreek_upxgreeks:n {Pi} ,      % 16
+    \ensuremath{\rhoup}        / \ensuremath{\mathrm{R}} ,            % 17
+    \ensuremath{\sigmaup}      / \__chemgreek_upxgreeks:n {Sigma} ,   % 18
+    \ensuremath{\tauup}        / \ensuremath{\mathrm{T}} ,            % 19
+    \ensuremath{\upsilonup}    / \__chemgreek_upxgreeks:n {Upsilon} , % 20
+    \ensuremath{\phiup}        / \__chemgreek_upxgreeks:n {Phi} ,     % 21
+    \ensuremath{\chiup}        / \ensuremath{\mathrm{X}} ,            % 22
+    \ensuremath{\psiup}        / \__chemgreek_upxgreeks:n {Psi} ,     % 23
+    \ensuremath{\omegaup}      / \__chemgreek_upxgreeks:n {Omega}     % 24
+  }
+  
+% ----------------------------------------------------------------------------
+% default activating of a mapping if a corresponding package has been loaded.
+
+\cs_new_protected:Npn \chemgreek_choose_mapping:
+  {
+    \tl_if_blank:VT \l_chemgreek_active_mapping_tl
+      {
+        \int_zero:N \l__chemgreek_tmpa_int
+        \prop_map_inline:Nn \l__chemgreek_packages_prop
+          {
+            \chemgreek_if_package_loaded:nT {##2}
+              {
+                \int_incr:N \l__chemgreek_tmpa_int
+                \tl_set:Nn \l__chemgreek_tmpa_tl {##1}
+              }
+          }
+        \int_compare:nTF { \l__chemgreek_tmpa_int = 1 }
+          { \chemgreek_activate_mapping:V \l__chemgreek_tmpa_tl }
+          { \chemgreek_activate_mapping:n {default} }
+      }
+  }
+
+\AtBeginDocument { \chemgreek_choose_mapping: }
+
+% ----------------------------------------------------------------------------
+% Greek letters in bookmarks:
+\AtBeginDocument
+  {
+    \chemgreek_if_package_with:nnT {hyperref} {unicode}
+      {
+        \chemgreek_if_package_loaded:nT {textalpha}
+          {
+            \pdfstringdefDisableCommands
+              {
+                \tl_map_inline:Nn \c__chemgreek_alphabet_tl
+                  {
+                    \cs_set_eq:cc
+                      {
+                        chem
+                        \str_upper_case:f { \tl_head:n {#1} }
+                        \str_lower_case:f { \tl_tail:n {#1} }
+                      }
+                      {
+                        text
+                        \str_upper_case:f { \tl_head:n {#1} }
+                        \str_lower_case:f { \tl_tail:n {#1} }
+                      }
+                    \cs_set_eq:cc
+                      {
+                        chemgreek_
+                        \str_upper_case:f { \tl_head:n {#1} }
+                        \str_lower_case:f { \tl_tail:n {#1} }
+                        :
+                      }
+                      {
+                        text
+                        \str_upper_case:f { \tl_head:n {#1} }
+                        \str_lower_case:f { \tl_tail:n {#1} }
+                      }
+                    \cs_set_eq:cc {chem#1} {text#1}
+                    \cs_set_eq:cc { chemgreek_ #1 : } {text#1}
+                  }
+              }
+          }
+      }
+  }
+
+\tex_endinput:D
+
+HISTORY:
+2013/06/26 - v0.1  - first working version to be bundled with chemmacros
+2013/07/06 - v0.1a - fixed stupid bug in `upgreek' mapping
+                   - added error messages and added \renewchemgreekmapping and
+                     \declarechemgreekmapping
+2013/08/24 - v0.2  - new mappings `mathdesign', `fourier'
+                   - new functions: \chemgreek_int_to_greek:n and
+                     \chemgreek_int_to_Greek:n
+2013/11/20 - v0.2a - fixed typos in `fourier' mapping
+                   - added missing \prop_clear: to \__chemgreek_set_mapping:nn
+                   - added missing argument to message calls
+2014/01/24 - v0.3  - rename \Chem<name => \chem<name>, the old names will
+                     issue warnings but still work
+                   - new mappings `textalpha' (cf the package with the same
+                     name, part of `greek-fontenc')
+                   - \chemgreek_new_mapping:nnn redefined so that package name
+                     must be given if needed; \chemgreek_activate_mapping:n
+                     now issues a warning if the needed package hasn't been
+                     loaded
+                   - if hyperref has been loaded with package option `unicode'
+                     and `textalpha' package has been loaded, too, we can use
+                     greek letters in PDF bookmarks
+                   - new command \printchemgreekmapping
+                   - \showchemgreekmapping now writes information to the log
+2014/01/29 - v0.4  - add mapping `fontspec'
+                   - new command \printchemgreekalphabet
+2014/08/08 - v0.5  - split from `chemmacros' bundle as independent package
+2015/03/13 - v0.5a - adapt to expl3's new case changing functions
+                   - change status of \Chem... macros from deprecated to
+                     dropped
+2015/04/09 - v1.0  - if a mapping is activated that needs a package and the
+                     package is missing the mapping falls back to `default'
+                   - if exactly one package for one of the mappings has been
+                     loaded the corresponding mapping is activated at begin
+                     document
+                   - expl3 versions of the letter macros (\chemgreek_alpha: ,
+                     \chemgreek_Alpha: , ...)
+                   - \chemgreek_get_from_mapping:nn
+                   - \chemgreek_declare_mapping_alias:nn ,
+                     \chemgreek_new_mapping_alias:nn ,
+                     \chemgreek_renew_mapping_alias:nn
+2015/07/01 - v1.0a - corrected `var-default' mapping
+2015/11/10 - v1.0b - new mapping `pxgreeks'
+2016/01/05 - v1.0c - fix issue #1 https://github.com/cgnieder/chemgreek/issues/1
+2016/01/07 - v1.0d - \prop_get:Nn => \prop_item:Nn
+2016/02/10 - v1.0e - one missed \prop_get:Nn
+2016/20/12 - v1.1  - fix wrong alphabet order (issue #5)
+                   - fix errors in fontspec mapping (issue #4)
+
+TODO:
+

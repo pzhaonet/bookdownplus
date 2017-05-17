@@ -4,10 +4,7 @@
 \alias{bookdownplus}
 \title{Create a demo file for an .Rmd file to compile with R bookdown package.}
 \usage{
-bookdownplus(template = c("article", "article_zh", "calendar", "chemistry",
-  "chemistry_zh", "guitar", "mail", "journal", "yihui_mini", "yihui_demo",
-  "yihui_zh", "article_mdpi", "thesis_classic", "thesis_ubt", "thesis_zju",
-  "poem", "poster")[13],
+bookdownplus(template = c()[13],
   title = "R bookdown+: Authoring varied types of books and documents with R bookdown",
   author = "Peng Zhao", from_address = "Maximillian Street 27",
   from_town = "95440 Bayreuth, Germany", from_phone = "62762524",
@@ -23,49 +20,69 @@ bookdownplus(template = c("article", "article_zh", "calendar", "chemistry",
   theme = c("eco", "ocean", "rose")[1])
 }
 \arguments{
-\item{template}{character, choose a template for your book or doc}
+\item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Availabel templates are:
+- 'article', academic article,
+- 'article_zh', academic article in Chinese,
+- 'calendar',  monthly or weekly calendar,
+- 'chemistry',   book with chemical molecular formulae and equations
+- 'chemistry_zh', chemistry book in Chinese,
+- 'guitar',  book with guitar chords,
+- 'mail', personal or business mail,
+- 'journal', laboratory journal or personal diary,
+- 'yihui_mini',  a mini demo book by Yihui Xie,
+- 'yihui_demo',  the original demo book by Yihui Xie,
+- 'yihui_zh', the demo in Chinese by Yihui Xie,
+- 'article_mdpi',   academic article by mdpi,
+- 'thesis_classic', classic thesis,
+- 'thesis_ubt',  thesis of University of Bayreuth,
+- 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
+- 'poem', poem book,
+- 'poster', poster}
 
-\item{title}{poster tile}
+\item{title}{character. book title.}
 
-\item{author}{poster author}
+\item{author}{character. book author.}
 
-\item{from_address}{sender's address (Street and No.) for mail template}
+\item{from_address}{character. sender's address (Street and No.) for mail template}
 
-\item{from_town}{sender's town for mail template}
+\item{from_town}{character. sender's town for mail template}
 
-\item{from_phone}{sender's phone number for mail templae}
+\item{from_phone}{character. sender's phone number for mail templae}
 
-\item{from_email}{sender's email for mail template}
+\item{from_email}{character. sender's email for mail template}
 
-\item{to_who}{receiver's name for mail template}
+\item{to_who}{character. receiver's name for mail template}
 
-\item{to_address}{receiver's address (Street and No.) for mail template}
+\item{to_address}{character. receiver's address (Street and No.) for mail template}
 
-\item{to_town}{receiver's town for mail template}
+\item{to_town}{character. receiver's town for mail template}
 
-\item{type}{mail type for mail template}
+\item{type}{character. mail type for mail template}
 
-\item{fontsize}{fontsize of the mail body for mail template}
+\item{fontsize}{character. fontsize of the mail body for mail template}
 
-\item{email}{author's email for poster template}
+\item{email}{character. author's email for poster template}
 
-\item{institute}{for poster template}
+\item{institute}{character. for poster template}
 
-\item{longinstitute}{for poster template}
+\item{longinstitute}{character. for poster template}
 
-\item{web}{for poster template}
+\item{web}{character. for poster template}
 
-\item{logo}{for poster template}
+\item{logo}{character. The path of the logo image. for poster template}
 
-\item{backimg}{for poster template}
+\item{backimg}{character. The path of the background image. for poster template}
 
-\item{bibliofiles}{for poster template}
+\item{bibliofiles}{character. The path of the bib file for poster template}
 
-\item{theme}{for poster template}
+\item{theme}{character. theme for poster template. available themes are 'eco' (default), 'ocean', 'rose'.}
 }
 \value{
 an .Rmd file to build with bookdown
 }
 \description{
 Yes, create a demo file for bookdown.
+}
+\examples{
+bookdownplus()
 }

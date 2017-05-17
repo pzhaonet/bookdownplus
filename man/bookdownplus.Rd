@@ -21,23 +21,25 @@ bookdownplus(template = c()[13],
 }
 \arguments{
 \item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Availabel templates are:
-- 'article', academic article,
-- 'article_zh', academic article in Chinese,
-- 'calendar',  monthly or weekly calendar,
-- 'chemistry',   book with chemical molecular formulae and equations
-- 'chemistry_zh', chemistry book in Chinese,
-- 'guitar',  book with guitar chords,
-- 'mail', personal or business mail,
-- 'journal', laboratory journal or personal diary,
-- 'yihui_mini',  a mini demo book by Yihui Xie,
-- 'yihui_demo',  the original demo book by Yihui Xie,
-- 'yihui_zh', the demo in Chinese by Yihui Xie,
-- 'article_mdpi',   academic article by mdpi,
-- 'thesis_classic', classic thesis,
-- 'thesis_ubt',  thesis of University of Bayreuth,
-- 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
-- 'poem', poem book,
-- 'poster', poster}
+\itemize{
+\item 'article', academic article,
+\item 'article_zh', academic article in Chinese,
+\item 'calendar',  monthly or weekly calendar,
+\item 'chemistry',   book with chemical molecular formulae and equations
+\item 'chemistry_zh', chemistry book in Chinese,
+\item 'guitar',  book with guitar chords,
+\item 'mail', personal or business mail,
+\item 'journal', laboratory journal or personal diary,
+\item 'yihui_mini',  a mini demo book by Yihui Xie,
+\item 'yihui_demo',  the original demo book by Yihui Xie,
+\item 'yihui_zh', the demo in Chinese by Yihui Xie,
+\item 'article_mdpi',   academic article by mdpi,
+\item 'thesis_classic', classic thesis,
+\item 'thesis_ubt',  thesis of University of Bayreuth,
+\item 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
+\item 'poem', poem book,
+\item 'poster', poster
+}}
 
 \item{title}{character. book title.}
 

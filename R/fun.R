@@ -43,8 +43,7 @@
 #' @examples
 #' bookdownplus()
 bookdownplus <- function( ######
-  template = c(
-  )[13],
+  template = 'thesis_classic',
   title ='R bookdown+: Authoring varied types of books and documents with R bookdown',
   author = 'Peng Zhao',
 

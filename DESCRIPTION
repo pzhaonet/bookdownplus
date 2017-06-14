@@ -1,6 +1,6 @@
 Package: bookdownplus
-Version: 0.0.0
-Date: 2017-05-15
+Version: 0.0.1
+Date: 2017-06-14
 Title: Generage varied books and documents with R bookdown
 Author: Peng Zhao
 Maintainer: Peng Zhao <pzhao@pzhao.net>
@@ -18,4 +18,3 @@ VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-05-15 09:53:27 UTC; c7701105

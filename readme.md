@@ -2,14 +2,14 @@
 
 # Introduction
 
-`R bookdown+` is an extension of `R bookdown` (Xie 2016). It is a collection of
-multiple templates on the basis of LaTeX, which are tailored so that I can work happily under the umbrella of `bookdown`. `R bookdown+` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
+`R bookdownplus` is an extension of `R bookdown` (Xie 2016). It is a collection of
+multiple templates on the basis of LaTeX, which are tailored so that I can work happily under the umbrella of `bookdown`. `R bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
 
 # Features
 
-`R bookdown+` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX. 
+`R bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX. 
 
-With `R bookdown+` users can
+With `R bookdownplus` users can
 
 -   record guitar chords,
 -   write a mail in an elegant layout,
@@ -20,11 +20,11 @@ With `R bookdown+` users can
 -   even in Chinese,
 -   and more wonders will come soon.
 
-Full documentation can be found in the book [R bookdown+ Textbook](https://bookdown.org/baydap/bookdown-plus). The webpage looks so-so, while the [pdf file](https://bookdown.org/baydap/bookdown-plus/bookdown-plus.pdf) might give you a little surprise.  
+Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdown-plus). The webpage looks so-so, while the [pdf file](https://bookdown.org/baydap/bookdown-plus/bookdown-plus.pdf) might give you a little surprise.  
 
 # Quick start
 
-Although this section might not be the latest version, the general idea won't change. Please see [R bookdown+ Textbook](https://bookdown.org/baydap/bookdown) to keep up with the update.
+Although this section might not be the latest version, the general idea won't change. Please see [R bookdownplus Textbook](https://bookdown.org/baydap/bookdown) to keep up with the update.
 
 ## Preparation
 
@@ -128,6 +128,7 @@ Still being developed.  Feel free to give your feedback to me!
 
 ## Updates
 
+- 2017-06-14. **Version 0.0.1.**  A bug fixed.
 - 2017-05-15. **Version 0.0.0**. A very preliminary version.
 
 

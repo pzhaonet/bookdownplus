@@ -4,7 +4,7 @@
 \alias{bookdownplus}
 \title{Create a demo file for an .Rmd file to compile with R bookdown package.}
 \usage{
-bookdownplus(template = c()[13],
+bookdownplus(template = "thesis_classic",
   title = "R bookdown+: Authoring varied types of books and documents with R bookdown",
   author = "Peng Zhao", from_address = "Maximillian Street 27",
   from_town = "95440 Bayreuth, Germany", from_phone = "62762524",

@@ -128,6 +128,7 @@ Still being developed.  Feel free to give your feedback to me!
 
 ## Updates
 
+- 2017-06-21. **Version 1.0.1.** Submitted to CRAN!
 - 2017-06-14. **Version 0.0.1.**  A bug fixed.
 - 2017-05-15. **Version 0.0.0**. A very preliminary version.
 

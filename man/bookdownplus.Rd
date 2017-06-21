@@ -2,17 +2,17 @@
 % Please edit documentation in R/fun.R
 \name{bookdownplus}
 \alias{bookdownplus}
-\title{Create a demo file for an .Rmd file to compile with R bookdown package.}
+\title{Create demo files for building books with R bookdown package.}
 \usage{
 bookdownplus(template = "thesis_classic",
-  title = "R bookdown+: Authoring varied types of books and documents with R bookdown",
-  author = "Peng Zhao", from_address = "Maximillian Street 27",
-  from_town = "95440 Bayreuth, Germany", from_phone = "62762524",
-  from_email = "dapengde@live.com", to_who = "CAMS",
-  to_address = "Zhongguancunnandajie 46", to_town = "100000 Beijing, China",
-  type = c("business", "personal")[2], fontsize = c("tiny", "scriptsize",
-  "footnotesize", "small", "normalsize", "large", "Large", "LARGE", "huge",
-  "Huge")[9], email = "pzhao@pzhao.net",
+  title = "R bookdownplus: Authoring varied types of books and documents with R bookdown",
+  author = "Peng Zhao", from_address = "15 Robin Hood Lane",
+  from_town = "11758  Massapequa, Long Island, New York",
+  from_phone = "62762524", from_email = "dapengde@live.com",
+  to_who = "receiver", to_address = "receiver address",
+  to_town = "100000 Beijing, China", type = c("business", "personal")[2],
+  fontsize = c("tiny", "scriptsize", "footnotesize", "small", "normalsize",
+  "large", "Large", "LARGE", "huge", "Huge")[5], email = "pzhao@pzhao.net",
   institute = "Institute of Ecology, Univ. Innsbruck",
   longinstitute = "Institute of Ecology, University of Innsbruck, Austria",
   web = "pzhao.org", logo = "images/logo.png",
@@ -20,7 +20,7 @@ bookdownplus(template = "thesis_classic",
   theme = c("eco", "ocean", "rose")[1])
 }
 \arguments{
-\item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Availabel templates are:
+\item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are:
 \itemize{
 \item 'article', academic article,
 \item 'article_zh', academic article in Chinese,
@@ -37,8 +37,8 @@ bookdownplus(template = "thesis_classic",
 \item 'thesis_classic', classic thesis,
 \item 'thesis_ubt',  thesis of University of Bayreuth,
 \item 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
-\item 'poem', poem book,
-\item 'poster', poster
+\item 'poster', poster,
+\item 'poem', poem book
 }}
 
 \item{title}{character. book title.}
@@ -59,7 +59,7 @@ bookdownplus(template = "thesis_classic",
 
 \item{to_town}{character. receiver's town for mail template}
 
-\item{type}{character. mail type for mail template}
+\item{type}{character. The mail type for mail template}
 
 \item{fontsize}{character. fontsize of the mail body for mail template}
 
@@ -80,11 +80,20 @@ bookdownplus(template = "thesis_classic",
 \item{theme}{character. theme for poster template. available themes are 'eco' (default), 'ocean', 'rose'.}
 }
 \value{
-an .Rmd file to build with bookdown
+demo files to build with bookdown
 }
 \description{
-Yes, create a demo file for bookdown.
+Technically, \code{bookdownplus} is a collection and selector of R bookdown templates. \code{bookdownplus} helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. \code{R bookdownplus} extends the features of \code{bookdown}, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
+
+Full documentation of \code{bookdownplus} can be found in the book \href{https://bookdown.org/baydap/bookdown-plus}{R bookdownplus Textbook}. Here is a quick-start procedure.
+\itemize{
+\item Before starting, you have to install bookdown package, and other software and packages (i.e. Pandoc, LaTeX, rmarkdown, rticle, knitr, etc.) which bookdown depends on. See the \href{https://bookdown.org/yihui/bookdown/}{official manual of bookdown} for details. Additionally, if you want to produce a poster, phython must be installed before using, and the path of phython might have to be added to the environmental variables for Windows users.
+\item Run \code{bookdownplus()} and specify the template with \code{template} argument, You will get some files (e.g. \code{index.Rmd}, \code{body.Rmd}, \code{bookdownplus.Rproj}) and folders in your working directory. Although there are many other arguments for \code{bookdownplus()}, you can simply ignore them if you use \code{bookdownplus} package for the first time.
+\item Open \code{bookdownplus.Rproj} with RStudio. Now press \code{ctrl+shift+b} to build it. Your will get a book file named \code{index.pdf} in \code{_book/} folder.
+\item Write your own text in \code{index.Rmd} and \code{body.Rmd}, and build your own lovely book.
+}
 }
 \examples{
 bookdownplus()
+bookdownplus(template = "article")
 }

@@ -1,7 +1,7 @@
 Package: bookdownplus
-Version: 0.0.1
-Date: 2017-06-14
-Title: Generage varied books and documents with R bookdown
+Version: 1.0.1
+Date: 2017-06-21
+Title: Generate Varied Books and Documents with R `bookdown` Package
 Author: Peng Zhao
 Maintainer: Peng Zhao <pzhao@pzhao.net>
 Depends: R (>= 3.1.0)
@@ -10,11 +10,10 @@ Imports:
     bookdown (>= 0.3.17),
     yaml (>= 2.1.14)
 Suggests:
-Description: Generage books with R bookkdown
+Description: A collection and selector of R `bookdown` templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 License: GPL
 URL: https://github.com/pzhaonet/bookdownplus
 BugReports: https://github.com/pzhaonet/bookdownplus/issues
-VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
 NeedsCompilation: no

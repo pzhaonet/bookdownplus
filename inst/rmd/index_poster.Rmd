@@ -7,7 +7,7 @@ longinstitute: Institute of Ecology, University of Innsbruck, Austria
 web: 'pzhao.org'
 logo: images/bookdownplus-logo.pdf
 #backimg: images/bookdownplus-logo.pdf
-biblio-files: bib/bib.bib
+bibliofiles: bib/bib.bib
 posteroptions: width=90,height=110,scale=1.2 #,grid # portrait
 #posteroptions: width=110,height=90,scale=1.2 #,grid # landscape
 headerheight: 13cm

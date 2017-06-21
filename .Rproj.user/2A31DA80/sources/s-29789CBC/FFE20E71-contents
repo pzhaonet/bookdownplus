@@ -1,3 +1,4 @@
+getwd()
 setwd('d:\\googledrive\\a9\\test')
 
 ### mindr
@@ -22,6 +23,7 @@ postr::postr_del()
 ### bookdownplus
 remove.packages('bookdownplus')
 library('bookdownplus')
+bookdownplus('mail', from_address = 'Frau-Hitt-Str. 5B', from_town = '6020 Innsbruck', from_phone = '0677-611-59599', from_email = 'baydap@gmail.com', to_who = 'Kinderkrippe Luftabon', to_address = 'Blasius-Hueberst. 12', to_town = '6020 Innsbruck', type =  'business', fontsize = 'normalsize')
 bookdownplus()
 
 ### mf
@@ -29,3 +31,8 @@ remove.packages('mf')
 devtools::install_github('pzhaonet/mf')
 mf::mf_bib()
 example(mf::mf_bib())
+
+mftest <- function(x = 1:4){
+  print(match.arg(x))
+}
+mftest(1)

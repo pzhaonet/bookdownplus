@@ -13,11 +13,11 @@
 #' - 'yihui_demo',  the original demo book by Yihui Xie,
 #' - 'yihui_zh', the demo in Chinese by Yihui Xie,
 #' - 'article_mdpi',   academic article by mdpi,
-#' - 'thesis_classic', classic thesis,
+#' - 'thesis_classic' (default), classic thesis,
 #' - 'thesis_ubt',  thesis of University of Bayreuth,
 #' - 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
 #' - 'poster', poster,
-#' - 'poem', poem book
+#' - 'poem', poem book.
 #' @param title character. book title.
 #' @param author character. book author.
 #' @param from_address character. sender's address (Street and No.) for mail template
@@ -27,8 +27,20 @@
 #' @param to_who character. receiver's name for mail template
 #' @param to_address character. receiver's address (Street and No.) for mail template
 #' @param to_town character. receiver's town for mail template
-#' @param type character. The mail type for mail template
-#' @param fontsize character. fontsize of the mail body for mail template
+#' @param type character. The mail type for mail template. Available types are:
+#' - 'business', 
+#' - 'personal' (default).
+#' @param fontsize character. fontsize of the mail body for mail template. Available sizes are:
+#' - 'tiny', 
+#' - 'scriptsize', 
+#' - 'footnotesize', 
+#' - 'small', 
+#' - 'normalsize' (default),
+#' - 'large', 
+#' - 'Large', 
+#' - 'LARGE', 
+#' - 'huge',
+#' - 'Huge'.
 #' @param email character. author's email for poster template
 #' @param institute character. for poster template
 #' @param longinstitute  character. for poster template
@@ -36,21 +48,24 @@
 #' @param logo  character. The path of the logo image. for poster template
 #' @param backimg  character. The path of the background image. for poster template
 #' @param bibliofiles  character. The path of the bib file for poster template
-#' @param theme  character. theme for poster template. available themes are 'eco' (default), 'ocean', 'rose'.
+#' @param theme  character. theme for poster template. available themes are 
+#' -'eco' (default), 
+#' -'ocean', 
+#' -'rose'.
 #' @return demo files to build with bookdown
 #' @export
 #' @examples
 #' bookdownplus()
 #' bookdownplus(template = 'article')
 #' @description
-#' Technically, `bookdownplus` is a collection and selector of R bookdown templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. `R bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
+#' Technically, `bookdownplus` is a collection and selector of R bookdown templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 #'
-#' Full documentation of `bookdownplus` can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdown-plus). Here is a quick-start procedure.
+#' Full documentation of `bookdownplus` can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). Here is a quick-start procedure.
 #'
-#' - Before starting, you have to install bookdown package, and other software and packages (i.e. Pandoc, LaTeX, rmarkdown, rticle, knitr, etc.) which bookdown depends on. See the [official manual of bookdown](https://bookdown.org/yihui/bookdown/) for details. Additionally, if you want to produce a poster, phython must be installed before using, and the path of phython might have to be added to the environmental variables for Windows users.
+#' - Before starting, you have to install `bookdown` package, and other software and packages (i.e. 'Pandoc', 'LaTeX', `rmarkdown`, `rticle`, `knitr`, etc.) which `bookdown` depends on. See the [official manual of `bookdown`](https://bookdown.org/yihui/bookdown/) for details. Additionally, if you want to produce a poster, phython must be installed before using, and the path of phython might have to be added to the environmental variables for Windows users.
 #'
 #' - Run `bookdownplus()` and specify the template with `template` argument, You will get some files (e.g. `index.Rmd`, `body.Rmd`, `bookdownplus.Rproj`) and folders in your working directory. Although there are many other arguments for `bookdownplus()`, you can simply ignore them if you use `bookdownplus` package for the first time.
-#' - Open `bookdownplus.Rproj` with RStudio. Now press `ctrl+shift+b` to build it. Your will get a book file named `index.pdf` in `_book/` folder.
+#' - Open `bookdownplus.Rproj` with RStudio. Now press `ctrl+shift+b` to build it. Your will get a book file named `*.pdf` in `_book/` folder.
 #' - Write your own text in `index.Rmd` and `body.Rmd`, and build your own lovely book.
 bookdownplus <- function( ######
   template = 'thesis_classic',

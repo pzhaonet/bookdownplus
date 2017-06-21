@@ -1,0 +1,51 @@
+getwd()
+setwd('d:\\googledrive\\a9\\test')
+
+### bookdownplus
+remove.packages('bookdownplus')
+library('bookdownplus')
+bookdownplus('mail', from_address = 'Frau-Hitt-Str. 5B', from_town = '6020 Innsbruck', from_phone = '0677-611-59599', from_email = 'baydap@gmail.com', to_who = 'Kinderkrippe Luftabon', to_address = 'Blasius-Hueberst. 12', to_town = '6020 Innsbruck', type =  'business', fontsize = 'normalsize')
+bookdownplus()
+
+bookdownplus::bookdownplus(template = 'journal')
+bookdownplus::bookdownplus(template = 'poem',
+                           author = 'John Smith',
+                           title = 'My Poem book')
+bookdownplus::bookdownplus(template = 'guitar',
+                           author = 'John Smith',
+                           title = 'My Guitar book')
+bookdownplus::bookdownplus(template = 'mail', author = 'sender', from_address = "sender's address", from_town = "sender's town", from_phone = "sender's phone number", from_email = "sender's email", to_who = "receiver's name", to_address = "receiver's address", to_town = "receiver's town")
+bookdownplus::bookdownplus(template = 'calendar')
+
+bookdownplus::bookdownplus(template = 'article')
+
+bookdownplus::bookdownplus(template = 'thesis_ubt')
+### mindr
+remove.packages('mindr')
+devtools::install_github("pzhaonet/mindr")
+
+library(mindr)
+md2mm()
+md2mm(remove_curly_bracket = TRUE)
+mm2md()
+outline(remove_curly_bracket = TRUE)
+outline()
+
+### postr
+remove.packages('postr')
+devtools::install_github("pzhaonet/postr")
+postr::postr()
+postr::postr(theme = 'night')
+postr::postr(empty = TRUE)
+postr::postr_del()
+
+### mf
+remove.packages('mf')
+devtools::install_github('pzhaonet/mf')
+mf::mf_bib()
+example(mf::mf_bib())
+
+mftest <- function(x = 1:4){
+  print(match.arg(x))
+}
+mftest(1)

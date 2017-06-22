@@ -41,14 +41,14 @@ install.package("bookdownplus")
 devtools::install_github("pzhaonet/bookdownplus")
 ```
 
-Run the following codes, and you will get some files (e.g. `index.Rmd` and `body.Rmd`) and folders in your working directory.
+Run the following codes, and you will get some files (e.g. `index.Rmd`, `body.Rmd`, `bookdownplus.Rproj`) and folders in your working directory.
 
 ```
 getwd() # this is your working directory. run setwd() to change it.
 bookdownplus::bookdownplus()
 ```
 
-Now press `ctrl+shift+b` to compile it. Your will get a book file named `index.pdf` in `_book/`folder.
+Now open `bookdownplus.Rproj` with RStudio, and press `ctrl+shift+b` to compile it. Your will get a book file named `*.pdf` in `_book/`folder.
 
 Write your own text in `index.Rmd` and `body.Rmd`, and build your own lovely book.
 
@@ -130,6 +130,8 @@ Still being developed.  Feel free to give your feedback to me!
 
 ## Updates
 
+- 2017-06-21. [Released on CRAN](https://cran.r-project.org/web/packages/bookdownplus/index.html)!
+- 2017-06-21. **Version 1.0.2.** Resubmitted to CRAN!
 - 2017-06-21. **Version 1.0.2.** Resubmitted to CRAN!
 - 2017-06-21. **Version 1.0.1.** Submitted to CRAN!
 - 2017-06-14. **Version 0.0.1.**  A bug fixed.

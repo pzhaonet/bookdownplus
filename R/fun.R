@@ -49,9 +49,9 @@
 #' @param backimg  character. The path of the background image. for poster template
 #' @param bibliofiles  character. The path of the bib file for poster template
 #' @param theme  character. theme for poster template. available themes are 
-#' -'eco' (default), 
-#' -'ocean', 
-#' -'rose'.
+#' - 'eco' (default), 
+#' - 'ocean', 
+#' - 'rose'.
 #' @return demo files to build with bookdown
 #' @export
 #' @examples

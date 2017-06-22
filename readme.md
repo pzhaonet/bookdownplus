@@ -20,11 +20,11 @@ With `R bookdownplus` users can
 -   even in Chinese,
 -   and more wonders will come soon.
 
-Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdown-plus). The webpage looks so-so, while the [pdf file](https://bookdown.org/baydap/bookdown-plus/bookdown-plus.pdf) might give you a little surprise.  
+Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). The webpage looks so-so, while the [pdf file](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf) might give you a little surprise.  
 
 # Quick start
 
-Although this section might not be the latest version, the general idea won't change. Please see [R bookdownplus Textbook](https://bookdown.org/baydap/bookdown) to keep up with the update.
+Although this section might not be the latest version, the general idea won't change. Please see [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus) to keep up with the update.
 
 ## Preparation
 
@@ -36,6 +36,8 @@ bookdown for details. Additionall, if you want to produce a poster, phython must
 Installation:
 
 ```
+install.package("bookdownplus")
+# or
 devtools::install_github("pzhaonet/bookdownplus")
 ```
 

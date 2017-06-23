@@ -371,7 +371,12 @@ pdfproducer={LaTeX with hyperref and classicthesis}
 \vfill
 
 \begingroup
+$if(subtitle)$
 \color{Maroon}\spacedallcaps{$title$} \\$subtitle$\\ \bigskip % Thesis title
+$else$
+\color{Maroon}\spacedallcaps{$title$} \\ \bigskip % Thesis title
+$endif$
+
 \endgroup
 
 \spacedlowsmallcaps{$author$} % Your name

@@ -1,64 +1,85 @@
+## 简介 
 
-## 背景 {intro}
+很高兴地宣布，我的 R 语言扩展包 'bookdownplus' [@R-bookdownplus] 在 CRAN [正式发布](https://cran.r-project.org/web/packages/bookdownplus/)了。
 
-[bookdown+](https://github.com/dapengde/bookdown-plus)，听起来像是跟R[@R-base]的扩展包`bookdown`[@R-bookdown]有关吧? 
+bookdownplus 是对 bookdown 包 [@R-bookdown] 的增强和简化。bookdown 就好比 Microsoft Word 或 \(\LaTeX\)，可以用来写文档，而 bookdownplus 提供了很多有用的模板，可以很方便地在 bookdown 平台写期刊论文、学位论文、学术海报、化学分子式、信件、日记、日历、诗集、吉他谱等各种常用文档和书籍。这是功能上的增强（+）。
 
-一点没错！我们知道，`bookdown`天生是个用来写编程书籍的称手工具。只是，这仅仅是硬币的一面。`bookdown`的功能远远不止如此。它就像一个美味的蛋糕，我等啊等啊，等着谁把它切开，实在等不及了，就自己下手吧。所以，我弄了个[bookdown+](https://github.com/dapengde/bookdown-plus)。
+bookdownplus 使用时只需指定一个模板，给定作者和书名，就可以一键生成模板文件，用户在模板文件里照猫画虎写自己的文字就可以了，不必再花力气上网找模板、设置 YAML 和 LaTeX。这是操作上的简化（-）。 
 
-[bookdown+](https://github.com/dapengde/bookdown-plus)是`bookdown`的扩展。我数年前收集了一些\(\LaTeX\)模板，现在我把他们整理到[bookdown+](https://github.com/dapengde/bookdown-plus)里，这样就可以开开心心在`bookdown`的环境里做喜欢的事情。[bookdown+](https://github.com/dapengde/bookdown-plus) 展示了硬币的另一面：你可以用它来写写期刊论文、化学分子式、信件、日历、甚至日记。
+bookdownplus 各个模板的使用方法详见 [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus)。这本电子书本身就是用 bookdownplus 生成的，尤其是它的 [pdf 版本](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf)很美观。此书的源码开放，可以作为使用 bookdownplus写书的示例。
 
-在不久的未来，肯定会出现很多官方的bookdown模板，但是我不想等了。你要是也等不及，就跟我来一起使用或开发[bookdown+]吧！
+下面是 bookdownplus 的简介和快速使用方法。
 
-## 快速入门 {quick}
+## 快速入门
 
-### 预备 {step0}
+### 准备
 
-在开始前，你需要安装 R, RStudio, bookdown，和其他依赖的软件和包(例如 `Pandoc`, \(\LaTeX\), `rmarkdown`, `rticle`, `knitr`等)。详见[bookdown官方手册](https://bookdown.org/yihui/bookdown/).
+在开始前，需要安装 R, RStudio, bookdown，和其他依赖的软件和包(例如 `Pandoc`, \(\LaTeX\), `rmarkdown`, `rticle`, `knitr`等)，作为准备。详见 [bookdown 官方手册](https://bookdown.org/yihui/bookdown/)。
 
-准备好后，从Github[下载`bookdown+`](https://github.com/dapengde/bookdown-plus/archive/master.zip)压缩文件。解压缩到你的电脑里，在得到的文件夹里找到 `_start.Rproj`文件，双击就会在RStudio里打开一个项目。
+### 安装
 
-文件夹里还有个`_runme.R`文件。你可以双击打开并运行。下面是对这个文件里代码的详细解释。
+准备完毕后，就可以安装 bookdownplus 了。可以安装稳定版：
 
-### 第1步：标题和作者 {step1}
-
-改成你自己书的标题和作者名。
-
-```{r, eval=FALSE}
-title <- 'bookdown+: Authoring Articles, Mails, Guitar books, Chemical Molecular
- Formulae and Equations with R bookdown'
-author <- 'Peng Zhao'
+```R
+install.packages("bookdownplus")
 ```
 
-### 第2步: 模板 {step2}
+或开发版：
 
-在给定的可用模板里选择你想要的。这里我们选第8个。
-
-```{r, eval=FALSE}
-templates  <- c('article',     #1, academic article
-                'article_zh',  #2, academic article in Chinese
-                'calendar',    #3, calendar, in progress
-                'chemistry',   #4, chemical molecular formulae and equations
-                'chemistry_zh',#5, in Chinese,
-                'guitar',      #6, guitar book
-                'mail',        #7, mail, in progress
-                'journal',     #8, laboratory journal, or personal diary
-                'mini',        #9, a mini demo by Yihui
-                'original',    #10, the original demo by Yihui
-                'book_zh'      #11, the demo in Chinese by Yihui
-)
-template <- templates[8]
+```R
+devtools::install_github("pzhaonet/bookdownplus")
 ```
 
-运行 `fun/build.R`。
+### 生成模板文件
 
-```{r, eval=FALSE}
-source('fun/build.R')
+接着，在 R 中运行下面的代码：
+
+```R
+bookdownplus::bookdownplus()
 ```
 
-### 第3步: 成书  {step3}
+这时，在你的工作目录（`getwd()`），会得到一些模板文件（如 `index.Rmd`，`body.Rmd`， `bookdownplus.Rproj`） 和文件夹。
 
-现在按下 `ctrl+shift+b` 快捷键，你就会在新生成的`book/`文件里找到一本示例书。打开看看吧！
+### 编译成书
 
-你自己的文字只需在`body.Rmd`修改，写完后重复本步即可。
+用 RStudio 打开 `bookdownplus.Rproj`文件，然后按 `ctrl+shift+b`，Duang！你就得到模板书  `*.pdf`了！保存在 `_book/` 文件夹里。
+
+
+### 你的文字
+
+在 `index.Rmd` 和 `body.Rmd` 里写你自己的文字，享受写书的快乐吧！自古皆死，不朽者文。
+
+
+### 更多输出格式
+
+模板默认生成的书是pdf格式。'bookdownplus' 从 1.0.3 开始，可以很方便地输出更多格式，包括国内最常见的 'word'格式，网页'html'格式和电子书'epub'格式，只需运行：
+
+```R
+bookdownplus::bookdownplus(template = 'article', more_output = c('html', 'word', 'epub'))
+```
+
+就可以在 `_book/` 文件夹里看到这些文件了。
+
+网页格式可以极其方便地免费发布到 [bookdown.org](https://bookdown.org)，只需运行：
+
+```R
+bookdown::publish_book()
+```
+
+这里是 bookdown 书籍的大本营。截至 2017 年 6 月，我有三本书被放置在这个网站的首页。
+
+### 更多建议
+
+我开发的另外两个 R 包可以配合 'bookdown' 使用：
+
+- mindr [@R-mindr]，可以从 markdown 或 R markdown 格式的书稿中提取纲要，并且生成思维导图。
+
+- pinyin [@R-pinyin]，可以为书稿的章节标题自动生成['{#ID}'](https://bookdown.org/yihui/bookdown/cross-references.html)。如果标题里含有汉字，就会自动转换成拼音。
+
+具体用法见他们的帮助信息。这两个包已经在 CRAN正式发布，安装命令是：
+
+```R
+install.packages('mindr')
+install.packages('pinyin')`.
 
 祝你玩得愉快！

@@ -1,5 +1,5 @@
 --- 
-title: "R bookdown+: 用 R bookdown 写期刊论文、日记、信件、日历、吉他书、化学方程式"
+title: "R bookdownplus: 用 R bookdown 写期刊论文、日记、信件、日历、吉他书、化学方程式"
 author: "赵大鹏^[通讯地址和邮箱] 　赵二鹏^[邮箱]"
 date: ""
 output:
@@ -21,7 +21,7 @@ bibliography: [bib/bib.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: no  
-toc: no
+#toc: no
 lot: no
 lof: no
 geometry: [a4paper]

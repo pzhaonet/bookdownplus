@@ -1,5 +1,5 @@
 --- 
-Title: "R bookdown+: Authoring Articles, Mails, Guitar Chords, Chemical Molecular Formulae and Equations with R bookdown"
+Title: "R bookdownplus: Authoring Articles, Mails, Guitar Chords, Chemical Molecular Formulae and Equations with R bookdown"
 date: ""
 # Authors, for the paper (add full first names)
 Author: "Peng Zhao, Samwell Tarly and Lyanna Mormont*"
@@ -18,7 +18,7 @@ secondnote: "These authors contributed equally to this work."
 
 # Keywords
 keyword: "dragon; dagger; bear; keyword 3 (list three to ten pertinent keywords specific to the article, yet reasonably common within the subject discipline.)"
-abstract: " Everyone knows that `bookdown` is an excellent package for authoring books on programming languages. But it is only one side of the coin.  It can do more than expected. Therefore I am developing `bookdown+`. `bookdown+` is an extension of `bookdown`. It helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries."
+abstract: " Everyone knows that `bookdown` is an excellent package for authoring books on programming languages. But it is only one side of the coin.  It can do more than expected. Therefore I am developing `bookdownplus`. `bookdownplus` is an extension of `bookdown`. It helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries."
 acknowledgements: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 doinum: "10.3390/------"
 pubvolume: "xx"
@@ -52,7 +52,7 @@ bibliography: [bib/bib.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: no  
-toc: no
+# toc: no
 lot: no
 lof: no
 site: bookdown::bookdown_site

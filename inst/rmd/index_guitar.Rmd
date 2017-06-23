@@ -17,7 +17,7 @@ output:
     toc_appendix: yes
     quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
 description: "This is a collection of my favorite songs with guitar chords, produced by bookdown."
-cover-image: "images/cover.png"
+# cover-image: "images/cover.png"
 documentclass: book
 classoption: openany
 colorlinks: no

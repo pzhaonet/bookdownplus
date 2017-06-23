@@ -1,5 +1,5 @@
 ---
-title: "R bookdown+: Authoring varied types of books and documents with R bookdown"
+title: "R bookdownplus: Authoring varied types of books and documents with R bookdown"
 author: [Peng Zhao]
 email: pzhao@pzhao.net
 institute: Institute of Ecology, Univ. Innsbruck
@@ -40,11 +40,11 @@ knitr::opts_chunk$set(fig.width = 16, fig.height = 4)
 
 ### Motivation
 
-`R bookdown` [@R-bookdown] is an excellent R [@R-base] package for authoring books on programming languages. It has the potential to do much more than authoring R books if users costumize self-defined templates. However, the development of templates is difficult and unnecessary. Therefore I developed `bookdown+` [@R-bdp].
+`R bookdown` [@R-bookdown] is an excellent R [@R-base] package for authoring books on programming languages. It has the potential to do much more than authoring R books if users costumize self-defined templates. However, the development of templates is difficult and unnecessary. Therefore I developed `bookdownplus` [@R-bookdownplus].
 
 ### Features
 
-`R bookdown+` is a collection of multiple templates. With `bookdown+` you can easily
+`R bookdownplus` is a collection of multiple templates. With `bookdownplus` you can easily
 
 - write a laboratory journal, or a personal diary,
 - draw a monthly or weekly or conference calendar,
@@ -55,7 +55,7 @@ knitr::opts_chunk$set(fig.width = 16, fig.height = 4)
 - even in Chinese,
 - and more wonders will come soon.
 
-This poster you are viewing now is produced by `R bookdown+`.
+This poster you are viewing now is produced by `R bookdownplus`.
 
 <!--
 
@@ -69,7 +69,7 @@ This poster you are viewing now is produced by `R bookdown+`.
 
 Before starting, you have to install R, RStudio, bookdown package, and other software and packages (\ie `Pandoc`, \LaTeX, `rmarkdown`, `rticle`, `knitr`, etc.) which bookdown depends on. See the official manual of bookdown ^[https://bookdown.org/yihui/bookdown/] for details.
 
-[Download `bookdown+`](https://github.com/dapengde/bookdown-plus/archive/master.zip) ^[https://github.com/dapengde/bookdown-plus] package as a zip file from Github. Unzip it to a folder in your PC. Double click a file named `_start.Rproj`, which will be opened by RStudio.
+[Download `bookdownplus`](https://github.com/dapengde/bookdown-plus/archive/master.zip) ^[https://github.com/dapengde/bookdown-plus] package as a zip file from Github. Unzip it to a folder in your PC. Double click a file named `_start.Rproj`, which will be opened by RStudio.
 
 Open `_runme.R` and run it. The explanation is as follows,
 
@@ -125,9 +125,9 @@ knitr::kable(
 
 [column]
 
-# Book types supported by `bookdown+`
+# Book types supported by `bookdownplus`
 
-Some sample pages are displayed as follows. More details can be found in the tutorial book [@R-bdp].
+Some sample pages are displayed as follows. More details can be found in the tutorial book [@R-bookdownplus].
 
 
 \begin{figure}[htp]
@@ -151,9 +151,9 @@ Some sample pages are displayed as follows. More details can be found in the tut
 
 # Take-home message
 
-- `R bookdown+` is an extension of `bookdown` for academic and literal writing, especially for reproducible reports.
+- `R bookdownplus` is an extension of `bookdown` for academic and literal writing, especially for reproducible reports.
 
-- `R bookdown+` is still being developed. Feel free to join me either in contributing templates to [**my Github repo**](https://github.com/dapengde/bookdown-plus) ^[https://github.com/dapengde/bookdown-plus], or in writing the tutorial of R bookdown+ [@R-bdp].
+- `R bookdownplus` is still being developed. Feel free to join me either in contributing templates to [**my Github repo**](https://github.com/dapengde/bookdown-plus) ^[https://github.com/dapengde/bookdown-plus], or in writing the tutorial of R bookdownplus [@R-bookdownplus].
 
 <!--\vskip0.5cm
 

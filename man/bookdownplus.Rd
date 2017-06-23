@@ -4,7 +4,7 @@
 \alias{bookdownplus}
 \title{Create demo files for building books with R bookdown package.}
 \usage{
-bookdownplus(template = "thesis_classic",
+bookdownplus(template = "thesis_classic", more_output = NULL,
   title = "R bookdownplus: Authoring varied types of books and documents with R bookdown",
   author = "Peng Zhao", from_address = "15 Robin Hood Lane",
   from_town = "11758  Massapequa, Long Island, New York",
@@ -40,6 +40,8 @@ bookdownplus(template = "thesis_classic",
 \item 'poster', poster,
 \item 'poem', poem book.
 }}
+
+\item{more_output}{optional output formats. NULL(default) or c('word', 'html', 'epub')}
 
 \item{title}{character. book title.}
 
@@ -94,9 +96,11 @@ bookdownplus(template = "thesis_classic",
 \item{bibliofiles}{character. The path of the bib file for poster template}
 
 \item{theme}{character. theme for poster template. available themes are
--'eco' (default),
--'ocean',
--'rose'.}
+\itemize{
+\item 'eco' (default),
+\item 'ocean',
+\item 'rose'.
+}}
 }
 \value{
 demo files to build with bookdown

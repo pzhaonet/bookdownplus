@@ -1,73 +1,95 @@
 # Introduction
 
-`bookdown+`? Hmm...sounds like something related to the R[@R-base] package `bookdown` [@R-bookdown]? 
+The R package `bookdownplus` [@R-bookdownplus] is an extension of `bookdown` [@R-bookdown]. It is a collection of
+multiple templates on the basis of LaTeX, which are tailored so that I can work happily under the umbrella of `bookdown`. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
 
+# Features
 
-Yes, you **_R_** right. Everyone knows that `bookdown` is an excellent package for authoring books on programming languages. But it is only one side of the coin.  It can do more than expected. `bookdown` smells like a tasty cake. I have been expecting someone to cut it. Now I am helping myself. Therefore I am developing `bookdown+`.
+`bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX. 
 
-`bookdown+` is an extension of `bookdown`. It is a collection of multiple templates, which I collected years ago on the basis of \LaTeX, and have been tailoring them so that I can work happily under the umbrella of `bookdown`. `bookdown+` shows you the other side of the coin, which helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
+With `bookdownplus` users can
 
-I believe some official bookdown templates will be available in the near future, but I cannot wait. Can you?
+-   record guitar chords,
 
-With `bookdown+` you can
+-   write a mail in an elegant layout,
 
-- record guitar chords,
+-   write a laboratory journal, or a personal diary,
 
-- write a mail in an elegant layout,
+-   draw a monthly or weekly or conference calendar,
 
-- write a laboratory journal, or a personal diary,
+-   and, of course, write academic articles in your favourite way,
 
-- draw a monthly or weekly or conference calendar,
+-   with chemical molecular formulae and equations,
 
-- and, of course, write academic articles in your favourite way,
+-   even in Chinese,
 
-- with chemical molecular formulae and equations,
+-   and more wonders will come soon.
 
-- even in Chinese,
-
-- and more wonders will come soon.
-
-`bookdown+` is developed on the basis of the following outstanding work:
-
-- R bookdown package [@R-bookdown]
-
-- Two minimal book examples using bookdown by Yihui Xie ^[https://github.com/yihui/bookdown-minimal] ^[https://github.com/rstudio/bookdown-demo]
-
-- gchords, a LaTeX package for typesetting guitar chord diagrams by Kasper Peeters ^[http://kasper.phi-sci.com/gchords/]
-
-- Copernicus Publications LaTeX Package ^[http://publications.copernicus.org/for_authors/latex_instructions.html]
-
-If I miss something that I should cite, please let me know.
+Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). The webpage looks so-so, while the [pdf file](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf) might give you a little surprise.  
 
 # Quick start
 
-## Step 0. Preparation
+Although this section might not be the latest version, the general idea won't change. Please see [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus) to keep up with the update.
 
-Before starting, you have to install R, RStudio, bookdown package, and other software and packages (i.e. `Pandoc`, \LaTeX, `rmarkdown`, `rticle`, `knitr`, etc.) which bookdown depends on. See the official manual of bookdown ^[https://bookdown.org/yihui/bookdown/] for details.
+## Preparation
 
-If you are ready, [download `bookdown+`](https://github.com/dapengde/bookdown-plus/archive/master.zip) package as a zip file from Github. Unzip it to a folder in your PC. You will find a file named `_start.Rproj`. Double click it, and it will be opened by RStudio.
+Before starting, you have to install R, RStudio, bookdown package, and
+other software and packages (i.e. Pandoc, LaTeX, rmarkdown, rticle,
+knitr, etc.) which bookdown depends on. See the official [manual](https://bookdown.org/yihui/bookdown/) of
+bookdown for details. Additionally, if you want to produce a poster, phython must be installed before using, and the path of phython might have to be added to the environmental variables for Windows users.
 
-OK, now you can see a `_runme.R` file as well. Open it and run the script, or follow my explanation as follows,
+## Installation
 
-## Step 1. Title and author
+```
+install.package("bookdownplus")
+# or
+devtools::
+  install_github("pzhaonet/bookdownplus")
+```
 
-Specify the title and the author of your book, article, guitar book, or whatever.
+## Generate demo files
 
-## Step 2: Template
+Run the following codes, and you will get some files (e.g. `index.Rmd`, `body.Rmd`, `bookdownplus.Rproj`) and folders in your working directory.
 
-Choose a template out of the available templates. Here I choose the 8th.
+```
+getwd() # this is your working directory. run setwd() to change it.
+bookdownplus::bookdownplus()
+```
 
+## Build a demo book
 
-Run `fun/build.R`.
+Now open `bookdownplus.Rproj` with RStudio, and press `ctrl+shift+b` to compile it. Your will get a book file named `*.pdf` in `_book/`folder.
 
-## Step 3: Write and Build
+## Write your own
 
-Now you can press `ctrl+shift+b` to build a demo book, which you can find in `book/`.
+Write your own text in `index.Rmd` and `body.Rmd`, and build your own lovely book.
 
-Write your own text in `body.Rmd`, and build your own lovely book. 
+## More outputs
 
-Have fun!
+By default, the book is in a pdf file. From 'bookdownplus' 1.0.3, users can get more output formats, including 'word', 'html' and 'epub'. Run:
 
+```
+bookdownplus::
+  bookdownplus(template = 'article', 
+               more_output = c('html', 'word', 'epub'))
+```
+
+## Recommendations
+
+I have been developing some other packages, which bring more features into 'bookdown', such as:
+
+- mindr [@R-mindr], which can extract the outline of your book and turn it into a mind map, and
+
+- pinyin [@R-pinyin], which can automatically generate ['{#ID}'](https://bookdown.org/yihui/bookdown/cross-references.html) of the chapter headers even if there are Chinese characters in them.
+
+Both of them have been released on CRAN and can be installed via:
+
+```
+install.packages('mindr')
+install.packages('pinyin')
+```
+
+Enjoy your bookdowning!
 
 ## Models
 
@@ -82,12 +104,12 @@ It can be written as $E = mc^2$.
 
 
 # Results
+
 Fig. \@ref(fig:fig1) psum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
 
 ```{r fig1, fig.cap='caption', out.width='80%', fig.align='center', echo=FALSE}
 plot(cars)
 ```
-
 
 Tab. \@ref(tab:tab1) psum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
 

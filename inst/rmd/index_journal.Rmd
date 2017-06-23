@@ -19,7 +19,7 @@ bibliography: [bib/bib.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: no  
-toc: yes
+# toc: yes
 lot: no
 lof: no
 # geometry: [a4paper, tmargin=2cm, bmargin=2cm, lmargin=1.5cm, rmargin=1.5cm]

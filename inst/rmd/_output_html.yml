@@ -1,11 +1,7 @@
-bookdown::word_document2: default 
-bookdown::epub_book: default
 bookdown::gitbook:
   css: style/gitbook.css
   config:
     toc:
       collapse: none
-      before: |
-        <li><a href="http://pzhao.org">Homepage'</a></li>
       after: |
         <li><a href="https://bookdown.org/baydap/bookdownplus/" target="blank">Supported by bookdownplus</a></li>

@@ -12,7 +12,7 @@ SecretLevel: "绝密"
 # 学号
 PersonalID: "127436"
 # 英文题目
-englishtitle: "R bookdown+"
+englishtitle: "R bookdownplus"
 # 学位
 degree: "壮士"
 # 导师

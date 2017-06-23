@@ -17,7 +17,7 @@ bibliography: [bib/bib.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: no  
-toc: no
+# toc: no
 lot: no
 lof: no
 site: bookdown::bookdown_site

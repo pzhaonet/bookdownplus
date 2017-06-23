@@ -1,5 +1,5 @@
 --- 
-title: "R bookdown+: Authoring Articles, Mails, Guitar Chords, Chemical Molecular Formulae and Equations with R bookdown"
+title: "R bookdownplus: Authoring Articles, Mails, Guitar Chords, Chemical Molecular Formulae and Equations with R bookdown"
 author: "Peng Zhao, Samwell Tarly and Lyanna Mormont*"
 date: ""
 output:
@@ -17,7 +17,7 @@ bibliography: [bib/bib.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: no  
-toc: no
+# toc: no
 lot: no
 lof: no
 site: bookdown::bookdown_site

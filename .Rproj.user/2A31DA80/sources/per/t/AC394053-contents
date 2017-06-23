@@ -20,8 +20,6 @@
 #' - 'poem', poem book.
 #' @param title character. book title.
 #' @param author character. book author.
-#' @param more_output optional output formats. NULL(default) or c('word', 'html', 'epub')
-#'
 #' @param from_address character. sender's address (Street and No.) for mail template
 #' @param from_town  character. sender's town for mail template
 #' @param from_phone character. sender's phone number for mail templae
@@ -30,20 +28,19 @@
 #' @param to_address character. receiver's address (Street and No.) for mail template
 #' @param to_town character. receiver's town for mail template
 #' @param type character. The mail type for mail template. Available types are:
-#' - 'business',
+#' - 'business', 
 #' - 'personal' (default).
 #' @param fontsize character. fontsize of the mail body for mail template. Available sizes are:
-#' - 'tiny',
-#' - 'scriptsize',
-#' - 'footnotesize',
-#' - 'small',
+#' - 'tiny', 
+#' - 'scriptsize', 
+#' - 'footnotesize', 
+#' - 'small', 
 #' - 'normalsize' (default),
-#' - 'large',
-#' - 'Large',
-#' - 'LARGE',
+#' - 'large', 
+#' - 'Large', 
+#' - 'LARGE', 
 #' - 'huge',
 #' - 'Huge'.
-#'
 #' @param email character. author's email for poster template
 #' @param institute character. for poster template
 #' @param longinstitute  character. for poster template
@@ -51,11 +48,10 @@
 #' @param logo  character. The path of the logo image. for poster template
 #' @param backimg  character. The path of the background image. for poster template
 #' @param bibliofiles  character. The path of the bib file for poster template
-#' @param theme  character. theme for poster template. available themes are
-#' - 'eco' (default),
-#' - 'ocean',
+#' @param theme  character. theme for poster template. available themes are 
+#' - 'eco' (default), 
+#' - 'ocean', 
 #' - 'rose'.
-#'
 #' @return demo files to build with bookdown
 #' @export
 #' @examples
@@ -73,8 +69,6 @@
 #' - Write your own text in `index.Rmd` and `body.Rmd`, and build your own lovely book.
 bookdownplus <- function( ######
   template = 'thesis_classic',
-  more_output = NULL,
-  # more_output = c('html', 'word', 'epub'),
   title ='R bookdownplus: Authoring varied types of books and documents with R bookdown',
   author = 'Peng Zhao',
 
@@ -104,7 +98,7 @@ bookdownplus <- function( ######
   ###### internal functions ######
   ### copy necessary files to the working directory
   copyfolder <- function(folder = 'images') {
-    dir.create(folder,showWarnings = FALSE)
+    dir.create(folder)
     mypath <- paste0(.libPaths(), '/bookdownplus/', folder)
     file.copy(from = dir(mypath[dir.exists(mypath)][1], full.names = TRUE), to = folder)
   }
@@ -171,14 +165,7 @@ bookdownplus <- function( ######
     ###### prepare _output.yml, which defines the output files of gitbook and epub formats. comment it if you only need pdf. ######
     backup('_output.yml')
     # file.copy('rmd/_output.yml', '_output.yml', copy.mode = FALSE, overwrite = TRUE)
-    output <- readLines('rmd/_output.yml')
-    if (!is.null(more_output)) {
-      outputyml <- file("_output.yml","w")
-      for (ic in more_output) {
-        writeLines(readLines(paste0('rmd/_output_', ic, '.yml')), con = outputyml, sep= "\n")
-      }
-      close(outputyml)
-      }
+
     ###### prepare body.Rmd ######
     bodydemo <- bodyfile(template)
     bodynew <- paste0('body', substr(bodydemo, nchar(bodydemo)-3, nchar(bodydemo)))

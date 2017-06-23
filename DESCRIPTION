@@ -1,6 +1,6 @@
 Package: bookdownplus
-Version: 1.0.2
-Date: 2017-06-21
+Version: 1.0.3
+Date: 2017-06-23
 Title: Generate Varied Books and Documents with R 'bookdown' Package
 Author: Peng Zhao
 Maintainer: Peng Zhao <pzhao@pzhao.net>

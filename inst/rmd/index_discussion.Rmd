@@ -6,7 +6,7 @@ abstract: " Everyone knows that `bookdown` is an excellent package for authoring
 acknowledgements: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 output:
   bookdown::pdf_book:
-    template: tex/template_article.tex
+    template: tex/template_discussion.tex
     keep_tex: yes
     citation_package: natbib
 #    latex_engine: xelatex

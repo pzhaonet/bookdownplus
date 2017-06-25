@@ -2,26 +2,26 @@
 #'
 #' @param template character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are:
 #' - 'article', academic article,
+#' - 'article_mdpi',   academic article by mdpi,
 #' - 'article_zh', academic article in Chinese,
 #' - 'calendar',  monthly or weekly calendar,
 #' - 'chemistry',   book with chemical molecular formulae and equations
 #' - 'chemistry_zh', chemistry book in Chinese,
+#' - 'discussion', article in discussion format,
 #' - 'guitar',  book with guitar chords,
-#' - 'mail', personal or business mail,
 #' - 'journal', laboratory journal or personal diary,
-#' - 'yihui_mini',  a mini demo book by Yihui Xie,
-#' - 'yihui_demo',  the original demo book by Yihui Xie,
-#' - 'yihui_zh', the demo in Chinese by Yihui Xie,
-#' - 'article_mdpi',   academic article by mdpi,
+#' - 'mail', personal or business mail,
+#' - 'nte_zh', a template from Nothing to envy, in Chinese
+#' - 'poem', poem book,
 #' - 'thesis_classic' (default), classic thesis,
 #' - 'thesis_mypku',  thesis of my Peking Uni., in Chinese,
 #' - 'thesis_ubt',  thesis of University of Bayreuth,
 #' - 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
-#' - 'poster', poster,
-#' - 'nte_zh', a template from Nothing to envy, in Chinese
-#' - 'discussion', article in discussion format,
+#' - 'yihui_demo',  the original demo book by Yihui Xie,
+#' - 'yihui_mini',  a mini demo book by Yihui Xie,
+#' - 'yihui_zh', the demo in Chinese by Yihui Xie,
 #' - 'article2_zh', article in two columns in Chinese, not ready yet,
-#' - 'poem', poem book.
+#' - 'poster', poster.
 #' @param title character. book title.
 #' @param author character. book author.
 #' @param more_output optional output formats. NULL(default) or c('word', 'html', 'epub')

@@ -82,91 +82,61 @@ Enjoy your bookdowning!
 
 ## Showcase
 
-- article
 
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_article.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+article.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_article_mdpi.jpg)
 
-- article_mdpi1
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_article_zh.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+article_mdpi.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_calendar.jpg)
 
-- article_zh
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_chemistry.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+article_zh.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_discussion.jpg)
 
-- calendar
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_guitar.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+calendar.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_journal.jpg)
 
-- chemistry
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_mail.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+chemistry.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_nte_zh.jpg)
 
-- guitar
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_poem.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+guitar.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_classic.jpg)
 
-- journal
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_mypku.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+journal.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_ubt.jpg)
 
-- mail
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_zju.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+mail.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_yihui_demo.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+mail2.png)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_yihui_mini.jpg)
 
-- poem
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_yihui_zh.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+poem.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_poster.jpg)
 
-- thesis_classic
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+thesis_classic.jpg)
-
-- thesis_ubt
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+thesis_ubt.jpg)
-
-- thesis_zju
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+thesis_zju.jpg)
-
-- yihui_demo
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+yihui_demo.jpg)
-
-- yihui_mini
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+yihui_mini.jpg)
-
-- yihui_zh
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+yihui_zh.jpg)
-
-- poster
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+poster_ocean.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdown-plus/master/showcase/bookdown+poster_eco.jpg)
 
 ## Updates
 
 
-- 2017-06-24. **1.1.0.** More templates!
-  - 'discussion', for academic article in discussion format,
-  - 'thesis_mypku', in Chinese, the master thesis template I used more than ten years ago, 
-  - 'nte_zh', in Chinese, for novels,
+- 2017-06-24. **1.1.0.** More templates! See `help(bookdownplus)`
+  - 'discussion', for academic article in discussion format.
+  - 'thesis_mypku', in Chinese, the master thesis template I used more than ten years ago.
+  - 'nte_zh', in Chinese, for novels.
   - 'mail' template updates:
     - more styles,
-	- more themes
+	- more themes.
 - 2017-06-23. **1.0.3.** 
   - Fixed a bug of thesis_classic. 
   - Switched off warnings when creating folders.
   - Options to export epub, html, and word documents.
-- 2017-06-21. [Released on CRAN](https://cran.r-project.org/web/packages/bookdownplus/index.html)!
-- 2017-06-21. **1.0.2.** Resubmitted to CRAN!
+- 2017-06-21. **1.0.2.** [Released on CRAN](https://cran.r-project.org/web/packages/bookdownplus/index.html)!
 - 2017-06-21. **1.0.2.** Resubmitted to CRAN!
 - 2017-06-21. **1.0.1.** Submitted to CRAN!
 - 2017-06-14. **0.0.1.** A bug fixed.

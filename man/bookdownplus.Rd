@@ -31,26 +31,26 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are:
 \itemize{
 \item 'article', academic article,
+\item 'article_mdpi',   academic article by mdpi,
 \item 'article_zh', academic article in Chinese,
 \item 'calendar',  monthly or weekly calendar,
 \item 'chemistry',   book with chemical molecular formulae and equations
 \item 'chemistry_zh', chemistry book in Chinese,
+\item 'discussion', article in discussion format,
 \item 'guitar',  book with guitar chords,
-\item 'mail', personal or business mail,
 \item 'journal', laboratory journal or personal diary,
-\item 'yihui_mini',  a mini demo book by Yihui Xie,
-\item 'yihui_demo',  the original demo book by Yihui Xie,
-\item 'yihui_zh', the demo in Chinese by Yihui Xie,
-\item 'article_mdpi',   academic article by mdpi,
+\item 'mail', personal or business mail,
+\item 'nte_zh', a template from Nothing to envy, in Chinese
+\item 'poem', poem book,
 \item 'thesis_classic' (default), classic thesis,
 \item 'thesis_mypku',  thesis of my Peking Uni., in Chinese,
 \item 'thesis_ubt',  thesis of University of Bayreuth,
 \item 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
-\item 'poster', poster,
-\item 'nte_zh', a template from Nothing to envy, in Chinese
-\item 'discussion', article in discussion format,
+\item 'yihui_demo',  the original demo book by Yihui Xie,
+\item 'yihui_mini',  a mini demo book by Yihui Xie,
+\item 'yihui_zh', the demo in Chinese by Yihui Xie,
 \item 'article2_zh', article in two columns in Chinese, not ready yet,
-\item 'poem', poem book.
+\item 'poster', poster.
 }}
 
 \item{more_output}{optional output formats. NULL(default) or c('word', 'html', 'epub')}

@@ -1,5 +1,3 @@
-Dear Sir or Madam:
-
 Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed nec sem sit amet lacus aliquam blandit. Nunc tristique mollis eros. Praesent elit. Maecenas turpis. Vestibulum consectetuer velit sit amet ipsum. Aliquam pede nunc, dictum ac, dictum nec, bibendum ut, ante. Phasellus justo urna, convallis vitae, scelerisque a, egestas vitae, diam. Cras eu enim a eros tristique varius.
 
 Pellentesque pellentesque magna a arcu. Phasellus enim purus, pellentesque sed, interdum hendrerit, interdum elementum, sapien. Nunc lobortis neque sed elit congue tempus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam lacus mi, volutpat bibendum, ullamcorper in, imperdiet vel, purus. Aliquam egestas sollicitudin mauris. Maecenas quis massa euismod tortor interdum consectetuer. Mauris rutrum leo adipiscing erat.
@@ -10,5 +8,3 @@ Nurabitur id mi. Morbi tempor porta neque. Curabitur nunc dui, posuere sed, orna
 
 Nulla mi. Suspendisse potenti. Quisque sapien nisl, congue id, egestas a, lacinia ut, pede. Etiam vehicula nisi eu dolor. Aliquam nulla elit, dignissim nec, suscipit ut, cursus sit amet, dui. Sed vel lorem ut lacus sagittis egestas. Quisque justo nisl, convallis non, ultrices et, tempor at, pede. Phasellus orci. Morbi non velit blandit pede adipiscing mollis. Cras malesuada. Mauris tincidunt massa ut risus. Maecenas sit amet mi nec elit ultrices tincidunt. Nullam hendrerit congue ipsum. Fusce felis.
   
-Yours faithfully,
-

@@ -1,0 +1,34 @@
+--- 
+title: "我的论文标题"
+author: "大鹏"
+site: bookdown::bookdown_site
+date: "`r Sys.Date()`"
+output:
+  bookdown::pdf_book:
+    keep_tex: yes
+    dev: "cairo_pdf"
+    latex_engine: xelatex
+    citation_package: natbib
+    template: tex/template_thesis_mypku.tex
+    pandoc_args: --chapters
+    toc_depth: 2
+    toc_unnumbered: yes
+    toc_appendix: yes
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+documentclass: ctexbook
+bibliography: [bib/book.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: no
+lot: yes
+lof: yes
+geometry: [a4paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
+description: "This is a thesis."
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 61)
+# options(htmltools.dir.version = FALSE, formatR.indent = 2, width = 61, digits = 4)
+
+# knitr::opts_chunk$set(tidy.opts=list(width.cutoff=61),tidy=TRUE) # does not work
+```

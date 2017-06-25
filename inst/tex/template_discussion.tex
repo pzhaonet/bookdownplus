@@ -1,0 +1,100 @@
+\documentclass[bgd, online, hvmath]{style/copernicus_discussions}
+%\documentclass[bgd, online, hvmath]{style/copernicus}
+%\documentclass[hess, online, hvmath]{copernicus}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+%\usepackage{lmodern}
+%\usepackage{amssymb,amsmath}
+\usepackage{fixltx2e} % provides \textsubscript
+
+
+$if(natbib)$
+\usepackage{natbib}
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
+$endif$
+$if(biblatex)$
+\usepackage[$if(biblio-style)$style=$biblio-style$,$endif$$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+$endif$
+
+\usepackage{color}
+%\usepackage[pdftex]{hyperref}
+\usepackage[colorlinks=true, linkcolor=black, citecolor=blue, urlcolor=black]{hyperref}
+\usepackage{pifont}
+\usepackage{verbatim}
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[singlelinecheck=false]{caption}
+\usepackage[figuresright]{rotating}
+\usepackage{float}
+\graphicspath{{pic/}}
+
+\begin{document}\sloppy
+
+\title{$title$}
+
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+
+$if(institute)$
+\providecommand{\institute}[1]{}
+\institute{$for(institute)$$institute$$sep$ \and $endfor$}
+$endif$
+
+%\author[]{NAME}
+%\author[]{NAME}
+%\author[]{NAME}
+
+%\affil[]{ADDRESS}
+%\affil[]{ADDRESS}
+
+%\affil[1]{Department of Micrometeorology, University of Bayreuth, Germany}
+%\affil[2]{Member of Bayreuth Center of Ecology and Environmental Research
+%(BayCEER), University of Bayreuth, Germany}
+%\correspondence{P.~Zhao~(peng.zhao@uni-bayreuth.de), J.~L\"{u}ers~(johannes.lueers@uni-bayreuth.de)}
+\runningtitle{short title}
+\runningauthor{authors}
+%\received{23 January 2012}
+%\accepted{28 February 2012}
+%\published{}
+
+
+\firstpage{1}
+\maketitle
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+$body$
+
+$if(acknowledgements)$
+\begin{acknowledgements}
+$acknowledgements$
+\end{acknowledgements}
+$endif$
+
+$if(natbib)$
+$if(bibliography)$
+$if(biblio-title)$
+$if(book-class)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$endif$
+$endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+$endif$
+
+\end{document}

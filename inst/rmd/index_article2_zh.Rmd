@@ -1,0 +1,31 @@
+--- 
+title: "R bookdownplus: 用 R bookdown 写期刊论文、日记、信件、日历、吉他书、化学方程式"
+author: "赵大鹏^[通讯地址和邮箱] 　赵二鹏^[邮箱]"
+date: ""
+output:
+  bookdown::pdf_book:
+    includes:
+      before_body: abstract.tex
+    keep_tex: yes
+    dev: "cairo_pdf"
+    citation_package: natbib
+    latex_engine: pdflatex # for chinese
+    template: tex/template_article2_zh.tex
+    pandoc_args: --chapters
+    toc_depth: 3
+    toc_unnumbered: no
+    toc_appendix: yes
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+documentclass: article
+bibliography: [bib/bib.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: no  
+#toc: no
+lot: no
+lof: no
+geometry: [a4paper]
+site: bookdown::bookdown_site
+description: "chemistry"
+#cover-image: images/cover.jpg
+---

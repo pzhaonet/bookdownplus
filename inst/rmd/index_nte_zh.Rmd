@@ -1,0 +1,29 @@
+--- 
+title: "Papa's Three Laws"
+author: "大鹏&朋友"
+site: bookdown::bookdown_site
+date: "`r Sys.Date()`"
+description: "This is a selection of a papa's diary originally posted on my blog. A family's stories of two children are told. This book is being updated."
+# github-repo: "pzhaonet/papasdiary"
+# cover-image: "images/cover.jpg"
+url: 'https\://bookdown.org/baydap/papasdiary/'
+output:
+  bookdown::pdf_book:
+    keep_tex: yes
+    dev: "cairo_pdf"
+    latex_engine: xelatex
+    template: tex/template_nte_zh.tex
+    pandoc_args: --chapters
+    toc_depth: 3
+    toc_unnumbered: yes
+    toc_appendix: yes
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+documentclass: ctexbook
+classoption: openany
+colorlinks: no
+lot: yes
+lof: yes
+# geometry: [b5paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=3.5cm, rmargin=2.5cm]
+---
+
+\mainmatter

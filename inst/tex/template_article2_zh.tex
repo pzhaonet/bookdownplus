@@ -1,0 +1,222 @@
+%中文latax模版
+\documentclass[11pt,onecolumn,twoside]{ARTICLE}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  packages
+%    这部分声明需要用到的包
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{CJK}         % CJK 中文支持
+\usepackage{fancyhdr}
+\usepackage{amsmath,amsfonts,amssymb,graphicx}    % EPS 图片支持
+\usepackage{subfigure}   % 使用子图形
+\usepackage{indentfirst} % 中文段落首行缩进
+\usepackage{bm}          % 公式中的粗体字符(用命令\boldsymbol）
+\usepackage{multicol}    % 正文双栏
+\usepackage{indentfirst} % 中文首段缩进
+\usepackage{picins}      % 图片嵌入段落宏包 比如照片
+\usepackage{abstract}    % 2栏文档，一栏摘要及关键字宏包
+\usepackage{amsthm}      % 使用定理
+\usepackage{booktabs}    % 使用表格
+\usepackage{titlesec}
+\usepackage{multirow}    %多行的合并
+\usepackage{ulem}        %波浪线
+\usepackage{upgreek}     %正体希腊小写字母
+\usepackage{times}
+\usepackage{wasysym}     %直立的积分号
+\usepackage[sort]{cite}
+\usepackage{balance}
+\def\citedash{$\sim$} % for creating cites like [3,4],[7~10]
+%\renewcommand{\theequation}{\thesection.\arabic{equation}}(公式按节编号)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  lengths
+%    下面的命令重定义页面边距，使其符合中文刊物习惯。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{lettrine}
+\linespread{1.3} \setlength{\voffset}{-13mm} \setlength\parindent{2em}%段首空两字
+\setlength{\topmargin}{0pt} \setlength{\headsep}{2mm}
+\setlength{\textheight}{260mm} \setlength{\textwidth}{170mm}
+\setlength{\hoffset}{3pt} \setlength{\parskip}{1pt}
+\setlength{\columnsep}{7mm} \setlength{\arraycolsep}{3pt}
+\renewcommand{\baselinestretch}{1} %定义行间距
+\setcounter{page}{1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 标题，基金项目，作者，通信地址定义
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{CJK}{GBK}{song}
+\CJKcaption{GB}
+\title{\vspace*{0.5em}\LARGE{\CJKfamily{hei}控制与决策论文格式要求}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  文章编号(左上角)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}[c]{10cm}
+\vspace{-3.5cm} \hskip -2.9cm
+\fontsize{8.2pt}{5.55mm}\selectfont{ {\CJKfamily{hei}文章编号\textbf{:}
+}1001-0920\,(0000)\,00-0000-00}
+\end{minipage}
+\vspace{-.8cm}
+\footnotetext{\footnotesize \vskip -5pt \hskip 3.5pt
+{\CJKfamily{hei}收稿日期\textbf{:~~}}xxxx-xx-xx；{\CJKfamily{hei}修回日期\textbf{:~~}} xxxx-xx-xx.\\[4pt]
+\hspace*{1.1em}
+{\CJKfamily{hei}基金项目\textbf{:~~}}国家杰出青年科学基金项目(51685168)；
+教育部重点科研基金项目(02152).\\[4pt]
+\hspace*{1.1em}
+{\CJKfamily{hei}作者简介\textbf{:~~}}{\renewcommand\baselinestretch{1.3}\selectfont\begin{minipage}[t]{14.5cm} 滕蓉(1983$-$), 女, 沈阳人, 教授, 博士生导师, 从事科技期刊编辑加工等研究；刘晓柳(1986$-$), 女, 沈阳人, 硕士生, 从事论文格式排版的研究.\end{minipage}}}}
+\author{{\large {\CJKfamily{kai}滕~~~~蓉\makebox{$^{1}$},~~刘晓柳\makebox{$^{2}$}}}\\[4pt]
+\footnotesize (1. 东北大学~信息科学与工程学院，沈阳~110004；
+2. 沈阳农业大学~园林系，沈阳~110014)\\[9pt]}
+\date{}  % 这一行用来去掉默认的日期显示
+\end{CJK}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 首页页眉页脚定义
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fancypagestyle{plain}{ \fancyhf{}
+\lhead{\CJKfamily{fangsong}\footnotesize 第~xx~卷~~~第~x~期\\[2pt]
+ Vol. xx~~~No. x\\[-7pt]}
+\chead{\centering{{\CJKfamily{kai}\large 控~~~~制~~~~与~~~~决~~~~策}\\[2pt]
+{{\small\textit{Control~~~~~and~~~~~Decision}\\[-8pt]}}}}
+\rhead{\CJKfamily{fangsong}\footnotesize {xxxx~年~~x~月}\\[2pt]
+{Xxx.~~xxxx}\\[-7pt]} \lfoot{} \cfoot{} \rfoot{}
+\renewcommand{\headrule}{%
+\hrule height0.4pt width \headwidth \vskip1.0pt%
+\hrule height0.4pt width \headwidth \vskip-2pt}}
+%\renewcommand{\footrulewidth}{0.4pt}
+%\setlength{\hoffset}{0.1pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 首页后根据奇偶页不同设置页眉页脚
+% R,C,L分别代表左中右，O,E代表奇偶页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}\fancyhf{} \fancyhead[RE]{\CJKfamily{fsong}\footnotesize
+第~~xx~~卷~~~\\[-7pt]} \fancyhead[CE]{\CJKfamily{kai}\small
+控~~~~~~~~~~~制~~~~~~~~~~~与~~~~~~~~~~~决~~~~~~~~~~~策\\[-7pt]}
+\fancyhead[LE,RO]{~~~\footnotesize\thepage ~~~\\[-7pt]}
+\fancyhead[CO]{\CJKfamily{kai}\small 滕~~蓉~等:~~控制与决策论文格式要求\\[-7pt]}
+\fancyhead[LO]{\CJKfamily{fsong}\footnotesize ~~~第~x~期\\[-7pt]} \lfoot{} \cfoot{}
+\rfoot{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 正文两栏环境不允许float环境，比如 figure, table。所以重新定义
+% figure，使之可以浮动到你想要的位置。table也同样，把figure改为
+% table就可以。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newenvironment{figurehere}
+ % {\def\@captype{figure}}
+  %{}
+%\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  文章正文
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\makeatletter
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   {4pt }%
+                                   {1pt}%
+                                   {\normalfont\large\bfseries}}
+\renewcommand\subsection{\@startsection {subsection}{1}{\z@}%
+                                   {1pt }%
+                                   {1pt}%
+                                   {\fontsize{10.2pt}{5.55mm}\selectfont\CJKfamily{hei}\bfseries}}
+\renewcommand\subsubsection{\@startsection {subsubsection}{1}{\z@}%
+                                   {1pt }%
+                                   {1pt}%
+                                   {\fontsize{10.2pt}{5.55mm}\selectfont\bfseries}}
+
+\makeatother
+\begin{CJK*}{GBK}{song}
+\CJKcaption{GB}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  定理 定义 推论格式.
+%  在任何用到的地方，用\begin{Thm} ... \end{Thm}; 将其括起来。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Cor}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}推论}}}
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Thm}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}定理}}}
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Site}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}引理}}}
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Def}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}定义}}}
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Rem}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}注}}}
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Alg}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}算法}}}
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Exam}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}例}}}
+\newtheoremstyle{mystyle}{1pt}{1pt}{}{\parindent}{\bfseries}{}{5mm}{}
+\theoremstyle{mystyle}\newtheorem{Sup}{\fontsize{10.2pt}{5.55mm}\selectfont{{\CJKfamily{hei}假设}}}
+\newtheoremstyle{citing}{1pt}{1pt}{}{}{\bfseries}{.}{.5em}{\thmnote{#3}}
+\theoremstyle{citing}\newtheorem*{citedthm}{}
+\renewcommand\refname{\fontsize{10.2pt}{5.55mm}\selectfont{{\rm}}}
+\abovedisplayskip=2.5pt %plus 3pt
+\abovedisplayshortskip=2.5pt% plus 3pt
+\belowdisplayskip=2pt %plus 3pt
+\belowdisplayshortskip=2.5pt %plus 3pt
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  自定义命令
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 此行使文献引用以上标形式显示
+%\newcommand{\supercite}[1]{\textsuperscript{\cite{#1}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  显示title，并设页码为空(按杂志社要求）
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  中文摘要
+%  调整摘要、\!\!关键词，中图分类号的页边距
+%  中英文同时调整
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\oddsidemargin}{1cm}  % 3.17cm - 1 inch
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\textwidth}{15.7cm} \vspace{-1.3cm}
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+\vspace{.1cm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  正文由此开始－－－－－－－－－－－－－－－－－－－－－－－－－
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  恢复正文页边距
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\oddsidemargin}{-.5cm}  % 3.17cm - 1 inch
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\textwidth}{17.00cm} \CJKfamily{song}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  分栏开始
+\begin{multicols}{2}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fontsize{10.2pt}{5.55mm}\selectfont
+
+
+$body$
+
+
+$if(natbib)$
+$if(bibliography)$
+$if(biblio-title)$
+$if(book-class)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+
+$endif$
+$endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+
+$endif$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  分栏结束
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{multicols}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  文章结束
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\end{CJK*}
+\end{document}

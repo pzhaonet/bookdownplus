@@ -153,6 +153,14 @@ Enjoy your bookdowning!
 
 ## Updates
 
+
+- 2017-06-24. **1.1.0.** More templates!
+  - 'discussion', for academic article in discussion format,
+  - 'thesis_mypku', in Chinese, the master thesis template I used more than ten years ago, 
+  - 'nte_zh', in Chinese, for novels,
+  - 'mail' template updates:
+    - more styles,
+	- more themes
 - 2017-06-23. **1.0.3.** 
   - Fixed a bug of thesis_classic. 
   - Switched off warnings when creating folders.
@@ -161,7 +169,7 @@ Enjoy your bookdowning!
 - 2017-06-21. **1.0.2.** Resubmitted to CRAN!
 - 2017-06-21. **1.0.2.** Resubmitted to CRAN!
 - 2017-06-21. **1.0.1.** Submitted to CRAN!
-- 2017-06-14. **0.0.1.**  A bug fixed.
+- 2017-06-14. **0.0.1.** A bug fixed.
 - 2017-05-15. **0.0.0.** A very preliminary version.
 
 

@@ -1,0 +1,25 @@
+--- 
+title: "R bookdownplus: Authoring Articles, Mails, Guitar Chords, Chemical Molecular Formulae and Equations with R bookdown"
+author: "Peng Zhao"
+date: ""
+abstract: " Everyone knows that `bookdown` is an excellent package for authoring books on programming languages. But it is only one side of the coin.  It can do more than expected. Therefore I am developing `bookdownplus`. `bookdownplus` is an extension of `bookdown`. It helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries."
+acknowledgements: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+output:
+  bookdown::pdf_book:
+    template: tex/template_article.tex
+    keep_tex: yes
+    citation_package: natbib
+#    latex_engine: xelatex
+    toc_depth: 3
+    toc_unnumbered: no
+    toc_appendix: yes
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+bibliography: [bib/bib.bib]
+biblio-style: apalike
+link-citations: yes
+colorlinks: no  
+# toc: no
+lot: no
+lof: no
+site: bookdown::bookdown_site
+---

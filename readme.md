@@ -83,43 +83,43 @@ Enjoy your bookdowning!
 ## Showcase
 
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_article.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_article.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_article_mdpi.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_article_mdpi.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_article_zh.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_article_zh.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_calendar.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_calendar.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_chemistry.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_chemistry.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_discussion.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_discussion.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_guitar.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_guitar.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_journal.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_journal.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_mail.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_mail.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_nte_zh.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_nte_zh.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_poem.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_poem.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_classic.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_thesis_classic.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_mypku.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_thesis_mypku.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_ubt.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_thesis_ubt.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_thesis_zju.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_thesis_zju.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_yihui_demo.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_yihui_demo.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_yihui_mini.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_yihui_mini.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_yihui_zh.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_yihui_zh.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/ins/showcase/bookdownplus_poster.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst/showcase/bookdownplus_poster.jpg)
 
 
 ## Updates

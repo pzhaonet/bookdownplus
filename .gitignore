@@ -1,5 +1,5 @@
 archive/
-# .Rproj.user/
+.Rproj.user/
 readme.Rmd
 
 # Windows image file caches

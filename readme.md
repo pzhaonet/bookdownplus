@@ -9,7 +9,9 @@ The R package [`bookdownplus`](https://cran.r-project.org/web/packages/bookdownp
 Features
 ========
 
-`bookdownplus` is the easiest shortcut to the wonderful world of `bookdown`. Users can get a demo book in .pdf or .doc with **just one single command**. `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
+`bookdown` is not easy for beginners. Try reading the official manual of ['bookdown'](https://bookdown.org/yihui/bookdown/). If you are able to build your own book in one hour, I am sure you are a genius and please send me a postcard with your signature. An R beginner might be confused or depressed in struggling in the flood of LaTeX, YAML, Markdown, Pandoc, etc. It would be a pity if users stop their steps at the door and give up the courage of entering the wonderful world of `bookdown`.
+
+`bookdownplus` is the easiest shortcut to the world of `bookdown`. With **just one single command** users can get a demo book (or multiple demo books) in .pdf or .doc, or even more formats (see the quick start section). `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 
 With `bookdownplus` users can
 
@@ -18,7 +20,7 @@ With `bookdownplus` users can
 -   draw a monthly or weekly or conference calendar,
 -   and, of course, write academic articles in your favourite way,
 -   with chemical molecular formulae and equations,
--   even in Chinese, 
+-   even in Chinese,
 -   record guitar chords,
 -   and more wonders will come soon.
 
@@ -75,6 +77,8 @@ require(bookdownplus)
 ``` r
 bookdownplus()
 ```
+
+Although there are many arguments for `bookdownplus()`, you can simply ignore them and they will use their default values, if you use 'bookdownplus' package for the first time.
 
 Now a demo file named `*.pdf` in `_book/` folder in your working directory is generated automatically. Open it with any pdf viewer so as to get an impression.
 
@@ -149,6 +153,24 @@ Both of them have been released on CRAN and can be installed via `install.packag
 
 Enjoy your bookdowning!
 
+Create Your Own Templates
+-------------------------
+
+`bookdownplus` provides around 20 templates (Version 1.2.0) and more will be included in the future. I am not an expert in LaTeX but I have successfully created these templates. It means that creating a LaTeX template does not require much knowledge in LaTeX. If you know the general workflow of LaTeX, and study these 'bookdownplus' templates carefully, and read Chapter 4 of the [official manual of 'bookdown'](https://bookdown.org/yihui/bookdown/), you will get the idea of how to create your own templates.
+
+Here is some hints from my experience on creating a new template from am existing LaTeX template:
+
+- Find a nice LaTeX template. There are many websites that provide free LaTeX templates. You can download one you like most. Those with good documentations and comments are highly recommended.
+- Compile the LaTeX template file to make sure that it can work fine and produce the right pdf file. You could either use command lines or use some software like TexStudio to compile it. You could send me (<pzhao@pzhao.net>) this template with its full documentation and your pdf file, if you do not want to continue. I would try tailoring it into 'bookdownplus' but it is not guaranteed. It depends on my time and mood. Thus I recommend you to be brave and continue the next steps.
+- Cut the template into 'template\_yours.tex' and 'index.Rmd' in the following way:
+  - The main body of the LaTeX are the part between `\begin{document}` and `\end{document}`. Replace the main body with `$body$`, which will be filled with 'body.Rmd'. You can use any 'body\*.Rmd' created by 'bookdownplus'.
+  - Use any 'index.Rmd' created by 'bookdownplus' and modify the name of the LaTex template in 'index.Rmd'.
+- If the LaTeX template is simple enough, now you may build this template book with 'bookdown'.
+- Usually it won't work. A good-looking LaTeX template is mostly complicated, especially those in Chinese. Probably you have to modify the preamble, pick out some parts and save them and specify them in 'index.Rmd'. See the official [manual of 'bookdown'](https://bookdown.org/yihui/bookdown/yaml-options.html).
+- If you can successfully build your book with your new template, congratulations. It would be appreciated if you could send me  (<pzhao@pzhao.net>) your 'index.Rmd', 'body.Rmd', 'template\_yours.tex' and other related files. I will add them into 'bookdownplus' templates and add your name into the contributor list.
+
+Let's build a 'bookdownplus' template library!
+
 Showcase
 --------
 
@@ -193,9 +215,12 @@ Showcase
 Updates
 -------
 
+# Updates
+
 - 2017-06-26. **v1.2.0.** Easier, faster, and more functions.
   - Easier and faster:
     - `bookdownplus()` can render the demo files automatically. You don't have to open a .Rproj file to generate the template files any more!
+    - If you don't like the automatic building, you can use the argument `render = FALSE` in `bookdownplus()` to switch it off.
   - New functions:
     - `more_output()`: display available output formats besides pdf\_book
     - `template()`: display available templates

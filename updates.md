@@ -1,0 +1,31 @@
+# Updates
+
+- 2017-06-26. **v1.2.0.** Easier, faster, and more functions.
+  - Easier and faster:
+    - `bookdownplus()` can render the demo files automatically. You don't have to open a .Rproj file to generate the template files any more!
+    - If you don't like the automatic building, you can use the argument `render = FALSE` in `bookdownplus()` to switch it off.
+  - New functions:
+    - `more_output()`: display available output formats besides pdf\_book
+    - `template()`: display available templates
+    - `mail_bodysize()`: display available fontsize for mail body
+    - `mail_font()`: display available fonts for mail body
+    - `mail_fontsize()`: display available fontsize for mail template
+    - `mail_style()`: display available styles for mail template
+    - `mail_theme()`: display available themes for mail template
+- 2017-06-24. **v1.1.0.** More templates! See `help(bookdownplus)`
+  - Templates:
+    - 'discussion', for academic article in discussion format.
+    - 'thesis\_mypku', in Chinese, the master thesis template I used more than ten years ago.
+    - 'nte\_zh', in Chinese, for novels.
+  - 'mail' template updates:
+    - more styles,
+    - more themes.
+- 2017-06-23. **v1.0.3.**
+  - Fixed a bug of thesis\_classic.
+  - Switched off warnings when creating folders.
+  - Options to export epub, html, and word documents.
+- 2017-06-21. **v1.0.2.** [Released on CRAN](https://cran.r-project.org/web/packages/bookdownplus/index.html)!
+- 2017-06-21. **v1.0.2.** Resubmitted to CRAN!
+- 2017-06-21. **v1.0.1.** Submitted to CRAN!
+- 2017-06-14. **v0.0.1.** A bug fixed.
+- 2017-05-15. **v0.0.0.** A very preliminary version.

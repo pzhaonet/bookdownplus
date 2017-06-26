@@ -1,7 +1,8 @@
 win <- .Platform$OS.type == 'windows'
+osx <- Sys.info()['sysname'] == "Darwin"
 ext <- tools::file_ext(input)
 input <- tools::file_path_sans_ext(basename(input))
-builddir <- if (win) './' else system2('make', '-s builddir', stdout = TRUE)
+builddir <- if (win|osx) './' else system2('make', '-s builddir', stdout = TRUE)
 
 fig.path <- paste0(input, '-figures/')
 if (!win) {
@@ -16,13 +17,22 @@ hook_pdfclean <- function (before, options, envir) {
         # crop
         system2('pdfcrop', c(shQuote(f), shQuote(f)))
         # remove meta data that might change between versions
-        system2('sed', c('-i', shQuote('/^\\/\\(Producer\\|Creator\\|PTEX.Fullbanner\\) (.*)/d'), shQuote(f)))
+        if (osx) {
+          system2('sed', c('-i', '', shQuote('/^\\/\\(Producer\\|Creator\\|PTEX.Fullbanner\\) (.*)/d'), shQuote(f)))
+        } else {
+          system2('sed', c('-i', shQuote('/^\\/\\(Producer\\|Creator\\|PTEX.Fullbanner\\) (.*)/d'), shQuote(f)))
+        }
         # fix offsets
         system2('pdftk', c(shQuote(f), 'output', shQuote(ft)))
         file.rename(ft, f)
         # remove timestamps
-        system2('sed', c('-i', shQuote('/^\\/\\(Mod\\|Creation\\)Date (D:/s/[0-9]/0/g'), shQuote(f)))
-        system2('sed', c('-i', shQuote('/^\\/ID \\[/s/[0-9a-fA-F]/D/g'), shQuote(f)))
+        if (osx) {
+          system2('sed', c('-i', '', shQuote('/^\\/\\(Mod\\|Creation\\)Date (D:/s/[0-9]/0/g'), shQuote(f)))
+          system2('sed', c('-i', '', shQuote('/^\\/ID \\[/s/[0-9a-fA-F]/D/g'), shQuote(f)))
+        } else {
+          system2('sed', c('-i', shQuote('/^\\/\\(Mod\\|Creation\\)Date (D:/s/[0-9]/0/g'), shQuote(f)))
+          system2('sed', c('-i', shQuote('/^\\/ID \\[/s/[0-9a-fA-F]/D/g'), shQuote(f)))
+        }
     }
 }
 
@@ -52,6 +62,15 @@ if (win) {
     system2('pdflatex', c('--synctex=1', '-shell-escape', '-interaction=nonstopmode', paste0(input, '.tex')))
     file.copy('references.bib', 'parsed-references.bib', overwrite = TRUE)
     system2('bibtex', c(input))
+} else if (osx) {
+  lines <- readLines(paste0(input, '.markdown'))
+  cat(grep('^%% ', lines, value = TRUE, invert = TRUE), file = paste0(input, '-filtered.markdown'), sep = '\n')
+  params <- sub('^%% ', '--', grep('^%% ', lines, value = TRUE))
+  system2('pandoc', c(paste0(input, '-filtered.markdown'), '-o', paste0(input, '.tex'), params) )
+  system2('pdflatex', c('--synctex=1', '-shell-escape', '-interaction=nonstopmode', paste0(input, '.tex')))
+  file.copy('references.bib', 'parsed-references.bib', overwrite = TRUE)
+  system2('bibtex', c(input))
+
 } else if (make) {
     system2('make', paste0('pdflatex-', input))
 }

@@ -1,6 +1,168 @@
+#' Available templates
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe displaying available templates.
+#' @export
+#'
+#' @examples template()
+template <- function(dataframe = FALSE){
+  temp <- c('article',  #academic article,
+            'article_mdpi',  #  academic article by mdpi,
+            'article_zh',  #academic article in Chinese,
+            'calendar',  # monthly or weekly calendar,
+            'chemistry',  #  book with chemical molecular formulae and equations
+            'chemistry_zh',  #chemistry book in Chinese,
+            'discussion',  #article in discussion format,
+            'guitar',  # book with guitar chords,
+            'journal',  #laboratory journal or personal diary,
+            'mail',  #personal or business mail,
+            'nte_zh',  #a template from Nothing to envy, in Chinese
+            'poem',  #poem book,
+            'thesis_classic', # (default), classic thesis,
+            'thesis_mypku',  # thesis of my Peking Uni., in Chinese,
+            'thesis_ubt',  # thesis of University of Bayreuth,
+            'thesis_zju',  # thesis of Zhejiang Uni., in Chinese,
+            'yihui_demo',  # the original demo book by Yihui Xie,
+            'yihui_mini',  # a mini demo book by Yihui Xie,
+            'yihui_zh',  #the demo in Chinese by Yihui Xie,
+#            'article2_zh',  #article in two columns in Chinese, not ready yet,
+            'poster')  #poster.
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
+#' Available output formats besides pdf_book
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe.
+#' @export
+#'
+#' @examples more_output()
+more_output <- function(dataframe = FALSE){
+  temp <- c('word_document2',
+            'html_document2',
+            'epub_book',
+            'gitbook')
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
+#' Available styles for mail template
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe.
+#' @export
+#'
+#' @examples mail_style()
+mail_style <- function(dataframe = FALSE){
+  temp <- c('casual', # (default),
+    'classic',
+    'oldstyle',
+    'banking'
+  )
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
+#' Available themes for mail template
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe.
+#' @export
+#'
+#' @examples mail_theme()
+mail_theme <- function(dataframe = FALSE){
+  temp <- c('blue', # (default),
+            'orange',
+            'green',
+            'red',
+            'purple',
+            'grey', # and
+            'black'
+  )
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
+#' Available fonts for mail body
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe.
+#' @export
+#'
+#' @examples mail_font()
+mail_font <- function(dataframe = FALSE){
+  temp <- c('sffamily', # (default), or
+            'calligra'
+  )
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
+#' Available fontsize for mail template
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe.
+#' @export
+#'
+#' @examples mail_fontsize()
+mail_fontsize <- function(dataframe = FALSE){
+  temp <- c('10pt',
+            '11pt',
+            '12pt' #(default)
+  )
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
+
+#' Available fontsize for mail body
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe.
+#' @export
+#'
+#' @examples mail_bodysize()
+mail_bodysize <- function(dataframe = FALSE){
+  temp <- c('tiny',
+            'scriptsize',
+            'footnotesize',
+            'small',
+            'normalsize', # (default),
+            'large',
+            'Large',
+            'LARGE',
+            'huge',
+            'Huge'
+  )
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
 #' Create demo files for building books with R bookdown package.
 #'
-#' @param template character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are:
+#' @param template character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are (run `template()` for hints):
 #' - 'article', academic article,
 #' - 'article_mdpi',   academic article by mdpi,
 #' - 'article_zh', academic article in Chinese,
@@ -24,8 +186,13 @@
 #' - 'poster', poster.
 #' @param title character. book title.
 #' @param author character. book author.
-#' @param more_output optional output formats. NULL(default) or c('word', 'html', 'epub')
-#'
+#' @param more_output optional output formats besides pdf_book, which can be (run `more_output()` for hints):
+#' - NULL (default)
+#' - 'word_document2'
+#' - 'html_document2'
+#' - 'epub_book'
+#' - 'gitbook'
+#' @param render logical. whether to render automatically
 #' @param mail_opening character. opening of the mail, such as 'Dear Thomas, '
 #' @param mail_closing  character. closing of the mail, such as 'Yours, '
 #' @param mail_from_address character. sender's address (Street and No.) for mail template
@@ -39,12 +206,12 @@
 #' @param mail_to_address character. recipient's address (Street and No.) for mail template
 #' @param mail_to_town character. recipient's town for mail template
 #' @param mail_date character. The date appearing in the mail
-#' @param mail_style character. The mail style for mail template. Available styles are:
+#' @param mail_style character. The mail style for mail template. Available styles are (run `mail_style()` for hints):
 #' - 'casual' (default),
 #' - 'classic',
 #' - 'oldstyle', and
 #' - 'banking'
-#' @param mail_theme character. The mail theme for mail template. Available themes are:
+#' @param mail_theme character. The mail theme for mail template. Available themes are (run `mail_theme()` for hints):
 #' - 'blue' (default),
 #' - 'orange',
 #' - 'green',
@@ -52,14 +219,14 @@
 #' - 'purple',
 #' - 'grey', and
 #' - 'black'
-#' @param mail_font character. The font of the body for mail template. Available fonts are:
+#' @param mail_font character. The font of the body for mail template. Available fonts are (run `mail_font()` for hints):
 #' - 'sffamily' (default), or
 #' - 'calligra'
-#' @param mail_fontsize character. fontsize of the mail for mail template. Available sizes are:
+#' @param mail_fontsize character. fontsize of the mail for mail template. Available sizes are (run `mail_fontsize()` for hints):
 #' - '10pt',
 #' - '11pt', and
 #' - '12pt' (default)
-#' @param mail_bodysize character. fontsize of the mail body for mail template. Available sizes are:
+#' @param mail_bodysize character. fontsize of the mail body for mail template. Available sizes are (run `mail_bodysize()` for hints):
 #' - 'tiny',
 #' - 'scriptsize',
 #' - 'footnotesize',
@@ -86,8 +253,8 @@
 #' @return demo files to build with bookdown
 #' @export
 #' @examples
-#' bookdownplus()
-#' bookdownplus(template = 'article')
+#' bookdownplus(render = FALSE)
+#' bookdownplus(template = 'article', render = FALSE)
 #' @description
 #' Technically, `bookdownplus` is a collection and selector of R bookdown templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 #'
@@ -101,10 +268,9 @@
 bookdownplus <- function( ######
   template = 'thesis_classic',
   more_output = NULL,
-  # more_output = c('html', 'word', 'epub'),
   title ='R bookdownplus',
   author = 'Peng Zhao',
-
+  render = TRUE,
   # for mail template only
   mail_from_address = '15 Robin Hood Lane',
   mail_from_town = '11758  Massapequa, Long Island, New York',
@@ -140,7 +306,7 @@ bookdownplus <- function( ######
   ###### internal functions ######
   ### copy necessary files to the working directory
   copyfolder <- function(folder = 'images') {
-    dir.create(folder,showWarnings = FALSE)
+    if (!dir.exists(folder)) dir.create(folder)
     mypath <- paste0(.libPaths(), '/bookdownplus/', folder)
     file.copy(from = dir(mypath[dir.exists(mypath)][1], full.names = TRUE), to = folder)
   }
@@ -211,7 +377,7 @@ bookdownplus <- function( ######
     ###### prepare _output.yml, which defines the output files of gitbook and epub formats. comment it if you only need pdf. ######
     backup('_output.yml')
     # file.copy('rmd/_output.yml', '_output.yml', copy.mode = FALSE, overwrite = TRUE)
-    output <- readLines('rmd/_output.yml')
+    # output <- readLines('rmd/_output.yml')
     if (!is.null(more_output)) {
       outputyml <- file("_output.yml","w")
       for (ic in more_output) {
@@ -269,6 +435,19 @@ bookdownplus <- function( ######
     ### article_mdpi needs an additional bst file
     if (template == 'article_mdpi') {
       file.copy('style/mdpi.bst', 'mdpi.bst')
+    }
+
+    if (render) {
+      bookdown::render_book(
+        'index.Rmd',
+        output_format = paste0('bookdown::', c('pdf_book', more_output)))
+      htmlfile <- paste0(template, '.html')
+      bookdir <- '_book'
+      if (file.exists(htmlfile)) {
+        if (!dir.exists(bookdir)) dir.create(bookdir)
+        file.copy(htmlfile, paste0(bookdir, '/', htmlfile))
+        file.remove(htmlfile)
+      }
     }
   }
 }

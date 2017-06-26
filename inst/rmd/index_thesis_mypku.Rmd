@@ -16,7 +16,7 @@ output:
     toc_appendix: yes
     quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
 documentclass: ctexbook
-bibliography: [bib/book.bib]
+bibliography: [bib/bib.bib]
 biblio-style: apalike
 link-citations: yes
 colorlinks: no

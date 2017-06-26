@@ -5,7 +5,7 @@
 \title{Create demo files for building books with R bookdown package.}
 \usage{
 bookdownplus(template = "thesis_classic", more_output = NULL,
-  title = "R bookdownplus", author = "Peng Zhao",
+  title = "R bookdownplus", author = "Peng Zhao", render = TRUE,
   mail_from_address = "15 Robin Hood Lane",
   mail_from_town = "11758  Massapequa, Long Island, New York",
   mail_from_phone = "31415926", mail_from_mobile = "31415927",
@@ -28,7 +28,7 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
   poster_theme = c("eco", "ocean", "rose")[1])
 }
 \arguments{
-\item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are:
+\item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are (run \code{template()} for hints):
 \itemize{
 \item 'article', academic article,
 \item 'article_mdpi',   academic article by mdpi,
@@ -53,11 +53,20 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item 'poster', poster.
 }}
 
-\item{more_output}{optional output formats. NULL(default) or c('word', 'html', 'epub')}
+\item{more_output}{optional output formats besides pdf_book, which can be (run \code{more_output()} for hints):
+\itemize{
+\item NULL (default)
+\item 'word_document2'
+\item 'html_document2'
+\item 'epub_book'
+\item 'gitbook'
+}}
 
 \item{title}{character. book title.}
 
 \item{author}{character. book author.}
+
+\item{render}{logical. whether to render automatically}
 
 \item{mail_from_address}{character. sender's address (Street and No.) for mail template}
 
@@ -85,7 +94,7 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 
 \item{mail_date}{character. The date appearing in the mail}
 
-\item{mail_style}{character. The mail style for mail template. Available styles are:
+\item{mail_style}{character. The mail style for mail template. Available styles are (run \code{mail_style()} for hints):
 \itemize{
 \item 'casual' (default),
 \item 'classic',
@@ -93,7 +102,7 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item 'banking'
 }}
 
-\item{mail_theme}{character. The mail theme for mail template. Available themes are:
+\item{mail_theme}{character. The mail theme for mail template. Available themes are (run \code{mail_theme()} for hints):
 \itemize{
 \item 'blue' (default),
 \item 'orange',
@@ -104,20 +113,20 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item 'black'
 }}
 
-\item{mail_font}{character. The font of the body for mail template. Available fonts are:
+\item{mail_font}{character. The font of the body for mail template. Available fonts are (run \code{mail_font()} for hints):
 \itemize{
 \item 'sffamily' (default), or
 \item 'calligra'
 }}
 
-\item{mail_fontsize}{character. fontsize of the mail for mail template. Available sizes are:
+\item{mail_fontsize}{character. fontsize of the mail for mail template. Available sizes are (run \code{mail_fontsize()} for hints):
 \itemize{
 \item '10pt',
 \item '11pt', and
 \item '12pt' (default)
 }}
 
-\item{mail_bodysize}{character. fontsize of the mail body for mail template. Available sizes are:
+\item{mail_bodysize}{character. fontsize of the mail body for mail template. Available sizes are (run \code{mail_bodysize()} for hints):
 \itemize{
 \item 'tiny',
 \item 'scriptsize',
@@ -167,6 +176,6 @@ Full documentation of \code{bookdownplus} can be found in the book \href{https:/
 }
 }
 \examples{
-bookdownplus()
-bookdownplus(template = "article")
+bookdownplus(render = FALSE)
+bookdownplus(template = "article", render = FALSE)
 }

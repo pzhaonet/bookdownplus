@@ -4,28 +4,27 @@
 \alias{bookdownplus}
 \title{Create demo files for building books with R bookdown package.}
 \usage{
-bookdownplus(template = "thesis_classic", more_output = NULL,
-  title = "R bookdownplus", author = "Peng Zhao", render = TRUE,
-  mail_from_address = "15 Robin Hood Lane",
-  mail_from_town = "11758  Massapequa, Long Island, New York",
-  mail_from_phone = "31415926", mail_from_mobile = "31415927",
-  mail_from_fax = "31415928", mail_from_email = "dapengde@live.com",
-  mail_to_who = "recipient",
-  mail_to_affiliation = "University of Innsbruck",
-  mail_to_address = "recipient address",
-  mail_to_town = "100000 Beijing, China",
-  mail_opening = "Dear Sir or Madam,", mail_closing = "Yours faithfully,",
-  mail_date = "25 June, 2017", mail_style = c("casual", "classic",
-  "oldstyle", "banking")[1], mail_theme = c("blue", "orange", "green", "red",
-  "purple", "grey", "black")[1], mail_font = c("sffamily", "calligra ")[1],
-  mail_fontsize = c("10pt", "11pt", "12pt")[3], mail_bodysize = c("tiny",
-  "scriptsize", "footnotesize", "small", "normalsize", "large", "Large",
-  "LARGE", "huge", "Huge")[5], poster_email = "pzhao@pzhao.net",
-  poster_institute = "Institute of Ecology, Univ. Innsbruck",
-  poster_longinstitute = "Institute of Ecology, University of Innsbruck, Austria",
-  poster_web = "pzhao.org", poster_logo = "images/logo.png",
-  poster_backimg = "images/logo.png", poster_bibliofiles = "bib/bib.bib",
-  poster_theme = c("eco", "ocean", "rose")[1])
+bookdownplus(template = "thesis_classic", more_output = NULL, 
+    title = "R bookdownplus", author = "Peng Zhao", render = TRUE, 
+    output_name = NA, mail_from_address = "15 Robin Hood Lane", 
+    mail_from_town = "11758  Massapequa, Long Island, New York", 
+    mail_from_phone = "31415926", mail_from_mobile = "31415927", 
+    mail_from_fax = "31415928", mail_from_email = "dapengde@live.com", 
+    mail_to_who = "recipient", mail_to_affiliation = "University of Innsbruck", 
+    mail_to_address = "recipient address", mail_to_town = "100000 Beijing, China", 
+    mail_opening = "Dear Sir or Madam,", mail_closing = "Yours faithfully,", 
+    mail_date = "25 June, 2017", mail_style = c("casual", "classic", 
+        "oldstyle", "banking")[1], mail_theme = c("blue", "orange", 
+        "green", "red", "purple", "grey", "black")[1], mail_font = c("sffamily", 
+        "calligra ")[1], mail_fontsize = c("10pt", "11pt", 
+        "12pt")[3], mail_bodysize = c("tiny", "scriptsize", 
+        "footnotesize", "small", "normalsize", "large", "Large", 
+        "LARGE", "huge", "Huge")[5], poster_email = "pzhao@pzhao.net", 
+    poster_institute = "Institute of Ecology, Univ. Innsbruck", 
+    poster_longinstitute = "Institute of Ecology, University of Innsbruck, Austria", 
+    poster_web = "pzhao.org", poster_logo = "images/logo.png", 
+    poster_backimg = "images/logo.png", poster_bibliofiles = "bib/bib.bib", 
+    poster_theme = c("eco", "ocean", "rose")[1])
 }
 \arguments{
 \item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are (run \code{template()} for hints):
@@ -67,6 +66,8 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item{author}{character. book author.}
 
 \item{render}{logical. whether to render automatically}
+
+\item{output_name}{chracter. the name of the output files. If NA (default), the template name will be used.}
 
 \item{mail_from_address}{character. sender's address (Street and No.) for mail template}
 

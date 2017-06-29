@@ -1,5 +1,6 @@
 # Updates
 
+- 2017-06-27. **v1.2.1.** Argument `output_name`
 - 2017-06-26. **v1.2.0.** Easier, faster, and more functions.
   - Easier and faster:
     - `bookdownplus()` can render the demo files automatically. You don't have to open a .Rproj file to generate the template files any more!

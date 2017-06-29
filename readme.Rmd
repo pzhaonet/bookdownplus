@@ -124,13 +124,31 @@ bookdownplus(template = template()[1])
 
 Then all the required output files are in `_book/` folder.
 
-## A magic trick
+## Magic tricks
 
-Run the following codes, and go and have a coffee break. When you come back, you will get 19 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
+Now it is time to witness the miracles. Run the following codes, and go and have a coffee break. When you come back, you will get 19 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
 ```{r, eval=FALSE}
 for (i in template()[1:19]) bookdownplus(template = i, more_output = more_output()[1:3])
 ```
+
+Another magic trick is the following codes. You will get all the demo files for different fonts, themes and styles from the 'mail' template:
+
+
+```{r, eval=FALSE}
+for (mf in mail_font()) {
+  for (ms in mail_style()) {
+    for (mt in mail_theme()) {
+      bookdownplus(template = 'mail', 
+	  mail_style = ms, 
+	  mail_font = mf, 
+	  mail_theme = mt, 
+	  output_name = paste('mail', ms, mf, mt, sep = '_'))
+    }
+  }
+}
+```
+
 
 ## Recommendations
 

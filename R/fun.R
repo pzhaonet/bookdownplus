@@ -192,6 +192,7 @@ mail_bodysize <- function(dataframe = FALSE){
 #' - 'html_document2'
 #' - 'epub_book'
 #' - 'gitbook'
+#' @param output_name chracter. the name of the output files. If NA (default), the template name will be used.
 #' @param render logical. whether to render automatically
 #' @param mail_opening character. opening of the mail, such as 'Dear Thomas, '
 #' @param mail_closing  character. closing of the mail, such as 'Yours, '
@@ -271,6 +272,7 @@ bookdownplus <- function( ######
   title ='R bookdownplus',
   author = 'Peng Zhao',
   render = TRUE,
+  output_name = NA,
   # for mail template only
   mail_from_address = '15 Robin Hood Lane',
   mail_from_town = '11758  Massapequa, Long Island, New York',
@@ -354,7 +356,6 @@ bookdownplus <- function( ######
   file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj.')
 
   ###### prepare index.Rmd ######
-  book_filename <- template
   index <- readLines(paste0('rmd/index_', template, '.Rmd'), encoding = 'UTF-8')
   index[grep('^title: "', index)] <- paste0('title: "', title, '"')
   index[grep('^author: "', index)] <- paste0('author: "', author, '"')
@@ -369,6 +370,7 @@ bookdownplus <- function( ######
   if (template != 'poster') {
 
     ###### prepare _bookdown.yml, which defines the output filename of the book. ######
+    book_filename <- ifelse(is.na(output_name), template, output_name)
     filenameyml <- readLines('rmd/_bookdown.yml', encoding = 'UTF-8')
     filenameyml[grep('book_filename: ', filenameyml)] <- paste0('book_filename: ', book_filename)
     backup('_bookdown.yml')

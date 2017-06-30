@@ -20,9 +20,9 @@ template <- function(dataframe = FALSE){
             'nte_zh',  #a template from Nothing to envy, in Chinese
             'poem',  #poem book,
             'thesis_classic', # (default), classic thesis,
-            'thesis_mypku',  # thesis of my Peking Uni., in Chinese,
+            'thesis_mypku_zh',  # thesis of my Peking Uni., in Chinese,
             'thesis_ubt',  # thesis of University of Bayreuth,
-            'thesis_zju',  # thesis of Zhejiang Uni., in Chinese,
+            'thesis_zju_zh',  # thesis of Zhejiang Uni., in Chinese,
             'yihui_demo',  # the original demo book by Yihui Xie,
             'yihui_mini',  # a mini demo book by Yihui Xie,
             'yihui_zh',  #the demo in Chinese by Yihui Xie,
@@ -160,6 +160,27 @@ mail_bodysize <- function(dataframe = FALSE){
   return(temp)
 }
 
+#' Available themes for poster templatemail body
+#'
+#' @param dataframe logical. FALSE by default. whether return a vector or a data frame.
+#'
+#' @return a vector or a dataframe.
+#' @export
+#'
+#' @examples poster_theme()
+poster_theme <- function(dataframe = FALSE){
+  temp <- c('eco', # default
+            'ocean',
+            'rose',
+            'night',
+            'ice'
+  )
+  tempdf <- data.frame(i = 1:length(temp),
+                       template = temp)
+  if (dataframe) return(tempdf)
+  return(temp)
+}
+
 #' Create demo files for building books with R bookdown package.
 #'
 #' @param template character. Choose a template for your book or doc. The default template is 'thesis_classic'. Available templates are (run `template()` for hints):
@@ -176,9 +197,9 @@ mail_bodysize <- function(dataframe = FALSE){
 #' - 'nte_zh', a template from Nothing to envy, in Chinese
 #' - 'poem', poem book,
 #' - 'thesis_classic' (default), classic thesis,
-#' - 'thesis_mypku',  thesis of my Peking Uni., in Chinese,
+#' - 'thesis_mypku_zh',  thesis of my Peking Uni., in Chinese,
 #' - 'thesis_ubt',  thesis of University of Bayreuth,
-#' - 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
+#' - 'thesis_zju_zh',  thesis of Zhejiang Uni., in Chinese,
 #' - 'yihui_demo',  the original demo book by Yihui Xie,
 #' - 'yihui_mini',  a mini demo book by Yihui Xie,
 #' - 'yihui_zh', the demo in Chinese by Yihui Xie,
@@ -249,8 +270,9 @@ mail_bodysize <- function(dataframe = FALSE){
 #' @param poster_theme  character. theme for poster template. available themes are
 #' - 'eco' (default),
 #' - 'ocean',
-#' - 'rose'.
-#'
+#' - 'rose',
+#' - 'night',
+#' - 'ice'.
 #' @return demo files to build with bookdown
 #' @export
 #' @examples
@@ -325,8 +347,8 @@ bookdownplus <- function( ######
     if (x == 'journal') return('rmd/body_journal.Rmd')
     if (x == 'yihui_zh') return('rmd/body_yihui_zh.Rmd')
     if (x == 'thesis_classic') return('rmd/body_thesis_classic.Rmd')
-    if (x == 'thesis_zju') return('rmd/body_thesis_zju.Rmd')
-    if (x == 'thesis_mypku') return('rmd/body_thesis_mypku.Rmd')
+    if (x == 'thesis_zju_zh') return('rmd/body_thesis_zju_zh.Rmd')
+    if (x == 'thesis_mypku_zh') return('rmd/body_thesis_mypku_zh.Rmd')
     if (x == 'nte_zh') return('rmd/body_nte_zh.Rmd')
     if (x == 'discussion') return('rmd/body_discussion.Rmd')
     if (x == 'poem') return('rmd/body_poem.Rmd')

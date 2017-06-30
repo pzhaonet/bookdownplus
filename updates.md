@@ -1,6 +1,10 @@
-# Updates
-
-- 2017-06-27. **v1.2.1.** Argument `output_name`
+- 2017-06-30. **v1.2.2.** Template names. Poster themes. A bug fixed.
+  - A template name ended with `_zh` means this template supports Chinese characters.
+  - Poster themes:
+    - More themes added: `ice` and `ocean`.
+    - New function `poster_theme()` which lists available poster themes.
+  - ​A bug in thesis_classic fixed.
+- 2017-06-27. **v1.2.1.** Argument `output_name` added. Then 
 - 2017-06-26. **v1.2.0.** Easier, faster, and more functions.
   - Easier and faster:
     - `bookdownplus()` can render the demo files automatically. You don't have to open a .Rproj file to generate the template files any more!

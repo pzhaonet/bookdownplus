@@ -42,9 +42,9 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item 'nte_zh', a template from Nothing to envy, in Chinese
 \item 'poem', poem book,
 \item 'thesis_classic' (default), classic thesis,
-\item 'thesis_mypku',  thesis of my Peking Uni., in Chinese,
+\item 'thesis_mypku_zh',  thesis of my Peking Uni., in Chinese,
 \item 'thesis_ubt',  thesis of University of Bayreuth,
-\item 'thesis_zju',  thesis of Zhejiang Uni., in Chinese,
+\item 'thesis_zju_zh',  thesis of Zhejiang Uni., in Chinese,
 \item 'yihui_demo',  the original demo book by Yihui Xie,
 \item 'yihui_mini',  a mini demo book by Yihui Xie,
 \item 'yihui_zh', the demo in Chinese by Yihui Xie,
@@ -159,7 +159,9 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \itemize{
 \item 'eco' (default),
 \item 'ocean',
-\item 'rose'.
+\item 'rose',
+\item 'night',
+\item 'ice'.
 }}
 }
 \value{

@@ -9,7 +9,7 @@ output:
     dev: "cairo_pdf"
     latex_engine: xelatex
     citation_package: natbib
-    template: tex/template_thesis_mypku.tex
+    template: tex/template_thesis_mypku_zh.tex
     pandoc_args: --chapters
     toc_depth: 2
     toc_unnumbered: yes

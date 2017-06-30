@@ -117,11 +117,22 @@ By default, the book is built from the 'theis\_classic' template. From 'bookdown
 template()
 ```
 
-    ##  [1] "article"        "article_mdpi"   "article_zh"     "calendar"      
-    ##  [5] "chemistry"      "chemistry_zh"   "discussion"     "guitar"        
-    ##  [9] "journal"        "mail"           "nte_zh"         "poem"          
-    ## [13] "thesis_classic" "thesis_mypku"   "thesis_ubt"     "thesis_zju"    
-    ## [17] "yihui_demo"     "yihui_mini"     "yihui_zh"       "poster"
+    ##  [1] "article"         "article_mdpi"    "article_zh"     
+    ##  [4] "calendar"        "chemistry"       "chemistry_zh"   
+    ##  [7] "discussion"      "guitar"          "journal"        
+    ## [10] "mail"            "nte_zh"          "poem"           
+    ## [13] "thesis_classic"  "thesis_mypku_zh" "thesis_ubt"     
+    ## [16] "thesis_zju_zh"   "yihui_demo"      "yihui_mini"     
+    ## [19] "yihui_zh"        "poster"
+
+A template with a name ended with '\_zh' means it support Chinese characters. To list all these Chinese templates, run:
+
+``` r
+grep('_zh$', template(), value = TRUE)
+```
+
+    ## [1] "article_zh"      "chemistry_zh"    "nte_zh"          "thesis_mypku_zh"
+    ## [5] "thesis_zju_zh"   "yihui_zh"
 
 You can specify the `template` argument in the `bookdownplus()` function:
 
@@ -131,13 +142,35 @@ bookdownplus(template = template()[1])
 
 Then all the required output files are in `_book/` folder.
 
-A magic trick
--------------
+Magic tricks
+------------
+
+Now it is time to witness the miracles. With the following magic tricks you will see what bookdownplus can do.
+
+**Magic I**
 
 Run the following codes, and go and have a coffee break. When you come back, you will get 19 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
 ``` r
 for (i in template()[1:19]) bookdownplus(template = i, more_output = more_output()[1:3])
+```
+
+**Magic II**
+
+Run the following codes. You will get all the demo files for different fonts, themes and styles from the 'mail' template:
+
+``` r
+for (mf in mail_font()) {
+  for (ms in mail_style()) {
+    for (mt in mail_theme()) {
+      bookdownplus(template = 'mail', 
+      mail_style = ms, 
+      mail_font = mf, 
+      mail_theme = mt, 
+      output_name = paste('mail', ms, mf, mt, sep = '_'))
+    }
+  }
+}
 ```
 
 Recommendations
@@ -160,14 +193,18 @@ Create Your Own Templates
 
 Here is some hints from my experience on creating a new template from am existing LaTeX template:
 
-- Find a nice LaTeX template. There are many websites that provide free LaTeX templates. You can download one you like most. Those with good documentations and comments are highly recommended.
-- Compile the LaTeX template file to make sure that it can work fine and produce the right pdf file. You could either use command lines or use some software like TexStudio to compile it. You could send me (<pzhao@pzhao.net>) this template with its full documentation and your pdf file, if you do not want to continue. I would try tailoring it into 'bookdownplus' but it is not guaranteed. It depends on my time and mood. Thus I recommend you to be brave and continue the next steps.
-- Cut the template into 'template\_yours.tex' and 'index.Rmd' in the following way:
-  - The main body of the LaTeX are the part between `\begin{document}` and `\end{document}`. Replace the main body with `$body$`, which will be filled with 'body.Rmd'. You can use any 'body\*.Rmd' created by 'bookdownplus'.
-  - Use any 'index.Rmd' created by 'bookdownplus' and modify the name of the LaTex template in 'index.Rmd'.
-- If the LaTeX template is simple enough, now you may build this template book with 'bookdown'.
-- Usually it won't work. A good-looking LaTeX template is mostly complicated, especially those in Chinese. Probably you have to modify the preamble, pick out some parts and save them and specify them in 'index.Rmd'. See the official [manual of 'bookdown'](https://bookdown.org/yihui/bookdown/yaml-options.html).
-- If you can successfully build your book with your new template, congratulations. It would be appreciated if you could send me  (<pzhao@pzhao.net>) your 'index.Rmd', 'body.Rmd', 'template\_yours.tex' and other related files. I will add them into 'bookdownplus' templates and add your name into the contributor list.
+-   Find a nice LaTeX template. There are many websites that provide free LaTeX templates. You can download one you like most. Those with good documentations and comments are highly recommended.
+
+-   Compile the LaTeX template file to make sure that it can work fine and produce the right pdf file. You could either use command lines or use some software like TexStudio to compile it. You could send to me this template with its full documentation and your pdf file, if you do not want to continue. I would try tailoring it into 'bookdownplus' but it is not guaranteed. It depends on my time and mood. Thus I recommend you to be brave and continue the next steps.
+-   Cut the template into 'template\_yours.tex' and 'index.Rmd' in the following way:
+-   The main body of the LaTeX are the part between `\begin{document}` and `\end{document}`. Replace the main body with `$body$`, which will be filled with 'body.Rmd'. You can use any 'body\*.Rmd' created by 'bookdownplus'.
+-   Use any 'index.Rmd' created by 'bookdownplus' and modify the name of the LaTex template in 'index.Rmd'.
+
+-   If the LaTeX template is simple enough, now you may build this template book with 'bookdown'.
+
+-   Usually it won't work. A good-looking LaTeX template is mostly complicated, especially those in Chinese. Probably you have to modify the preamble, pick out some parts and save them and specify them in 'index.Rmd'. See the official [manual of 'bookdown'](https://bookdown.org/yihui/bookdown/yaml-options.html).
+
+-   If you can successfully build your book with your new template, congratulations. It would be appreciated if you could send me your 'index.Rmd', 'body.Rmd', 'template\_yours.tex' and other related files. I will add them into 'bookdownplus' templates and add your name into the contributor list.
 
 Let's build a 'bookdownplus' template library!
 
@@ -215,8 +252,13 @@ Showcase
 Updates
 -------
 
-# Updates
-
+- 2017-06-30. **v1.2.2.** Template names. Poster themes. A bug fixed.
+  - A template name ended with `_zh` means this template supports Chinese characters.
+  - Poster themes:
+    - More themes added: `ice` and `ocean`.
+    - New function `poster_theme()` which lists available poster themes.
+  - ​A bug in thesis_classic fixed.
+- 2017-06-27. **v1.2.1.** Argument `output_name` added. Then 
 - 2017-06-26. **v1.2.0.** Easier, faster, and more functions.
   - Easier and faster:
     - `bookdownplus()` can render the demo files automatically. You don't have to open a .Rproj file to generate the template files any more!

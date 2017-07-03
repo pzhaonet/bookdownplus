@@ -1,6 +1,8 @@
 bookdownplus: an R package for writing varied types of books and documents, such as academic articles, mails, guitar chords, chemical melecular formulae, with R bookdown
 =========================================================================================================================================================================
-
+ 
+ ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/bookdownplus)
+ 
 Introduction
 ============
 

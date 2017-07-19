@@ -254,6 +254,8 @@ Showcase
 Updates
 -------
 
+- 2017-07-19. **v1.3.0.** Updated on CRAN. See the [release note](https://github.com/pzhaonet/beginr/releases/tag/v1.3).
+
 - 2017-06-30. **v1.2.2.** Template names. Poster themes. A bug fixed.
   - A template name ended with `_zh` means this template supports Chinese characters.
   - Poster themes:

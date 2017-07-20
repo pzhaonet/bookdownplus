@@ -1,6 +1,7 @@
 archive/
 .Rproj.user/
 readme.Rmd
+help/
 
 # Windows image file caches
 Thumbs.db

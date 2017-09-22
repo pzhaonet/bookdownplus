@@ -1,3 +1,4 @@
+- 2017-09-22. **v1.3.1.** Some monor bugs fixed. Markdown file produced besides pdf as default.
 - 2017-07-19. **v1.3.0.** Updated on CRAN. See the [release note](https://github.com/pzhaonet/bookdownplus/releases/tag/v1.3).
 - 2017-06-30. **v1.2.2.** Template names. Poster themes. A bug fixed.
   - A template name ended with `_zh` means this template supports Chinese characters.

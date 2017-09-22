@@ -464,7 +464,8 @@ bookdownplus <- function( ######
     if (render) {
       bookdown::render_book(
         'index.Rmd',
-        output_format = paste0('bookdown::', c('pdf_book', more_output)))
+        output_format = paste0('bookdown::', c('pdf_book', more_output)), clean = FALSE)
+
       htmlfile <- paste0(template, '.html')
       bookdir <- '_book'
       if (file.exists(htmlfile)) {
@@ -472,6 +473,16 @@ bookdownplus <- function( ######
         file.copy(htmlfile, paste0(bookdir, '/', htmlfile))
         file.remove(htmlfile)
       }
+
+      mdfile <- paste0(template, '.utf8.md')
+      if (file.exists(mdfile)) {
+        if (!dir.exists(bookdir)) dir.create(bookdir)
+        file.copy(mdfile, paste0(bookdir, '/', mdfile))
+        file.remove(mdfile)
+        file.remove(paste0(template, '.knit.md'))
+        file.remove(paste0(template, '.lol'))
+      }
+
     }
   }
 }

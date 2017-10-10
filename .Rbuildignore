@@ -1,6 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.git$
 archive/
 readme.*
 updates.*
 help/
+fonts/

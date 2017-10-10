@@ -479,8 +479,8 @@ bookdownplus <- function( ######
         if (!dir.exists(bookdir)) dir.create(bookdir)
         file.copy(mdfile, paste0(bookdir, '/', mdfile))
         file.remove(mdfile)
-        file.remove(paste0(template, '.knit.md'))
-        file.remove(paste0(template, '.lol'))
+        if (file.exists(paste0(template, '.knit.md'))) file.remove(paste0(template, '.knit.md'))
+        if (file.exists(paste0(template, '.lol'))) file.remove(paste0(template, '.lol'))
       }
 
     }

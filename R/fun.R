@@ -215,6 +215,7 @@ poster_theme <- function(dataframe = FALSE){
 #' - 'gitbook'
 #' @param output_name chracter. the name of the output files. If NA (default), the template name will be used.
 #' @param render logical. whether to render automatically
+#' @param rproj logical. whether to created an .Rproj file automatically
 #' @param mail_opening character. opening of the mail, such as 'Dear Thomas, '
 #' @param mail_closing  character. closing of the mail, such as 'Yours, '
 #' @param mail_from_address character. sender's address (Street and No.) for mail template
@@ -274,6 +275,7 @@ poster_theme <- function(dataframe = FALSE){
 #' - 'night',
 #' - 'ice'.
 #' @return demo files to build with bookdown
+#' @importFrom utils download.file unzip
 #' @export
 #' @examples
 #' bookdownplus(render = FALSE)
@@ -294,6 +296,7 @@ bookdownplus <- function( ######
                           title ='R bookdownplus',
                           author = 'Peng Zhao',
                           render = TRUE,
+                          rproj = TRUE,
                           output_name = NA,
                           # for mail template only
                           mail_from_address = '15 Robin Hood Lane',
@@ -373,13 +376,16 @@ bookdownplus <- function( ######
   }
 
   ###### copy folders and files to the working dir ######
-  lapply(X = c('backup', 'bib', 'rmd', 'images', 'style','tex', 'fonts'), FUN = copyfolder)
-  mypath <- paste0(.libPaths(), '/bookdownplus/proj/')
-  file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj')
+  lapply(X = c('backup', 'bib', 'rmd', 'images', 'style','tex'), FUN = copyfolder)
+  if (rproj) {
+    mypath <- paste0(.libPaths(), '/bookdownplus/proj/')
+    file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj')
+  }
   if (template == 'nte_zh') {
-    download.file('')
-    unzip()
-    file.remove()
+    dir.create('fonts')
+    download.file('https://github.com/pzhaonet/bookdownplus/raw/master/fonts/fonts.zip', destfile = './fonts/fonts.zip')
+    unzip('./fonts/fonts.zip', exdir = './fonts')
+    file.remove('./fonts/fonts.zip')
   }
 
   ###### prepare index.Rmd ######

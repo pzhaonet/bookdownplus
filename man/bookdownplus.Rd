@@ -6,7 +6,7 @@
 \usage{
 bookdownplus(template = "thesis_classic", more_output = NULL, 
     title = "R bookdownplus", author = "Peng Zhao", render = TRUE, 
-    output_name = NA, mail_from_address = "15 Robin Hood Lane", 
+    rproj = TRUE, output_name = NA, mail_from_address = "15 Robin Hood Lane", 
     mail_from_town = "11758  Massapequa, Long Island, New York", 
     mail_from_phone = "31415926", mail_from_mobile = "31415927", 
     mail_from_fax = "31415928", mail_from_email = "dapengde@live.com", 
@@ -66,6 +66,8 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item{author}{character. book author.}
 
 \item{render}{logical. whether to render automatically}
+
+\item{rproj}{logical. whether to created an .Rproj file automatically}
 
 \item{output_name}{chracter. the name of the output files. If NA (default), the template name will be used.}
 

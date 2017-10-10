@@ -1,8 +1,8 @@
 bookdownplus: an R package for writing varied types of books and documents, such as academic articles, mails, guitar chords, chemical melecular formulae, with R bookdown
 =========================================================================================================================================================================
- 
+
  ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/bookdownplus)
- 
+
 Introduction
 ============
 
@@ -254,6 +254,9 @@ Showcase
 Updates
 -------
 
+- 2017-10-10. **v1.3.2**. Minor bugs fixed, one more argument, package size reduced
+  - Argument `rproj` added to `bookdownplus()` function so that users can avoid creating an .Rproj file automatically.
+  - 'fonts' folder removed so that the package size is smaller than 5 MB. The 'fonts' folder can be downloaded automatically from github repo if necessary.
 - 2017-09-22. **v1.3.1.** Some monor bugs fixed. Markdown file produced besides pdf as default.
 - 2017-07-19. **v1.3.0.** Updated on CRAN. See the [release note](https://github.com/pzhaonet/bookdownplus/releases/tag/v1.3).
 - 2017-06-30. **v1.2.2.** Template names. Poster themes. A bug fixed.

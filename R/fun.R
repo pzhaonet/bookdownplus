@@ -375,7 +375,7 @@ bookdownplus <- function( ######
   ###### copy folders and files to the working dir ######
   lapply(X = c('backup', 'bib', 'rmd', 'images', 'style','tex', 'fonts'), FUN = copyfolder)
   mypath <- paste0(.libPaths(), '/bookdownplus/proj/')
-  file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj.')
+  file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj')
 
   ###### prepare index.Rmd ######
   index <- readLines(paste0('rmd/index_', template, '.Rmd'), encoding = 'UTF-8')

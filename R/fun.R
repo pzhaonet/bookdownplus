@@ -26,7 +26,7 @@ template <- function(dataframe = FALSE){
             'yihui_demo',  # the original demo book by Yihui Xie,
             'yihui_mini',  # a mini demo book by Yihui Xie,
             'yihui_zh',  #the demo in Chinese by Yihui Xie,
-#            'article2_zh',  #article in two columns in Chinese, not ready yet,
+            #            'article2_zh',  #article in two columns in Chinese, not ready yet,
             'poster')  #poster.
   tempdf <- data.frame(i = 1:length(temp),
                        template = temp)
@@ -63,9 +63,9 @@ more_output <- function(dataframe = FALSE){
 #' @examples mail_style()
 mail_style <- function(dataframe = FALSE){
   temp <- c('casual', # (default),
-    'classic',
-    'oldstyle',
-    'banking'
+            'classic',
+            'oldstyle',
+            'banking'
   )
   tempdf <- data.frame(i = 1:length(temp),
                        template = temp)
@@ -289,43 +289,43 @@ poster_theme <- function(dataframe = FALSE){
 #' - Open `bookdownplus.Rproj` with RStudio. Now press `ctrl+shift+b` to build it. Your will get a book file named `*.pdf` in `_book/` folder.
 #' - Write your own text in `index.Rmd` and `body.Rmd`, and build your own lovely book.
 bookdownplus <- function( ######
-  template = 'thesis_classic',
-  more_output = NULL,
-  title ='R bookdownplus',
-  author = 'Peng Zhao',
-  render = TRUE,
-  output_name = NA,
-  # for mail template only
-  mail_from_address = '15 Robin Hood Lane',
-  mail_from_town = '11758  Massapequa, Long Island, New York',
-  mail_from_phone = '31415926',
-  mail_from_mobile = '31415927',
-  mail_from_fax = '31415928',
-  mail_from_email = 'dapengde@live.com',
-  mail_to_who = 'recipient',
-  mail_to_affiliation = 'University of Innsbruck',
-  mail_to_address = 'recipient address',
-  mail_to_town = '100000 Beijing, China',
-  mail_opening = 'Dear Sir or Madam,',
-  mail_closing = 'Yours faithfully,',
-  mail_date = '25 June, 2017',
-  mail_style = c('casual', 'classic', 'oldstyle', 'banking')[1],
-  mail_theme = c('blue', 'orange', 'green', 'red', 'purple', 'grey', 'black')[1],
-  mail_font = c('sffamily', 'calligra ')[1],
-  mail_fontsize = c('10pt', '11pt', '12pt')[3],
-  mail_bodysize = c(
-    'tiny', 'scriptsize', 'footnotesize', 'small', 'normalsize',
-    'large', 'Large', 'LARGE', 'huge','Huge') [5],
+                          template = 'thesis_classic',
+                          more_output = NULL,
+                          title ='R bookdownplus',
+                          author = 'Peng Zhao',
+                          render = TRUE,
+                          output_name = NA,
+                          # for mail template only
+                          mail_from_address = '15 Robin Hood Lane',
+                          mail_from_town = '11758  Massapequa, Long Island, New York',
+                          mail_from_phone = '31415926',
+                          mail_from_mobile = '31415927',
+                          mail_from_fax = '31415928',
+                          mail_from_email = 'dapengde@live.com',
+                          mail_to_who = 'recipient',
+                          mail_to_affiliation = 'University of Innsbruck',
+                          mail_to_address = 'recipient address',
+                          mail_to_town = '100000 Beijing, China',
+                          mail_opening = 'Dear Sir or Madam,',
+                          mail_closing = 'Yours faithfully,',
+                          mail_date = '25 June, 2017',
+                          mail_style = c('casual', 'classic', 'oldstyle', 'banking')[1],
+                          mail_theme = c('blue', 'orange', 'green', 'red', 'purple', 'grey', 'black')[1],
+                          mail_font = c('sffamily', 'calligra ')[1],
+                          mail_fontsize = c('10pt', '11pt', '12pt')[3],
+                          mail_bodysize = c(
+                            'tiny', 'scriptsize', 'footnotesize', 'small', 'normalsize',
+                            'large', 'Large', 'LARGE', 'huge','Huge') [5],
 
-  # for poster template only
-  poster_email = 'pzhao@pzhao.net',
-  poster_institute = 'Institute of Ecology, Univ. Innsbruck',
-  poster_longinstitute = 'Institute of Ecology, University of Innsbruck, Austria',
-  poster_web = 'pzhao.org',
-  poster_logo = 'images/logo.png',
-  poster_backimg = 'images/logo.png',
-  poster_bibliofiles = 'bib/bib.bib',
-  poster_theme = c('eco', 'ocean', 'rose')[1]) {
+                          # for poster template only
+                          poster_email = 'pzhao@pzhao.net',
+                          poster_institute = 'Institute of Ecology, Univ. Innsbruck',
+                          poster_longinstitute = 'Institute of Ecology, University of Innsbruck, Austria',
+                          poster_web = 'pzhao.org',
+                          poster_logo = 'images/logo.png',
+                          poster_backimg = 'images/logo.png',
+                          poster_bibliofiles = 'bib/bib.bib',
+                          poster_theme = c('eco', 'ocean', 'rose')[1]) {
 
   ###### internal functions ######
   ### copy necessary files to the working directory
@@ -367,7 +367,7 @@ bookdownplus <- function( ######
         file.copy(filename, backupfile)
         message(paste(filename, 'exsits. Backuped to', backupfile, ':)'))
       } #else {
-        #message(paste(filename, 'does not exist. No need to bakcup :)'))
+      #message(paste(filename, 'does not exist. No need to bakcup :)'))
       #}
     }
   }
@@ -376,6 +376,11 @@ bookdownplus <- function( ######
   lapply(X = c('backup', 'bib', 'rmd', 'images', 'style','tex', 'fonts'), FUN = copyfolder)
   mypath <- paste0(.libPaths(), '/bookdownplus/proj/')
   file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj')
+  if (template == 'nte_zh') {
+    download.file('')
+    unzip()
+    file.remove()
+  }
 
   ###### prepare index.Rmd ######
   index <- readLines(paste0('rmd/index_', template, '.Rmd'), encoding = 'UTF-8')
@@ -408,7 +413,7 @@ bookdownplus <- function( ######
         writeLines(readLines(paste0('rmd/_output_', ic, '.yml')), con = outputyml, sep= "\n")
       }
       close(outputyml)
-      }
+    }
     ###### prepare body.Rmd ######
     bodydemo <- bodyfile(template)
     bodynew <- paste0('body', substr(bodydemo, nchar(bodydemo)-3, nchar(bodydemo)))
@@ -479,8 +484,8 @@ bookdownplus <- function( ######
         if (!dir.exists(bookdir)) dir.create(bookdir)
         file.copy(mdfile, paste0(bookdir, '/', mdfile))
         file.remove(mdfile)
-        file.remove(paste0(template, '.knit.md'))
-        file.remove(paste0(template, '.lol'))
+        if (file.exists(paste0(template, '.knit.md'))) file.remove(paste0(template, '.knit.md'))
+        if (file.exists(paste0(template, '.lol'))) file.remove(paste0(template, '.lol'))
       }
 
     }

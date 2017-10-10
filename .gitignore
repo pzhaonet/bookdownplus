@@ -2,6 +2,7 @@ archive/
 .Rproj.user/
 readme.Rmd
 help/
+.Rbuildignore
 
 # Windows image file caches
 Thumbs.db

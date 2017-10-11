@@ -151,11 +151,19 @@ Now it is time to witness the miracles. With the following magic tricks you will
 
 **Magic I**
 
-Run the following codes, and go and have a coffee break. When you come back, you will get 19 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
+Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get 19 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
 ``` r
 for (i in template()[1:19]) bookdownplus(template = i, more_output = more_output()[1:3])
 ```
+
+Non-Chinese users might encounter some errors because their computers do not support Chinese characters in the demo books. Instead, run the following codes, which exclude the Chinese templates:
+
+```r
+for (i in template()[-c(grep('_zh$', template()), 20)]) 
+  bookdownplus(template = i, more_output = more_output()[1:3])
+```
+
 
 **Magic II**
 

@@ -7,16 +7,16 @@ output: #md_document
     variant: markdown_github
 ---
 
-# bookdownplus: an R package for writing varied types of books and documents, such as academic articles, mails, guitar chords, chemical melecular formulae, with R bookdown
+# bookdownplus: an R package for writing varied types of books and documents, such as academic articles, e-mail, guitar chords, chemical molecular formula, with R bookdown
 
 # Introduction
 
 The R package [`bookdownplus`](https://cran.r-project.org/web/packages/bookdownplus) [@R-bookdownplus] is an extension of `bookdown` [@R-bookdown]. It is a collection of
-multiple templates on the basis of LaTeX, which are tailored so that I can work happily under the umbrella of `bookdown`. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
+multiple templates on the basis of LaTeX, which are tailored so that I can work happily under the umbrella of `bookdown`. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, e-mail, calendars, and diaries.
 
 # Features
 
-`bookdown` is not easy for beginners. Try reading the official manual of ['bookdown'](https://bookdown.org/yihui/bookdown/). If you are able to build your own book in one hour, I am sure you are a genius and please send me a postcard with your signature. An R beginner might be confused or depressed in struggling in the flood of LaTeX, YAML, Markdown, Pandoc, etc. It would be a pity if users stop their steps at the door and give up the courage of entering the wonderful world of `bookdown`.
+`bookdown` is not easy for beginners. Try reading the official manual of ['bookdown'](https://bookdown.org/yihui/bookdown/). If you are able to build your own book in one hour, I am sure you are a genius and please send me a postcard with your signature. An R beginner might be confused or depressed in struggling with the flood of LaTeX, YAML, Markdown, Pandoc, etc. It would be a pity if users stop their steps at the door and give up the courage of entering the wonderful world of `bookdown`.
 
 `bookdownplus` is the easiest shortcut to the world of `bookdown`. With **just one single command** users can get a demo book (or multiple demo books) in .pdf or .doc, or even more formats (see the quick start section). `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 

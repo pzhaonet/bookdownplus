@@ -48,7 +48,6 @@ bookdownplus(template = "thesis_classic", more_output = NULL,
 \item 'yihui_demo',  the original demo book by Yihui Xie,
 \item 'yihui_mini',  a mini demo book by Yihui Xie,
 \item 'yihui_zh', the demo in Chinese by Yihui Xie,
-\item 'article2_zh', article in two columns in Chinese, not ready yet,
 \item 'poster', poster.
 }}
 

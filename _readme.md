@@ -1,7 +1,7 @@
-bookdownplus: an R package for writing assorted books and documents, such as academic articles, mails, guitar chords, chemical melecular formulae, with R bookdown
-==================================================================================================================================================================
+bookdownplus: an R package for writing varied types of books and documents, such as academic articles, mails, guitar chords, chemical melecular formulae, with R bookdown
+=========================================================================================================================================================================
 
-![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/bookdownplus)
+ ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/bookdownplus)
 
 Introduction
 ============
@@ -24,7 +24,7 @@ With `bookdownplus` users can
 -   with chemical molecular formulae and equations,
 -   even in Chinese,
 -   record guitar chords,
--   and more wonders are coming soon.
+-   and more wonders will come soon.
 
 Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). The webpage looks as good as other books, while the [pdf file](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf) might give you a little surprise.
 
@@ -94,7 +94,7 @@ After writing some texts, open `bookdownplus.Rproj` with RStudio, and press `ctr
 More output formats
 -------------------
 
-By default, the book is built in a .pdf file and an .md file. From 'bookdownplus v1.0.3', users can get more output formats, including word, html and epub. From 'bookdownplus v1.2.0', uses can see the available output formats by running:
+By default, the book is built in a pdf file and a md file. From 'bookdownplus v1.0.3', users can get more output formats, including word, html and epub. From 'bookdownplus v1.2.0', uses can see the available output formats by running:
 
 ``` r
 more_output()
@@ -121,12 +121,11 @@ template()
 
     ##  [1] "article"         "article_mdpi"    "article_zh"     
     ##  [4] "calendar"        "chemistry"       "chemistry_zh"   
-    ##  [7] "discussion"      "dnd_dev"         "guitar"         
-    ## [10] "journal"         "mail"            "nonpar"         
-    ## [13] "nte_zh"          "poem"            "poster"         
-    ## [16] "thesis_classic"  "thesis_mypku_zh" "thesis_pku_zh"  
-    ## [19] "thesis_ubt"      "thesis_zju_zh"   "yihui_crc"      
-    ## [22] "yihui_demo"      "yihui_mini"      "yihui_zh"
+    ##  [7] "discussion"      "guitar"          "journal"        
+    ## [10] "mail"            "nte_zh"          "poem"           
+    ## [13] "thesis_classic"  "thesis_mypku_zh" "thesis_ubt"     
+    ## [16] "thesis_zju_zh"   "yihui_demo"      "yihui_mini"     
+    ## [19] "yihui_zh"        "poster"
 
 A template with a name ended with '\_zh' means it support Chinese characters. To list all these Chinese templates, run:
 
@@ -135,7 +134,7 @@ grep('_zh$', template(), value = TRUE)
 ```
 
     ## [1] "article_zh"      "chemistry_zh"    "nte_zh"          "thesis_mypku_zh"
-    ## [5] "thesis_pku_zh"   "thesis_zju_zh"   "yihui_zh"
+    ## [5] "thesis_zju_zh"   "yihui_zh"
 
 You can specify the `template` argument in the `bookdownplus()` function:
 
@@ -155,21 +154,33 @@ Now it is time to witness the miracles. With the following magic tricks you will
 Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get 19 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
 ``` r
-showcase()
+for (i in template()[1:19]) bookdownplus(template = i, more_output = more_output()[1:3])
 ```
 
 Non-Chinese users might encounter some errors because their computers do not support Chinese characters in the demo books. Instead, run the following codes, which exclude the Chinese templates:
 
-``` r
-showcase(x = template()[-c(grep('_zh$', template()), which(template() == 'poster'))])
+```r
+for (i in template()[-c(grep('_zh$', template()), 20)]) 
+  bookdownplus(template = i, more_output = more_output()[1:3])
 ```
+
 
 **Magic II**
 
 Run the following codes. You will get all the demo files for different fonts, themes and styles from the 'mail' template:
 
 ``` r
-showcase(x = 'NA', mail_all = TRUE)
+for (mf in mail_font()) {
+  for (ms in mail_style()) {
+    for (mt in mail_theme()) {
+      bookdownplus(template = 'mail', 
+      mail_style = ms, 
+      mail_font = mf, 
+      mail_theme = mt, 
+      output_name = paste('mail', ms, mf, mt, sep = '_'))
+    }
+  }
+}
 ```
 
 Recommendations
@@ -220,15 +231,13 @@ Showcase
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_chemistry.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_dnd_dev.jpg) ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_discussion.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_discussion.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_guitar.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_journal.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_mail.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_nonpar.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_nte_zh.jpg)
 
@@ -238,13 +247,9 @@ Showcase
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_mypku.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_theis_pku.jpg)
-
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_ubt.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_zju.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_yihui_crc.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_yihui_demo.jpg)
 
@@ -257,55 +262,54 @@ Showcase
 Updates
 -------
 
--   2017-11-24. **v1.4.0**. Structure changed. Minor bugs fixed. More templates.
--   Template files organized much better. Flexible of adding new templates.
--   Four more templates:
-    -   'yihui\_crc', for writing a book of Chapman & Hall, by Yihui Xie
-    -   'thesis\_pku\_zh', in Chinese, for thesis of Peking University, from Casper Ti. Vector
-    -   'nonpar', by Eduardo García Portugués,
-    -   'dnd\_dev', something I don't know.
--   2017-10-10. **v1.3.2**. Minor bugs fixed, one more argument, package size reduced
--   Argument `rproj` added to `bookdownplus()` function so that users can avoid creating an .Rproj file automatically.
--   'fonts' folder removed so that the package size is smaller than 5 MB. The 'fonts' folder can be downloaded automatically from github repo if necessary.
--   2017-09-22. **v1.3.1.** Some minor bugs fixed. Markdown file produced besides pdf as default.
--   2017-07-19. **v1.3.0.** Updated on CRAN. See the [release note](https://github.com/pzhaonet/bookdownplus/releases/tag/v1.3).
--   2017-06-30. **v1.2.2.** Template names. Poster themes. A bug fixed.
--   A template name ended with `_zh` means this template supports Chinese characters.
--   Poster themes:
-    -   More themes added: `ice` and `ocean`.
-    -   New function `poster_theme()` which lists available poster themes.
--   A bug in thesis\_classic fixed.
--   2017-06-27. **v1.2.1.** Argument `output_name` added. Then
--   2017-06-26. **v1.2.0.** Easier, faster, and more functions.
--   Easier and faster:
-    -   `bookdownplus()` can render the demo files automatically. You don't have to open a .Rproj file to generate the template files any more!
-    -   If you don't like the automatic building, you can use the argument `render = FALSE` in `bookdownplus()` to switch it off.
--   New functions:
-    -   `more_output()`: display available output formats besides pdf\_book
-    -   `template()`: display available templates
-    -   `mail_bodysize()`: display available fontsize for mail body
-    -   `mail_font()`: display available fonts for mail body
-    -   `mail_fontsize()`: display available fontsize for mail template
-    -   `mail_style()`: display available styles for mail template
-    -   `mail_theme()`: display available themes for mail template
--   2017-06-24. **v1.1.0.** More templates! See `help(bookdownplus)`
--   Templates:
-    -   'discussion', for academic article in discussion format.
-    -   'thesis\_mypku', in Chinese, the master thesis template I used more than ten years ago.
-    -   'nte\_zh', in Chinese, for novels.
--   'mail' template updates:
-    -   more styles,
-    -   more themes.
--   2017-06-23. **v1.0.3.**
--   Fixed a bug of thesis\_classic.
--   Switched off warnings when creating folders.
--   Options to export epub, html, and word documents.
--   2017-06-21. **v1.0.2.** [Released on CRAN](https://cran.r-project.org/web/packages/bookdownplus/index.html)!
--   2017-06-21. **v1.0.2.** Resubmitted to CRAN!
--   2017-06-21. **v1.0.1.** Submitted to CRAN!
--   2017-06-14. **v0.0.1.** A bug fixed.
--   2017-05-15. **v0.0.0.** A very preliminary version.
-
+- 2017-11-24. **v1.4.0**. Structure changed. Minor bugs fixed. More templates.
+  - Template files organized much better. Flexible of adding new templates.
+  - Four more templates:
+    - 'yihui\_crc', for writing a book of Chapman & Hall, by Yihui Xie
+	- 'thesis\_pku\_zh', in Chinese, for thesis of Peking University, from Casper Ti. Vector
+	- 'nonpar', by Eduardo García Portugués,
+	- 'dnd_dev', something I don't know.
+- 2017-10-10. **v1.3.2**. Minor bugs fixed, one more argument, package size reduced
+  - Argument `rproj` added to `bookdownplus()` function so that users can avoid creating an .Rproj file automatically.
+  - 'fonts' folder removed so that the package size is smaller than 5 MB. The 'fonts' folder can be downloaded automatically from github repo if necessary.
+- 2017-09-22. **v1.3.1.** Some minor bugs fixed. Markdown file produced besides pdf as default.
+- 2017-07-19. **v1.3.0.** Updated on CRAN. See the [release note](https://github.com/pzhaonet/bookdownplus/releases/tag/v1.3).
+- 2017-06-30. **v1.2.2.** Template names. Poster themes. A bug fixed.
+  - A template name ended with `_zh` means this template supports Chinese characters.
+  - Poster themes:
+    - More themes added: `ice` and `ocean`.
+    - New function `poster_theme()` which lists available poster themes.
+  - ​A bug in thesis_classic fixed.
+- 2017-06-27. **v1.2.1.** Argument `output_name` added. Then 
+- 2017-06-26. **v1.2.0.** Easier, faster, and more functions.
+  - Easier and faster:
+    - `bookdownplus()` can render the demo files automatically. You don't have to open a .Rproj file to generate the template files any more!
+    - If you don't like the automatic building, you can use the argument `render = FALSE` in `bookdownplus()` to switch it off.
+  - New functions:
+    - `more_output()`: display available output formats besides pdf\_book
+    - `template()`: display available templates
+    - `mail_bodysize()`: display available fontsize for mail body
+    - `mail_font()`: display available fonts for mail body
+    - `mail_fontsize()`: display available fontsize for mail template
+    - `mail_style()`: display available styles for mail template
+    - `mail_theme()`: display available themes for mail template
+- 2017-06-24. **v1.1.0.** More templates! See `help(bookdownplus)`
+  - Templates:
+    - 'discussion', for academic article in discussion format.
+    - 'thesis\_mypku', in Chinese, the master thesis template I used more than ten years ago.
+    - 'nte\_zh', in Chinese, for novels.
+  - 'mail' template updates:
+    - more styles,
+    - more themes.
+- 2017-06-23. **v1.0.3.**
+  - Fixed a bug of thesis\_classic.
+  - Switched off warnings when creating folders.
+  - Options to export epub, html, and word documents.
+- 2017-06-21. **v1.0.2.** [Released on CRAN](https://cran.r-project.org/web/packages/bookdownplus/index.html)!
+- 2017-06-21. **v1.0.2.** Resubmitted to CRAN!
+- 2017-06-21. **v1.0.1.** Submitted to CRAN!
+- 2017-06-14. **v0.0.1.** A bug fixed.
+- 2017-05-15. **v0.0.0.** A very preliminary version.
 License
 =======
 
@@ -316,10 +320,10 @@ Released under the [MIT](https://github.com/pzhaonet/bookdown-plus/blob/master/L
 References
 ==========
 
-Xie, Yihui. 2016. *Bookdown: Authoring Books and Technical Documents with R Markdown*. <https://github.com/rstudio/bookdown>.
+Xie, Yihui. 2016. *Bookdown: Authoring Books and Technical Documents with R Markdown*. Boca Raton, Florida: Chapman; Hall/CRC. <https://github.com/rstudio/bookdown>.
 
-Zhao, Peng. 2017a. *Bookdownplus: Generate Varied Types of Books and Documents with R ’Bookdown’ Package*. <https://CRAN.R-project.org/package=bookdownplus>.
+Zhao, Peng. 2017a. *Bookdownplus: Generate Varied Books and Documents with R ’Bookdown’ Package*. <https://CRAN.R-project.org/package=bookdownplus>.
 
-———. 2017b. *Mindr: Convert Files Between Markdown or Rmarkdown Files and Mindmaps*. <https://CRAN.R-project.org/package=mindr>.
+———. 2017b. *Mindr: Convert Files Between Markdown or Rmarkdown Files and Mindmaps*. <https://github.com/pzhaonet/mindr>.
 
-———. 2017c. *Pinyin: Convert Chinese Characters into Pinyin*. <https://CRAN.R-project.org/package=pinyin>.
+———. 2017c. *Pinyin: Convert Chinese Characters into Pinyin*. <https://github.com/pzhaonet/pinyin>.

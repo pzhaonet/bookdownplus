@@ -7,27 +7,8 @@
 #'
 #' @examples template()
 template <- function(dataframe = FALSE){
-  temp <- c('article',  #academic article,
-            'article_mdpi',  #  academic article by mdpi,
-            'article_zh',  #academic article in Chinese,
-            'calendar',  # monthly or weekly calendar,
-            'chemistry',  #  book with chemical molecular formulae and equations
-            'chemistry_zh',  #chemistry book in Chinese,
-            'discussion',  #article in discussion format,
-            'guitar',  # book with guitar chords,
-            'journal',  #laboratory journal or personal diary,
-            'mail',  #personal or business mail,
-            'nte_zh',  #a template from Nothing to envy, in Chinese
-            'poem',  #poem book,
-            'thesis_classic', # (default), classic thesis,
-            'thesis_mypku_zh',  # thesis of my Peking Uni., in Chinese,
-            'thesis_ubt',  # thesis of University of Bayreuth,
-            'thesis_zju_zh',  # thesis of Zhejiang Uni., in Chinese,
-            'yihui_demo',  # the original demo book by Yihui Xie,
-            'yihui_mini',  # a mini demo book by Yihui Xie,
-            'yihui_zh',  #the demo in Chinese by Yihui Xie,
-            #            'article2_zh',  #article in two columns in Chinese, not ready yet,
-            'poster')  #poster.
+  pckpath <- paste0(.libPaths(), '/bookdownplus/')
+  temp <- gsub('.zip', '', dir(paste0(pckpath, 'zip/')))
   tempdf <- data.frame(i = 1:length(temp),
                        template = temp)
   if (dataframe) return(tempdf)
@@ -203,7 +184,6 @@ poster_theme <- function(dataframe = FALSE){
 #' - 'yihui_demo',  the original demo book by Yihui Xie,
 #' - 'yihui_mini',  a mini demo book by Yihui Xie,
 #' - 'yihui_zh', the demo in Chinese by Yihui Xie,
-#' - 'article2_zh', article in two columns in Chinese, not ready yet,
 #' - 'poster', poster.
 #' @param title character. book title.
 #' @param author character. book author.
@@ -329,33 +309,14 @@ bookdownplus <- function( ######
                           poster_backimg = 'images/logo.png',
                           poster_bibliofiles = 'bib/bib.bib',
                           poster_theme = c('eco', 'ocean', 'rose')[1]) {
+  pckpath <- paste0(.libPaths(), '/bookdownplus/')
 
   ###### internal functions ######
   ### copy necessary files to the working directory
   copyfolder <- function(folder = 'images') {
     if (!dir.exists(folder)) dir.create(folder)
-    mypath <- paste0(.libPaths(), '/bookdownplus/', folder)
+    mypath <- paste0(pckpath, folder)
     file.copy(from = dir(mypath[dir.exists(mypath)][1], full.names = TRUE), to = folder)
-  }
-
-  ###  define body file name, dependent on the template name
-  bodyfile <- function(x) {
-    if (x == 'article_zh') return('rmd/body_article_zh.Rmd')
-    if (x == 'article2_zh') return('rmd/body_article_zh.Rmd')
-    if (x == 'calendar') return('rmd/body_calendar.tex')
-    if (x == 'chemistry') return('rmd/body_chemistry.Rmd')
-    if (x == 'chemistry_zh') return('rmd/body_chemistry_zh.Rmd')
-    if (x == 'guitar') return('rmd/body_guitar.Rmd')
-    if (x == 'mail') return('rmd/body_mail.Rmd')
-    if (x == 'journal') return('rmd/body_journal.Rmd')
-    if (x == 'yihui_zh') return('rmd/body_yihui_zh.Rmd')
-    if (x == 'thesis_classic') return('rmd/body_thesis_classic.Rmd')
-    if (x == 'thesis_zju_zh') return('rmd/body_thesis_zju_zh.Rmd')
-    if (x == 'thesis_mypku_zh') return('rmd/body_thesis_mypku_zh.Rmd')
-    if (x == 'nte_zh') return('rmd/body_nte_zh.Rmd')
-    if (x == 'discussion') return('rmd/body_discussion.Rmd')
-    if (x == 'poem') return('rmd/body_poem.Rmd')
-    'rmd/body.Rmd'
   }
 
   ### backup a file to backup/ folder, avoid overwriting it.
@@ -366,6 +327,8 @@ bookdownplus <- function( ######
         filenamesplitl <- length(filenamesplit)
         tolength <- ifelse(filenamesplitl > 1, filenamesplitl - 1, 1)
         filenamepost <- filenamesplit[filenamesplitl]
+        getwd()
+        if (!dir.exists('backup')) dir.create('backup')
         backupfile <- paste0('backup/', paste(filenamesplit[1:tolength], collapse = '_'), '-', format(Sys.time(), '%Y-%m-%d-%H-%M-%S'), '.', filenamepost)
         file.copy(filename, backupfile)
         message(paste(filename, 'exsits. Backuped to', backupfile, ':)'))
@@ -376,20 +339,25 @@ bookdownplus <- function( ######
   }
 
   ###### copy folders and files to the working dir ######
-  lapply(X = c('backup', 'bib', 'rmd', 'images', 'style','tex'), FUN = copyfolder)
+  lapply(X = c('backup', 'bib', 'images'), FUN = copyfolder)
+  unzip(paste0(pckpath, 'zip/', template, '.zip'))
+
   if (rproj) {
-    mypath <- paste0(.libPaths(), '/bookdownplus/proj/')
+    mypath <- paste0(pckpath, 'proj/')
     file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj')
   }
+
   if (template == 'nte_zh') {
-    dir.create('fonts')
+    if(!dir.exists('fonts')) dir.create('fonts')
     download.file('https://github.com/pzhaonet/bookdownplus/raw/master/fonts/fonts.zip', destfile = './fonts/fonts.zip')
     unzip('./fonts/fonts.zip', exdir = './fonts')
     file.remove('./fonts/fonts.zip')
   }
 
   ###### prepare index.Rmd ######
-  index <- readLines(paste0('rmd/index_', template, '.Rmd'), encoding = 'UTF-8')
+  backup('index.Rmd')
+  file.rename(paste0('index_', template, '.Rmd'), 'index.Rmd')
+  index <- readLines('index.Rmd', encoding = 'UTF-8')
   index[grep('^title: "', index)] <- paste0('title: "', title, '"')
   index[grep('^author: "', index)] <- paste0('author: "', author, '"')
   # index[grep('titleshort: "', index)] <- paste0('titleshort: "', titleshort, '"')
@@ -397,14 +365,12 @@ bookdownplus <- function( ######
   if (template == 'poster') {
     index[grep('^%% template=tex/poster.tex', index)] <- paste0('%% template=tex/poster_', poster_theme, '.tex')
   }
-  backup('index.Rmd')
   writeLines(index, 'index.Rmd', useBytes = TRUE)
 
   if (template != 'poster') {
-
     ###### prepare _bookdown.yml, which defines the output filename of the book. ######
     book_filename <- ifelse(is.na(output_name), template, output_name)
-    filenameyml <- readLines('rmd/_bookdown.yml', encoding = 'UTF-8')
+    filenameyml <- readLines(paste0(pckpath, 'yml/_bookdown.yml'), encoding = 'UTF-8')
     filenameyml[grep('book_filename: ', filenameyml)] <- paste0('book_filename: ', book_filename)
     backup('_bookdown.yml')
     writeLines(filenameyml, '_bookdown.yml', useBytes = TRUE)
@@ -416,15 +382,19 @@ bookdownplus <- function( ######
     if (!is.null(more_output)) {
       outputyml <- file("_output.yml","w")
       for (ic in more_output) {
-        writeLines(readLines(paste0('rmd/_output_', ic, '.yml')), con = outputyml, sep= "\n")
+        writeLines(readLines(paste0(pckpath, 'yml/_output_', ic, '.yml')), con = outputyml, sep= "\n")
       }
       close(outputyml)
     }
     ###### prepare body.Rmd ######
-    bodydemo <- bodyfile(template)
+    for(i in c('body.Rmd', 'body.tex')) {
+      backup(i)
+      if(file.exists('body.Rmd')) file.remove(i)
+    }
+    bodydemo <- ifelse(template == 'calendar', 'body_calendar.tex', paste0('body_', template, '.Rmd'))
     bodynew <- paste0('body', substr(bodydemo, nchar(bodydemo)-3, nchar(bodydemo)))
-    backup('body.Rmd')
-    file.copy(bodydemo, bodynew, copy.mode = FALSE, overwrite = TRUE)
+    file.rename(bodydemo, bodynew)
+    # file.copy(bodydemo, bodynew, copy.mode = FALSE, overwrite = TRUE)
 
     ###### exceptions ######
 
@@ -477,7 +447,7 @@ bookdownplus <- function( ######
         'index.Rmd',
         output_format = paste0('bookdown::', c('pdf_book', more_output)), clean = FALSE)
 
-      htmlfile <- paste0(template, '.html')
+      htmlfile <- paste0(book_filename, '.html')
       bookdir <- '_book'
       if (file.exists(htmlfile)) {
         if (!dir.exists(bookdir)) dir.create(bookdir)
@@ -485,15 +455,75 @@ bookdownplus <- function( ######
         file.remove(htmlfile)
       }
 
-      mdfile <- paste0(template, '.utf8.md')
+      mdfile <- paste0(book_filename, '.utf8.md')
       if (file.exists(mdfile)) {
         if (!dir.exists(bookdir)) dir.create(bookdir)
-        file.copy(mdfile, paste0(bookdir, '/', mdfile))
+        file.copy(mdfile, paste0(bookdir, '/', paste0(book_filename, '.md')))
         file.remove(mdfile)
-        if (file.exists(paste0(template, '.knit.md'))) file.remove(paste0(template, '.knit.md'))
-        if (file.exists(paste0(template, '.lol'))) file.remove(paste0(template, '.lol'))
+        if (file.exists(paste0(book_filename, '.knit.md'))) file.remove(paste0(book_filename, '.knit.md'))
+        if (file.exists(paste0(book_filename, '.lol'))) file.remove(paste0(book_filename, '.lol'))
       }
 
     }
   }
+}
+
+#' Title Show demos
+#'
+#' @param x NA or character, templates to show
+#' @param mail_all logical
+#'
+#' @return demo files
+#' @export
+#'
+#' @examples
+#' showcase(template = NA)
+showcase <- function(x = template()[-which(template() == 'poster')], mail_all = FALSE){
+  if('poster' %in% x) message('"poster" demo output will not be displayed automatcially. See the help.')
+
+  if(!is.na(x[1])) {
+    for(i in x){
+      bookdownplus(template = i, more_output = more_output()[1:3])
+      message(paste0('Generating a demo book from the "', i, '" template'))
+    }
+  }
+
+  if(mail_all) {
+    for(mf in mail_font()) {
+      for(ms in mail_style()) {
+        for(mt in mail_theme()) {
+          bookdownplus(template = 'mail', mail_style = ms, mail_font = mf, mail_theme = mt, output_name = paste('mail', ms, mf, mt, sep = '_'))
+        }
+      }
+    }
+  }
+}
+
+#' Prepare a template to contribute to bookdownplus
+#'
+#' @param template_name character. tempalte name.
+#' @param bodyfile character. name of the body file.
+#' @param indexfile character. name of the index file.
+#' @param texfile character. name of the texfile
+#'
+#' @return organzed folders and files.
+#' @export
+#'
+#' @examples
+#' share()
+share <- function(template_name = 'new', bodyfile = 'body.Rmd', indexfile = 'index.Rmd', texfile = 't.tex'){
+  folders <- c('rmd', 'style', 'tex')
+  files <- paste0(c('body_', 'index_', 'template_'), template_name, c('.Rmd', '.Rmd', '.tex'))
+  for(i in folders) if(!dir.exists(i)) dir.create(i)
+  pckpath <- paste0(.libPaths(), '/bookdownplus/')
+  mypath <- paste0(pckpath, 'proj/')
+  for (i in c('body.Rmd', 'index.Rmd')) file.copy(from = paste0(mypath[dir.exists(mypath)][1], i), to = i)
+  if(file.exists(texfile)) file.copy(texfile, paste0('tex/', files[3])) else message(paste(texfile, 'does not exist.'))
+  if(file.exists(bodyfile)) file.copy(bodyfile, paste0('rmd/', files[1])) else message(paste(bodyfile, 'does not exist.'))
+  if(file.exists(indexfile)) {
+    indextxt <- readLines(indexfile, encoding = 'UTF-8')
+    indextxt[grep('template', indextxt)] <- gsub('new', template_name, indextxt[grep('template', indextxt)])
+    writeLines(indextxt, indexfile, useBytes = TRUE)
+    file.copy(indexfile, paste0('rmd/', files[2]))
+  } else message(paste(indexfile, 'does not exist.'))
 }

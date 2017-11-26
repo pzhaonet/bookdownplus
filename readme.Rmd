@@ -223,7 +223,7 @@ Let's build a 'bookdownplus' template library!
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_mypku.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_theis_pku.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_pku.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_ubt.jpg)
 

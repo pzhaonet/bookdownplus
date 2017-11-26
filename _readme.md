@@ -259,6 +259,13 @@ Showcase
 Updates
 -------
 
+- 2017-11-24. **v1.4.0**. Structure changed. Minor bugs fixed. More templates.
+  - Template files organized much better. Flexible of adding new templates.
+  - Four more templates:
+    - 'yihui\_crc', for writing a book of Chapman & Hall, by Yihui Xie
+	- 'thesis\_pku\_zh', in Chinese, for thesis of Peking University, from Casper Ti. Vector
+	- 'nonpar', by Eduardo García Portugués,
+	- 'dnd_dev', something I don't know.
 - 2017-10-10. **v1.3.2**. Minor bugs fixed, one more argument, package size reduced
   - Argument `rproj` added to `bookdownplus()` function so that users can avoid creating an .Rproj file automatically.
   - 'fonts' folder removed so that the package size is smaller than 5 MB. The 'fonts' folder can be downloaded automatically from github repo if necessary.

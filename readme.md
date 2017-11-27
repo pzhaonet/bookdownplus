@@ -308,6 +308,12 @@ Copyright 2017 [Peng Zhao](http://pzhao.org).
 
 Released under the [MIT](https://github.com/pzhaonet/bookdown-plus/blob/master/LICENSE.md) license.
 
+
+Acknowledgement
+=======
+
+A short [introduction of bookdownplus](https://utopian.io/utopian-io/@dapeng/introduction-to-bookdownplus-an-r-package-for-writing-assorted-books-and-documents) authored with my id @dapeng is posted on utopian.io, which supports open-source projects. 
+
 References
 ==========
 

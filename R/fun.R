@@ -7,7 +7,7 @@
 #'
 #' @examples template()
 template <- function(dataframe = FALSE){
-  pckpath <- paste0(.libPaths(), '/bookdownplus/')
+  pckpath <- paste0(path.package('bookdownplus'), '/')
   temp <- gsub('.zip', '', dir(paste0(pckpath, 'zip/')))
   tempdf <- data.frame(i = 1:length(temp),
                        template = temp)
@@ -309,8 +309,7 @@ bookdownplus <- function( ######
                           poster_backimg = 'images/logo.png',
                           poster_bibliofiles = 'bib/bib.bib',
                           poster_theme = c('eco', 'ocean', 'rose')[1]) {
-  pckpath <- paste0(.libPaths(), '/bookdownplus/')
-
+  pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
   ###### internal functions ######
   ### copy necessary files to the working directory
   copyfolder <- function(folder = 'images') {
@@ -515,7 +514,7 @@ share <- function(template_name = 'new', bodyfile = 'body.Rmd', indexfile = 'ind
   folders <- c('rmd', 'style', 'tex')
   files <- paste0(c('body_', 'index_', 'template_'), template_name, c('.Rmd', '.Rmd', '.tex'))
   for(i in folders) if(!dir.exists(i)) dir.create(i)
-  pckpath <- paste0(.libPaths(), '/bookdownplus/')
+  pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
   mypath <- paste0(pckpath, 'proj/')
   for (i in c('body.Rmd', 'index.Rmd')) file.copy(from = paste0(mypath[dir.exists(mypath)][1], i), to = i)
   if(file.exists(texfile)) file.copy(texfile, paste0('tex/', files[3])) else message(paste(texfile, 'does not exist.'))

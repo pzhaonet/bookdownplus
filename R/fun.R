@@ -25,9 +25,9 @@ template <- function(dataframe = FALSE){
 #' @examples more_output()
 more_output <- function(dataframe = FALSE){
   temp <- c('word_document2',
-            'html_document2',
             'epub_book',
-            'gitbook')
+            'gitbook',
+            'html_document2')
   tempdf <- data.frame(i = 1:length(temp),
                        template = temp)
   if (dataframe) return(tempdf)
@@ -339,6 +339,8 @@ bookdownplus <- function( ######
 
   ###### copy folders and files to the working dir ######
   lapply(X = c('backup', 'bib', 'images'), FUN = copyfolder)
+  backup('index.Rmd')
+
   unzip(paste0(pckpath, 'zip/', template, '.zip'))
 
   if (rproj) {
@@ -354,7 +356,6 @@ bookdownplus <- function( ######
   }
 
   ###### prepare index.Rmd ######
-  backup('index.Rmd')
   file.rename(paste0('index_', template, '.Rmd'), 'index.Rmd')
   index <- readLines('index.Rmd', encoding = 'UTF-8')
   index[grep('^title: "', index)] <- paste0('title: "', title, '"')
@@ -442,15 +443,16 @@ bookdownplus <- function( ######
     }
 
     if (render) {
+      outfrmt <- paste0('bookdown::', c('pdf_book', more_output))
+      if(grepl('_dev', template)) outfrmt <- 'bookdown::pdf_book'
       bookdown::render_book(
         'index.Rmd',
-        output_format = paste0('bookdown::', c('pdf_book', more_output)), clean = FALSE)
-
+        output_format = outfrmt, clean = FALSE)
       htmlfile <- paste0(book_filename, '.html')
       bookdir <- '_book'
       if (file.exists(htmlfile)) {
         if (!dir.exists(bookdir)) dir.create(bookdir)
-        file.copy(htmlfile, paste0(bookdir, '/', htmlfile))
+        file.copy(htmlfile, paste0(bookdir, '/', book_filename, '2.html'))
         file.remove(htmlfile)
       }
 
@@ -482,8 +484,9 @@ showcase <- function(x = template()[-which(template() == 'poster')], mail_all = 
 
   if(!is.na(x[1])) {
     for(i in x){
-      bookdownplus(template = i, more_output = more_output()[1:3])
       message(paste0('Generating a demo book from the "', i, '" template'))
+      bookdownplus(template = i, more_output = more_output()[1:3])
+      message(paste0('Done with "', i, '"!'))
     }
   }
 

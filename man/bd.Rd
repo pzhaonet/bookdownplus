@@ -2,7 +2,7 @@
 % Please edit documentation in R/fun.R
 \name{bd}
 \alias{bd}
-\title{Title Show demos}
+\title{Show demos}
 \usage{
 bd(x = template()[-which(template() == "poster")], mail_all = FALSE)
 }
@@ -15,8 +15,8 @@ bd(x = template()[-which(template() == "poster")], mail_all = FALSE)
 demo files
 }
 \description{
-Title Show demos
+Show demos
 }
 \examples{
-bd(template = NA)
+bd(x = NA)
 }

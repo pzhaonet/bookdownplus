@@ -26,7 +26,7 @@ With `bookdownplus` users can
 -   record guitar chords,
 -   and more wonders are coming soon.
 
-Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). The webpage looks as good as other books, while the [pdf file](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf) might give you a little surprise.
+Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). The webpage looks as elegant as other books, while the [pdf file](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf) might give you a little surprise.
 
 Quick start
 ===========
@@ -36,19 +36,16 @@ Preparation
 
 Before starting, you have to install 'R', 'RStudio', 'bookdown' package, and other software and packages (i.e.'Pandoc', 'LaTeX', 'rmarkdown', 'rticle', 'knitr', etc.) which 'bookdown' depends on. See the [official manual of 'bookdown'](https://bookdown.org/yihui/bookdown/) for details. A brief list is as follows:
 
-1.  [Download R](https://cran.r-project.org) and install it.
+1.  Download [R](https://cran.r-project.org) and install it.
 
-2.  [Download RStudio](https://www.rstudio.com/products/rstudio/download/) and install it.
+2.  Download [RStudio](https://www.rstudio.com/products/rstudio/download/) and install it.
 
-3.  [Download LaTeX](http://www.ctex.org/CTeXDownload) and install it.
+3.  Download LaTeX(e.g. [CTeX](http://www.ctex.org/CTeXDownload) or [TinyTeX](https://yihui.name/tinytex/)) and install it.
 
-4.  [Download Pandoc](http://pandoc.org/installing.html) and install it.
-
-5.  Run RStudio. Type the following codes in the top-left panel to install 'bookdown' and 'servr' packages:
+4.  Run RStudio. Type the following codes in the top-left panel to install 'bookdown' packages:
 
 ``` r
 install.packages('bookdown')
-install.packages('servr')
 ```
 
 Additionally, if you want to produce a poster, phython must be installed before using, and the path of phython might have to be added to the environmental variables for Windows users. Details can be found in the instruction of [kuleuven-templates](https://github.com/exporl/kuleuven-templates), which is the origin of the 'poster' template.
@@ -62,8 +59,6 @@ devtools::install_github("pzhaonet/bookdownplus")
 # or the stable version from CRAN
 install.package("bookdownplus")
 ```
-
-Recently I have been updating `bookdownplus` frequently, while the policy of CRAN only allows one update every one or two months at most. Therefore the development version is highly recommended.
 
 Generate a demo book
 --------------------
@@ -100,7 +95,7 @@ By default, the book is built in a .pdf file and an .md file. From 'bookdownplus
 more_output()
 ```
 
-    ## [1] "word_document2" "html_document2" "epub_book"      "gitbook"
+    ## [1] "word_document2" "epub_book"      "gitbook"        "html_document2"
 
 You can specify the `more_output` argument in the `bookdownplus()` function:
 
@@ -120,13 +115,15 @@ template()
 ```
 
     ##  [1] "article"         "article_mdpi"    "article_zh"     
-    ##  [4] "calendar"        "chemistry"       "chemistry_zh"   
-    ##  [7] "discussion"      "dnd_dev"         "guitar"         
-    ## [10] "journal"         "mail"            "nonpar"         
-    ## [13] "nte_zh"          "poem"            "poster"         
-    ## [16] "thesis_classic"  "thesis_mypku_zh" "thesis_pku_zh"  
-    ## [19] "thesis_ubt"      "thesis_zju_zh"   "yihui_crc"      
-    ## [22] "yihui_demo"      "yihui_mini"      "yihui_zh"
+    ##  [4] "calendar"        "cchess"          "chemistry"      
+    ##  [7] "chemistry_zh"    "discussion"      "dnd_dev"        
+    ## [10] "docsens"         "guitar"          "igo"            
+    ## [13] "journal"         "mail"            "musix"          
+    ## [16] "nonpar"          "nte_zh"          "poem"           
+    ## [19] "poster"          "rbasics"         "skak"           
+    ## [22] "thesis_classic"  "thesis_mypku_zh" "thesis_pku_zh"  
+    ## [25] "thesis_ubt"      "thesis_zju_zh"   "yihui_crc"      
+    ## [28] "yihui_demo"      "yihui_mini"      "yihui_zh"
 
 A template with a name ended with '\_zh' means it support Chinese characters. To list all these Chinese templates, run:
 
@@ -152,16 +149,16 @@ Now it is time to witness the miracles. With the following magic tricks you will
 
 **Magic I**
 
-Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get 19 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
+Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get more than 20 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
 ``` r
-showcase()
+bd()
 ```
 
 Non-Chinese users might encounter some errors because their computers do not support Chinese characters in the demo books. Instead, run the following codes, which exclude the Chinese templates:
 
 ``` r
-showcase(x = template()[-c(grep('_zh$', template()), which(template() == 'poster'))])
+bd(x = template()[-c(grep('_zh$', template()), which(template() == 'poster'))])
 ```
 
 **Magic II**
@@ -169,7 +166,7 @@ showcase(x = template()[-c(grep('_zh$', template()), which(template() == 'poster
 Run the following codes. You will get all the demo files for different fonts, themes and styles from the 'mail' template:
 
 ``` r
-showcase(x = 'NA', mail_all = TRUE)
+bd(x = NA, mail_all = TRUE)
 ```
 
 Recommendations
@@ -220,9 +217,7 @@ Showcase
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_chemistry.jpg)
 
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_dnd_dev.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_discussion.jpg)
+![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_dnd_dev.jpg) ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_discussion.jpg)
 
 ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_guitar.jpg)
 
@@ -301,18 +296,13 @@ Updates
 - 2017-06-14. **v0.0.1.** A bug fixed.
 - 2017-05-15. **v0.0.0.** A very preliminary version.
 
+
 License
 =======
 
 Copyright 2017 [Peng Zhao](http://pzhao.org).
 
 Released under the [MIT](https://github.com/pzhaonet/bookdown-plus/blob/master/LICENSE.md) license.
-
-
-Acknowledgement
-=======
-
-A short [introduction of bookdownplus](https://utopian.io/utopian-io/@dapeng/introduction-to-bookdownplus-an-r-package-for-writing-assorted-books-and-documents) authored with my id @dapeng is posted on utopian.io, which supports open-source projects. 
 
 References
 ==========

@@ -7,11 +7,26 @@
 #'
 #' @examples template()
 template <- function(dataframe = FALSE){
-  pckpath <- paste0(path.package('bookdownplus'), '/')
-  temp <- gsub('.zip', '', dir(paste0(pckpath, 'zip/')))
-  tempdf <- data.frame(i = 1:length(temp),
-                       template = temp)
-  if (dataframe) return(tempdf)
+  pckpath <- paste0(path.package('bookdownplus'), '/zip')
+  zipfiles <- list.files(path = pckpath, pattern = '\\.zip$')
+  temp <- gsub('.zip', '', zipfiles)
+  if (dataframe) {
+    txt <- NULL
+    txtfiles <- paste0(pckpath, '/', temp, '.txt')
+    for(i in txtfiles) {
+      if(file.exists(i))
+        newtxt <- paste0(readLines(i, encoding = 'UTF-8'), collapse = '')
+      else {
+        newtxt <- NA
+        # file.create(i)
+        }
+      txt <- c(txt, newtxt)
+    }
+    tempdf <- data.frame(i = 1:length(temp),
+                         template = temp,
+                         descript = txt)
+    return(tempdf)
+  }
   return(temp)
 }
 
@@ -275,8 +290,8 @@ bookdownplus <- function( ######
                           more_output = NULL,
                           title ='R bookdownplus',
                           author = 'Peng Zhao',
-                          render = TRUE,
-                          rproj = TRUE,
+                          render = FALSE,
+                          rproj = FALSE,
                           output_name = NA,
                           # for mail template only
                           mail_from_address = '15 Robin Hood Lane',
@@ -284,7 +299,7 @@ bookdownplus <- function( ######
                           mail_from_phone = '31415926',
                           mail_from_mobile = '31415927',
                           mail_from_fax = '31415928',
-                          mail_from_email = 'dapengde@live.com',
+                          mail_from_email = 'test@test.test',
                           mail_to_who = 'recipient',
                           mail_to_affiliation = 'University of Innsbruck',
                           mail_to_address = 'recipient address',
@@ -301,7 +316,7 @@ bookdownplus <- function( ######
                             'large', 'Large', 'LARGE', 'huge','Huge') [5],
 
                           # for poster template only
-                          poster_email = 'pzhao@pzhao.net',
+                          poster_email = 'test@test.test',
                           poster_institute = 'Institute of Ecology, Univ. Innsbruck',
                           poster_longinstitute = 'Institute of Ecology, University of Innsbruck, Austria',
                           poster_web = 'pzhao.org',
@@ -469,7 +484,7 @@ bookdownplus <- function( ######
   }
 }
 
-#' Title Show demos
+#' Show demos
 #'
 #' @param x NA or character, templates to show
 #' @param mail_all logical
@@ -478,21 +493,21 @@ bookdownplus <- function( ######
 #' @export
 #'
 #' @examples
-#' bd(template = NA)
+#' bd(x = NA)
 bd <- function(x = template()[-which(template() == 'poster')], mail_all = FALSE){
   if('poster' %in% x) message('"poster" demo output will not be displayed automatcially. See the help.')
   if(.Platform$OS.type == 'unix') x <- x[x %in% c('article_mdpi', 'article', 'calendar', 'chemistry_zh', 'chemistry', 'discussion', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'thesis_classic', 'thesis_mypku_zh', 'thesis_pku_zh', 'thesis_ubt', 'thesis_zju_zh', 'yihui_crc', 'yihui_demo', 'yihui_mini', 'yihui_zh')]
   if(!is.na(x[1])) {
     for(i in x){
       message(paste0('Generating a demo book from the "', i, '" template'))
-      bookdownplus(template = i, more_output = more_output())
+      bookdownplus(template = i, more_output = more_output(), render = TRUE)
       message(paste0('Done with "', i, '"!'))
     }
   } else if(mail_all) {
     for(mf in mail_font()) {
       for(ms in mail_style()) {
         for(mt in mail_theme()) {
-          bookdownplus(template = 'mail', mail_style = ms, mail_font = mf, mail_theme = mt, output_name = paste('mail', ms, mf, mt, sep = '_'))
+          bookdownplus(template = 'mail', mail_style = ms, mail_font = mf, mail_theme = mt, output_name = paste('mail', ms, mf, mt, sep = '_'), render = TRUE)
         }
       }
     }

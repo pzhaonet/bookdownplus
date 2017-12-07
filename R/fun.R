@@ -478,19 +478,17 @@ bookdownplus <- function( ######
 #' @export
 #'
 #' @examples
-#' showcase(template = NA)
-showcase <- function(x = template()[-which(template() == 'poster')], mail_all = FALSE){
+#' bd(template = NA)
+bd <- function(x = template()[-which(template() == 'poster')], mail_all = FALSE){
   if('poster' %in% x) message('"poster" demo output will not be displayed automatcially. See the help.')
-
+  if(.Platform$OS.type == 'unix') x <- x[x %in% c('article_mdpi', 'article', 'calendar', 'chemistry_zh', 'chemistry', 'discussion', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'thesis_classic', 'thesis_mypku_zh', 'thesis_pku_zh', 'thesis_ubt', 'thesis_zju_zh', 'yihui_crc', 'yihui_demo', 'yihui_mini', 'yihui_zh')]
   if(!is.na(x[1])) {
     for(i in x){
       message(paste0('Generating a demo book from the "', i, '" template'))
-      bookdownplus(template = i, more_output = more_output()[1:3])
+      bookdownplus(template = i, more_output = more_output())
       message(paste0('Done with "', i, '"!'))
     }
-  }
-
-  if(mail_all) {
+  } else if(mail_all) {
     for(mf in mail_font()) {
       for(ms in mail_style()) {
         for(mt in mail_theme()) {
@@ -498,6 +496,8 @@ showcase <- function(x = template()[-which(template() == 'poster')], mail_all = 
         }
       }
     }
+  } else {
+    message('No template in the showcase.')
   }
 }
 

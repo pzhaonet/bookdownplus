@@ -1,3 +1,5 @@
+- 2018-02-05. **v1.4.3**. Bugs fixed.
+  - `pandoc_args` changed from `--chapters` into `--top-level-division=chapter`
 - 2017-11-24. **v1.4.0**. Structure changed. Minor bugs fixed. More templates.
   - Template files organized much better. Flexible of adding new templates.
   - Four more templates:

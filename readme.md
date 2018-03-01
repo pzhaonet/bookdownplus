@@ -57,7 +57,7 @@ Installation
 # the development version from GitHub (recommended)
 devtools::install_github("pzhaonet/bookdownplus")
 # or the stable version from CRAN
-install.package("bookdownplus")
+install.packages("bookdownplus")
 ```
 
 Generate a demo book

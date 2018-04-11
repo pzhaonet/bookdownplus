@@ -52,7 +52,7 @@ Before starting, you have to install 'R', 'RStudio', 'bookdown' package, and oth
 install.packages('bookdown')
 ```
 
-Additionally, if you want to produce a poster, phython must be installed before using, and the path of phython might have to be added to the environmental variables for Windows users. Details can be found in the instruction of [kuleuven-templates](https://github.com/exporl/kuleuven-templates), which is the origin of the 'poster' template.
+Additionally, if you want to produce a poster, Python must be installed before using, and the path of Python might have to be added to the environmental variables for Windows users. Details can be found in the instruction of [kuleuven-templates](https://github.com/exporl/kuleuven-templates), which is the origin of the 'poster' template.
 
 ## Installation
 
@@ -104,7 +104,7 @@ Then all the required output files are in `_book/` folder.
 
 ## More templates
 
-By default, the book is built from the 'theis_classic' template. From 'bookdownplus v1.2.0', uses can see the available templates by running:
+By default, the book is built from the 'thesis_classic' template. From 'bookdownplus v1.2.0', users can see the available templates by running:
 
 ```{r}
 template()

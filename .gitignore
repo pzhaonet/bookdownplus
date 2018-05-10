@@ -4,6 +4,7 @@ readme.Rmd
 help/
 .Rbuildignore
 gitsync_bookdownplus.bat
+_*.*
 
 # Windows image file caches
 Thumbs.db

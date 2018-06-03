@@ -253,6 +253,7 @@ Showcase
 Updates
 -------
 
+- 2018-06-03. **v1.4.5**. 'skak', for writing a chess diagram.
 - 2018-05-10. **v1.4.4**. One more library, 'yihui\_crc', for writing a book of Chapman & Hall.
 - 2018-02-05. **v1.4.3**. Bugs fixed.
   - `pandoc_args` changed from `--chapters` into `--top-level-division=chapter`

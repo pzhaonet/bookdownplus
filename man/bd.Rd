@@ -4,10 +4,10 @@
 \alias{bd}
 \title{Show demos}
 \usage{
-bd(x = get_template()[, "name"])
+bd(template = NA)
 }
 \arguments{
-\item{x}{NA or character, templates to show}
+\item{template}{NA or character, templates to show}
 }
 \value{
 demo files
@@ -16,5 +16,5 @@ demo files
 Show demos
 }
 \examples{
-bd(x = NA)
+bd(NULL)
 }

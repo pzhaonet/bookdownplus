@@ -100,6 +100,9 @@ bookdownplus <- function(template = 'thesis_classic',
                          render = FALSE,
                          rproj = FALSE,
                          output_name = NA) {
+  book_filename <- ifelse(is.na(output_name), template, output_name)
+  pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
+
   ###### check whether the template is available
   template_all <- get_template()
   if(!template %in% template_all$name)
@@ -114,7 +117,6 @@ bookdownplus <- function(template = 'thesis_classic',
     file.remove('demo.zip')
   } else {
     ###### get the locale template and prepare
-    pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
 
     ###### copy folders and files to the working dir ######
     lapply(X = c('backup', 'bib', 'images'), FUN = copyfolder)
@@ -137,7 +139,6 @@ bookdownplus <- function(template = 'thesis_classic',
     writeLines(index, 'index.Rmd', useBytes = TRUE)
 
     ###### prepare _bookdown.yml, which defines the output filename of the book. ######
-    book_filename <- ifelse(is.na(output_name), template, output_name)
     filenameyml <- readLines(paste0(pckpath, 'yml/_bookdown.yml'), encoding = 'UTF-8')
     filenameyml[grep('book_filename: ', filenameyml)] <- paste0('book_filename: ', book_filename)
     backup('_bookdown.yml')
@@ -206,23 +207,31 @@ bookdownplus <- function(template = 'thesis_classic',
 
 #' Show demos
 #'
-#' @param x NA or character, templates to show
+#' @param template NA or character, templates to show
 #'
 #' @return demo files
 #' @export
 #'
 #' @examples
-#' bd(x = NA)
-bd <- function(x = get_template()[, 'name']){
-  if(.Platform$OS.type == 'unix') x <- x[x %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'thesis_classic', 'thesis_zh', 'pku_zh', 'ubt', 'thesis_zju_zh', 'yihui_crc', 'yihui_demo', 'yihui_mini', 'yihui_zh')]
-  if(!is.na(x[1])) {
-    for(i in x){
-      message(paste0('Generating a demo book from the "', i, '" template'))
-      bookdownplus(template = i, more_output = get_output(), render = TRUE)
-      message(paste0('Done with "', i, '"!'))
-    }
-  } else {
+#' bd(NULL)
+bd <- function(template = NA){
+  if(is.null(template)){
     message('No template in the showcase.')
+  } else {
+    x <- template
+    if(is.na(x)) {
+      x <- get_template()
+      x <- x[x$location == 'local', ]
+      x <- x$name
+    }
+    if(.Platform$OS.type == 'unix') x <- x[x %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'thesis_classic', 'thesis_zh', 'pku_zh', 'ubt', 'thesis_zju_zh', 'yihui_crc', 'yihui_demo', 'yihui_mini', 'yihui_zh')]
+    if(!is.na(x[1])) {
+      for(i in x){
+        message(paste0('Generating a demo book from the "', i, '" template...........'))
+        bookdownplus(template = i, more_output = get_output(), render = TRUE)
+        message(paste0('Done with "', i, '"!'))
+      }
+    }
   }
 }
 

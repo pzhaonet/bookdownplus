@@ -1,6 +1,7 @@
 archive/
 .Rproj.user/
 readme.Rmd
+.Rhistory
 help/
 .Rbuildignore
 gitsync_bookdownplus.bat

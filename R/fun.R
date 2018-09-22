@@ -7,13 +7,13 @@
 get_template <- function(){
   # local tempaltes
   path_local <- paste0(path.package('bookdownplus'), '/templates/-list.csv')
-  df_t <- read.csv(path_local)
+  df_t <- read.csv(path_local, stringsAsFactors = FALSE)
   df_t$location <- 'local'
   # remote templates on github
   path_remote <- 'https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/upload/-list.csv'
   df_r <- try(read.csv(path_remote), silent = T)
   if (class(df_r) != 'try-error') {
-    df_r <- read.csv(path_remote)
+    df_r <- read.csv(path_remote, stringsAsFactors = FALSE)
     df_r$location <- 'remote'
     df_t <- rbind(df_t, df_r)
   } else {

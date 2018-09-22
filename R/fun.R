@@ -88,7 +88,7 @@ get_output <- function(dataframe = FALSE){
 #'
 #' Full documentation of `bookdownplus` can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). Here is a quick-start procedure.
 #'
-#' - Before starting, you have to install `bookdown` package, and other software and packages (i.e. 'Pandoc', 'LaTeX', `rmarkdown`, `rticle`, `knitr`, etc.) which `bookdown` depends on. See the [official manual of `bookdown`](https://bookdown.org/yihui/bookdown/) for details. Additionally, if you want to produce a poster, phython must be installed before using, and the path of phython might have to be added to the environmental variables for Windows users.
+#' - Before starting, you have to install `bookdown` package, and other software and packages (i.e. 'Pandoc', 'LaTeX', `rmarkdown`, `rticle`, `knitr`, etc.) which `bookdown` depends on. See the [official manual of `bookdown`](https://bookdown.org/yihui/bookdown/) for details.
 #'
 #' - Run `bookdownplus()` and specify the template with `template` argument, You will get some files (e.g. `index.Rmd`, `body.Rmd`, `bookdownplus.Rproj`) and folders in your working directory. Although there are many other arguments for `bookdownplus()`, you can simply ignore them if you use `bookdownplus` package for the first time.
 #' - Open `bookdownplus.Rproj` with RStudio. Now press `ctrl+shift+b` to build it. Your will get a book file named `*.pdf` in `_book/` folder.
@@ -102,15 +102,14 @@ bookdownplus <- function(template = 'thesis_classic',
                          output_name = NA) {
   ###### check whether the template is available
   template_all <- get_template()
-  if(!template %in% template_all)
-    return(message(paste0(template, 'is unavailable. Please check whether your spelling is correct. Run get_template() to see available templates.')))
-
+  if(!template %in% template_all$name)
+    return(message(paste0(template, ' is unavailable. Please check whether your spelling is correct. Run get_template() to see available templates.')))
 
   if_remote <- template_all[template_all$name == template, 'location'] == 'remote'
   if(if_remote) {
     ###### get the remote template
     remote_file <- paste0('https://github.com/pzhaonet/bookdownplus/raw/master/upload/', template, '/demo.zip')
-    download.file(remote_file)
+    download.file(remote_file, destfile = 'demo.zip')
     unzip('demo.zip')
     file.remove('demo.zip')
   } else {
@@ -214,7 +213,7 @@ bookdownplus <- function(template = 'thesis_classic',
 #'
 #' @examples
 #' bd(x = NA)
-bd <- function(x = template()){
+bd <- function(x = get_template()[, 'name']){
   if(.Platform$OS.type == 'unix') x <- x[x %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'thesis_classic', 'thesis_zh', 'pku_zh', 'ubt', 'thesis_zju_zh', 'yihui_crc', 'yihui_demo', 'yihui_mini', 'yihui_zh')]
   if(!is.na(x[1])) {
     for(i in x){

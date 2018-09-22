@@ -4,12 +4,10 @@
 \alias{bd}
 \title{Show demos}
 \usage{
-bd(x = template()[-which(template() == "poster")], mail_all = FALSE)
+bd(x = template())
 }
 \arguments{
 \item{x}{NA or character, templates to show}
-
-\item{mail_all}{logical}
 }
 \value{
 demo files

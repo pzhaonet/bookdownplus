@@ -114,21 +114,10 @@ By default, the book is built from the ‘thesis\_classic’ template. From ‘b
 template()
 ```
 
-    ##  [1] "article"         "article_mdpi"    "article_zh"     
-    ##  [4] "calendar"        "cchess"          "chemistry"      
-    ##  [7] "chemistry_zh"    "discussion"      "dnd_dev"        
-    ## [10] "docsens"         "guitar"          "igo"            
-    ## [13] "journal"         "mail"            "musix"          
-    ## [16] "nonpar"          "nte_zh"          "poem"           
-    ## [19] "poster"          "rbasics"         "skak"           
-    ## [22] "thesis_classic"  "thesis_mypku_zh" "thesis_pku_zh"  
-    ## [25] "thesis_ubt"      "thesis_zju_zh"   "yihui_crc"      
-    ## [28] "yihui_demo"      "yihui_mini"      "yihui_zh"
-
 A template with a name ended with ’\_zh’ means it support Chinese characters. To list all these Chinese templates, run:
 
 ``` r
-grep('_zh$', template(), value = TRUE)
+grep('_zh$', template()[, 'name'], value = TRUE)
 ```
 
     ## [1] "article_zh"      "chemistry_zh"    "nte_zh"          "thesis_mypku_zh"
@@ -142,12 +131,11 @@ bookdownplus(template = template()[1])
 
 Then all the required output files are in `_book/` folder.
 
-Magic tricks
+Magic trick
 ------------
 
-Now it is time to witness the miracles. With the following magic tricks you will see what bookdownplus can do.
+Now it is time to witness the miracles. With the following magic trick you will see what bookdownplus can do.
 
-**Magic I**
 
 Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get more than 20 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
@@ -158,16 +146,9 @@ bd()
 Non-Chinese users might encounter some errors because their computers do not support Chinese characters in the demo books. Instead, run the following codes, which exclude the Chinese templates:
 
 ``` r
-bd(x = template()[-c(grep('_zh$', template()), which(template() == 'poster'))])
+bd(x = template()[-grep('_zh$', template())])
 ```
 
-**Magic II**
-
-Run the following codes. You will get all the demo files for different fonts, themes and styles from the ‘mail’ template:
-
-``` r
-bd(x = NA, mail_all = TRUE)
-```
 
 Recommendations
 ---------------
@@ -253,6 +234,8 @@ Showcase
 Updates
 -------
 
+- 2018-09-22. **v1.4.8**. Open for contributors to upload new templates.
+- 2018-09-21. **v1.4.7**. Codes simplified. One more template.
 - 2018-06-10. **v1.4.6**. More templates:
   - cchess
   - dnd_dev

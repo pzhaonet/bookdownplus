@@ -93,7 +93,7 @@ get_output <- function(dataframe = FALSE){
 #' - Run `bookdownplus()` and specify the template with `template` argument, You will get some files (e.g. `index.Rmd`, `body.Rmd`, `bookdownplus.Rproj`) and folders in your working directory. Although there are many other arguments for `bookdownplus()`, you can simply ignore them if you use `bookdownplus` package for the first time.
 #' - Open `bookdownplus.Rproj` with RStudio. Now press `ctrl+shift+b` to build it. Your will get a book file named `*.pdf` in `_book/` folder.
 #' - Write your own text in `index.Rmd` and `body.Rmd`, and build your own lovely book.
-bookdownplus <- function(template = 'thesis_classic',
+bookdownplus <- function(template = 'copernicus',
                          more_output = NULL,
                          title ='title',
                          author = 'author',
@@ -235,7 +235,7 @@ bd <- function(template = NA){
   }
 }
 
-#' Prepare a template skeleton to contribute to bookdownplus
+#' Prepare a strict template skeleton to contribute to bookdownplus
 #'
 #' @param template_name character. tempalte name.
 #' @param bodyfile character. name of the body file.
@@ -262,4 +262,23 @@ create <- function(template_name = 'new', bodyfile = 'body.Rmd', indexfile = 'in
     writeLines(indextxt, indexfile, useBytes = TRUE)
     file.copy(indexfile, paste0('rmd/', files[2]))
   } else message(paste(indexfile, 'does not exist.'))
+}
+
+
+#' Prepare a relaxed template folder to contribute to bookdownplus
+#'
+#' @param template_path character. The complete path of the template folder.
+#' @param template_name character. The tempalte name.
+#'
+#' @return Prepare a folder for contribution.
+#' @export
+#'
+#' @examples
+#' share()
+share <- function(template_name = NA){
+  if(is.na(template_name)) return(message('Please give a valid tempalte name.'))
+  dir.create(template_name)
+  dir.create(paste0(template_name, '/showcase'))
+  file.create(paste0(template_name, '/put_readme.txt_and_demo.zip_here.txt'))
+  file.create(paste0(template_name, '/showcase/put_sample_images_and_cover.png_here.txt'))
 }

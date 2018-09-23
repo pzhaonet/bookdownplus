@@ -4,7 +4,7 @@
 \alias{bookdownplus}
 \title{Create demo files for building books with R bookdown package.}
 \usage{
-bookdownplus(template = "thesis_classic", more_output = NULL, title = "title", 
+bookdownplus(template = "copernicus", more_output = NULL, title = "title", 
     author = "author", render = FALSE, rproj = FALSE, output_name = NA)
 }
 \arguments{

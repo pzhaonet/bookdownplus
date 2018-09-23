@@ -2,7 +2,7 @@
 % Please edit documentation in R/fun.R
 \name{create}
 \alias{create}
-\title{Prepare a template skeleton to contribute to bookdownplus}
+\title{Prepare a strict template skeleton to contribute to bookdownplus}
 \usage{
 create(template_name = "new", bodyfile = "body.Rmd", indexfile = "index.Rmd", 
     texfile = "t.tex")
@@ -20,7 +20,7 @@ create(template_name = "new", bodyfile = "body.Rmd", indexfile = "index.Rmd",
 organzed folders and files.
 }
 \description{
-Prepare a template skeleton to contribute to bookdownplus
+Prepare a strict template skeleton to contribute to bookdownplus
 }
 \examples{
 create()

@@ -92,7 +92,7 @@ More output formats
 By default, the book is built in a .pdf file and an .md file. From ‘bookdownplus v1.0.3’, users can get more output formats, including word, html and epub. From ‘bookdownplus v1.2.0’, uses can see the available output formats by running:
 
 ``` r
-more_output()
+get_output()
 ```
 
     ## [1] "word_document2" "epub_book"      "gitbook"        "html_document2"
@@ -100,7 +100,7 @@ more_output()
 You can specify the `more_output` argument in the `bookdownplus()` function:
 
 ``` r
-bookdownplus(more_output = more_output())
+bookdownplus(more_output = get_output())
 ```
 
 Then all the required output files are in `_book/` folder.
@@ -111,13 +111,13 @@ More templates
 By default, the book is built from the ‘thesis\_classic’ template. From ‘bookdownplus v1.2.0’, users can see the available templates by running:
 
 ``` r
-template()
+get_template()
 ```
 
 A template with a name ended with ’\_zh’ means it support Chinese characters. To list all these Chinese templates, run:
 
 ``` r
-grep('_zh$', template()[, 'name'], value = TRUE)
+grep('_zh$', get_template()[, 'name'], value = TRUE)
 ```
 
     ## [1] "article_zh"      "chemistry_zh"    "nte_zh"          "thesis_mypku_zh"
@@ -126,7 +126,7 @@ grep('_zh$', template()[, 'name'], value = TRUE)
 You can specify the `template` argument in the `bookdownplus()` function:
 
 ``` r
-bookdownplus(template = template()[1])
+bookdownplus(template = get_template()$name[1])
 ```
 
 Then all the required output files are in `_book/` folder.
@@ -146,7 +146,7 @@ bd()
 Non-Chinese users might encounter some errors because their computers do not support Chinese characters in the demo books. Instead, run the following codes, which exclude the Chinese templates:
 
 ``` r
-bd(x = template()[-grep('_zh$', template())])
+bd(x = get_template()$name[-grep('_zh$', get_template()$name)])
 ```
 
 
@@ -234,6 +234,7 @@ Showcase
 Updates
 -------
 
+- 2018-09-23. **v1.5.0**. Ready for contributions.
 - 2018-09-22. **v1.4.8**. Open for contributors to upload new templates.
 - 2018-09-21. **v1.4.7**. Codes simplified. One more template.
 - 2018-06-10. **v1.4.6**. More templates:

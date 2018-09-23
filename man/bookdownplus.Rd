@@ -34,8 +34,6 @@ demo files to build with bookdown
 }
 \description{
 Technically, \code{bookdownplus} is a collection and selector of R bookdown templates. \code{bookdownplus} helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R \code{bookdownplus} extends the features of \code{bookdown}, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
-
-Full documentation of \code{bookdownplus} can be found in the book \href{https://bookdown.org/baydap/bookdownplus}{R bookdownplus Textbook}. Here is a quick-start procedure.
 \itemize{
 \item Before starting, you have to install \code{bookdown} package, and other software and packages (i.e. 'Pandoc', 'LaTeX', \code{rmarkdown}, \code{rticle}, \code{knitr}, etc.) which \code{bookdown} depends on. See the \href{https://bookdown.org/yihui/bookdown/}{official manual of bookdown} for details.
 \item Run \code{bookdownplus()} and specify the template with \code{template} argument, You will get some files (e.g. \code{index.Rmd}, \code{body.Rmd}, \code{bookdownplus.Rproj}) and folders in your working directory. Although there are many other arguments for \code{bookdownplus()}, you can simply ignore them if you use \code{bookdownplus} package for the first time.

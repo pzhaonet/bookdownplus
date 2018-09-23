@@ -26,7 +26,9 @@ With `bookdownplus` users can
 -   record guitar chords,
 -   and more wonders are coming soon.
 
+<!---
 Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). The webpage looks as elegant as other books, while the [pdf file](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf) might give you a little surprise.
+-->
 
 Quick start
 ===========

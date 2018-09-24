@@ -1,59 +1,48 @@
-bookdownplus: an R package for writing assorted books and documents, such as academic articles, mails, guitar chords, chemical melecular formulae, with R bookdown
-==================================================================================================================================================================
-
 ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/bookdownplus)
 
-Introduction
-============
+![](https://bookdownplus.netlify.com/img/bookdownplus-logo.png)
 
-The R package [`bookdownplus`](https://cran.r-project.org/web/packages/bookdownplus) (Zhao 2017a) is an extension of `bookdown` (Xie 2016). It is a collection of multiple templates on the basis of LaTeX, which are tailored so that I can work happily under the umbrella of `bookdown`. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
+## Introduction
 
-Features
-========
+The package [bookdownplus](https://cran.r-project.org/web/packages/bookdownplus) (Zhao 2017a) is an extension of R [bookdown](https://bookdown.org/yihui/bookdown/) (Xie 2016). It is a collection of multiple templates on the basis of LaTeX, which are tailored so that I can work happily under the umbrella of bookdown. bookdownplus helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries.
 
-`bookdown` is not easy for beginners. Try reading the official manual of [‘bookdown’](https://bookdown.org/yihui/bookdown/). If you are able to build your own book in one hour, I am sure you are a genius and please send me a postcard with your signature. An R beginner might be confused or depressed in struggling in the flood of LaTeX, YAML, Markdown, Pandoc, etc. It would be a pity if users stop their steps at the door and give up the courage of entering the wonderful world of `bookdown`.
+## Features
 
-`bookdownplus` is the easiest shortcut to the world of `bookdown`. With **just one single command** users can get a demo book (or multiple demo books) in .pdf or .doc, or even more formats (see the quick start section). `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
+bookdown features the collaboration  of many fantastic tools. However, an R beginner might be confused or depressed in struggling in the flood of LaTeX, YAML, Markdown, Pandoc, etc. It would be a pity if users stop their steps at the door and give up the courage of entering the wonderful world of bookdown.
 
-With `bookdownplus` users can
+bookdownplus is the easiest shortcut to the world of bookdown. With **just one single command** users can get a demo book (or multiple demo books) in .pdf or .doc, or even more formats (see the quick start section). bookdownplus extends the features of bookdown, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 
--   write a mail in an elegant layout,
--   write a laboratory journal, or a personal diary,
--   draw a monthly or weekly or conference calendar,
--   and, of course, write academic articles in your favourite way,
--   with chemical molecular formulae and equations,
--   even in Chinese,
--   record guitar chords,
+With bookdownplus users can
+
+-   write academic journal articles and theses/dissertations,
+-   write mails in an elegant layout,
+-   write laboratory journals, or personal diaries,
+-   draw monthly or weekly or conference calendars,
+-   insert chemical molecular formulae and equations,
+-   and guitar chords,
 -   and more wonders are coming soon.
+
+The website [bookdownplus gallery](https://bookdownplus.netlify.com) shows some samples that bookdownplus provides.
 
 <!---
 Full documentation can be found in the book [R bookdownplus Textbook](https://bookdown.org/baydap/bookdownplus). The webpage looks as elegant as other books, while the [pdf file](https://bookdown.org/baydap/bookdownplus/bookdownplus.pdf) might give you a little surprise.
 -->
 
-Quick start
-===========
+## Quick start
 
-Preparation
------------
+### Preparation
 
-Before starting, you have to install ‘R’, ‘RStudio’, ‘bookdown’ package, and other software and packages (i.e.’Pandoc’, ‘LaTeX’, ‘rmarkdown’, ‘rticle’, ‘knitr’, etc.) which ‘bookdown’ depends on. See the [official manual of ‘bookdown’](https://bookdown.org/yihui/bookdown/) for details. A brief list is as follows:
+1.  Install [R](https://cran.r-project.org), [RStudio](https://www.rstudio.com/products/rstudio/download/). LaTeX(e.g. [MiKTeX](https://miktex.org/) or [TinyTeX](https://yihui.name/tinytex/). See the [official manual of ‘bookdown’](https://bookdown.org/yihui/bookdown/) for details. 
 
-1.  Download [R](https://cran.r-project.org) and install it.
-
-2.  Download [RStudio](https://www.rstudio.com/products/rstudio/download/) and install it.
-
-3.  Download LaTeX(e.g. [CTeX](http://www.ctex.org/CTeXDownload) or [TinyTeX](https://yihui.name/tinytex/)) and install it.
-
-4.  Run RStudio. Type the following codes in the top-left panel to install ‘bookdown’ packages:
+2.  Run RStudio. Type the following codes in the top-left panel to install ‘bookdown’ packages:
 
 ``` r
 install.packages('bookdown')
 ```
 
-Additionally, if you want to produce a poster, Python must be installed before using, and the path of Python might have to be added to the environmental variables for Windows users. Details can be found in the instruction of [kuleuven-templates](https://github.com/exporl/kuleuven-templates), which is the origin of the ‘poster’ template.
+> !---Additionally, if you want to produce a poster, Python must be installed before using, and the path of Python might have to be added to the environmental variables for Windows users. Details can be found in the instruction of [kuleuven-templates](https://github.com/exporl/kuleuven-templates), which is the origin of the ‘poster’ template.
 
-Installation
-------------
+### Installation
 
 ``` r
 # the development version from GitHub (recommended)
@@ -62,8 +51,7 @@ devtools::install_github("pzhaonet/bookdownplus")
 install.package("bookdownplus")
 ```
 
-Generate a demo book
---------------------
+### Generate a demo book
 
 Firstly check your working directory (`getwd()`) and make sure that it is empty. `bookdownplus` will generate lots of files. An empty folder as a working directory is highly recommended. If you don’t know how to change your working directory with R command, you can use RStudio to create a new project (File – New Project - New Directory – Empty Project) and work always in this project.
 
@@ -71,33 +59,37 @@ Run the following codes:
 
 ``` r
 require(bookdownplus)
+bd('ubt')
 ```
 
-``` r
+Now a demo dissertation for the University of Bayreuth  is generated in many formats in the `_book/` folder in your working directory. Open `_book/ubt.pdf`or other files so as to get an impression.
+
+### Write your own book
+
+`bd()` is a simplified function for demos. The main function of the bookdownplus package is:
+
+```r
 bookdownplus()
 ```
+with multiple pamameters. 
 
-Although there are many arguments for `bookdownplus()`, you can simply ignore them and they will use their default values, if you use ‘bookdownplus’ package for the first time.
+For example,
 
-Now a demo file named `*.pdf` in `_book/` folder in your working directory is generated automatically. Open it with any pdf viewer so as to get an impression.
+```
+bookdownplus(template = 'ubt', render = TRUE)	
+```
 
-Write your own book
--------------------
+You can see some other files (e.g. `index.Rmd`, `body.Rmd`, `-bookdownplus.Rproj`) and folders. Write your own texts in `body.Rmd` and revise the author and the book title in `index.Rmd`. You can use RStudio or any other text editor (but please don’t use Microsoft Word).
 
-You can see some other files (e.g. `index.Rmd`, `body.Rmd`, `bookdownplus.Rproj`) and folders. Write your own texts in `body.Rmd` and revise the author and the book title in `index.Rmd`. You can use RStudio or any other text editor (but please don’t use Microsoft Word, believe it or not).
+After writing some texts, open `-bookdownplus.Rproj` with RStudio, and press `ctrl+shift+b` to build your own lovely book.
 
-After writing some texts, open `bookdownplus.Rproj` with RStudio, and press `ctrl+shift+b` to build your own lovely book.
-
-More output formats
--------------------
+### More outputs
 
 By default, the book is built in a .pdf file and an .md file. From ‘bookdownplus v1.0.3’, users can get more output formats, including word, html and epub. From ‘bookdownplus v1.2.0’, uses can see the available output formats by running:
 
 ``` r
 get_output()
 ```
-
-    ## [1] "word_document2" "epub_book"      "gitbook"        "html_document2"
 
 You can specify the `more_output` argument in the `bookdownplus()` function:
 
@@ -107,24 +99,20 @@ bookdownplus(more_output = get_output())
 
 Then all the required output files are in `_book/` folder.
 
-More templates
---------------
 
-By default, the book is built from the ‘thesis\_classic’ template. From ‘bookdownplus v1.2.0’, users can see the available templates by running:
+### More templates
+
+By default, the book is built from the ‘ubt’ template. From ‘bookdownplus v1.2.0’, users can see the available templates by running:
 
 ``` r
 get_template()
 ```
 
-A template with a name ended with ’\_zh’ means it support Chinese characters. To list all these Chinese templates, run:
+A template with a name ended with ’\_zh’ means that it supports Chinese characters. To list all these Chinese templates, run:
 
 ``` r
 grep('_zh$', get_template()[, 'name'], value = TRUE)
 ```
-
-    ## [1] "article_zh"      "chemistry_zh"    "nte_zh"          "thesis_mypku_zh"
-    ## [5] "thesis_pku_zh"   "thesis_zju_zh"   "yihui_zh"
-
 You can specify the `template` argument in the `bookdownplus()` function:
 
 ``` r
@@ -133,11 +121,9 @@ bookdownplus(template = get_template()$name[1])
 
 Then all the required output files are in `_book/` folder.
 
-Magic trick
-------------
+## Magic trick
 
 Now it is time to witness the miracles. With the following magic trick you will see what bookdownplus can do.
-
 
 Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get more than 20 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
@@ -145,15 +131,52 @@ Chinese users can run the following codes, and go and have a coffee break. When 
 bd()
 ```
 
-Non-Chinese users might encounter some errors because their computers do not support Chinese characters in the demo books. Instead, run the following codes, which exclude the Chinese templates:
+Non-Chinese users might encounter some errors because their computers do not support Chinese characters in the demo books. Instead, run the following codes, which exclude the Chinese templates and the remote templates:
 
 ``` r
-bd(x = get_template()$name[-grep('_zh$', get_template()$name)])
+my_t <- get_template()
+my_t <- my_t$name[my_t$location == 'local' & !grepl('_zh$', my_t$name)]
+bd(my_t)
+```
+
+## Showcase
+
+The website [bookdownplus gallery](https://bookdownplus.netlify.com) shows some samples that bookdownplus provides.
+
+[![](https://github.com/pzhaonet/bookdownplus-web/raw/master/static/img/webshot.png)](https://bookdownplus.netlify.com)
+
+## Share Your Own Templates
+
+`bookdownplus` provides around 30 templates (Version 1.5.0). If you are willing to contribute your own bookdown templates to bookdownplus, just upload them to the [bookdownplus repo](https://github.com/pzhaonet/bookdownplus). They will be displayed in the [bookdownplus gallery](https://bookdownplus.netlify.com) automatically once accepted.
+
+From the version 1.5, bookdownplus opens a widest-ever door to contributors. Here is how:
+
+1. Make sure that your template works successfully with bookdown.
+2. Prepare a folder in your working directory by running:
+
+  ```r
+  bookdownplus::share('your_template_name')
+  ``` 
+  
+  Follow the instructions in each subfolder and create the required files. 
+  - (Mandatory) 'your_template_name/demo.zip' is the compressed file from your bookdown project folder.
+  - (Optional) 'your_template_name/showcase/' contains the sample files (e.g. pdf, image files). An image file 'cover.png' is recommended, which will be used as the cover image in the gallery.
+  - (Optional) You could write a 'your_template/readme.txt' (in markdown syntax), which will be displayed as the text in the gallery.
+
+3. Upload your template folder 'your_template_name/' in to '[upload/](https://github.com/pzhaonet/bookdownplus/tree/master/upload)' of the bookdownplus repo. 
+
+4. Add the template information, including the template name, the contributor's name, and a brief introduction, into 'upload/-list.csv'.
+
+5. Create a Pull Request to bookdownplus.
+
+Wait for the response, and your template will be available in the gallery. Users can get it easily by clicking the ".zip" link in the gallery, or running
+
+```
+bookdownplus("your_template_name")
 ```
 
 
-Recommendations
----------------
+## Recommendations
 
 I have been developing some other packages, which bring more features into ‘bookdown’, such as:
 
@@ -164,74 +187,6 @@ I have been developing some other packages, which bring more features into ‘bo
 Both of them have been released on CRAN and can be installed via `install.packages('mindr')` and `install.packages('pinyin')`.
 
 Enjoy your bookdowning!
-
-Create Your Own Templates
--------------------------
-
-`bookdownplus` provides around 20 templates (Version 1.2.0) and more will be included in the future. I am not an expert in LaTeX but I have successfully created these templates. It means that creating a LaTeX template does not require much knowledge in LaTeX. If you know the general workflow of LaTeX, and study these ‘bookdownplus’ templates carefully, and read Chapter 4 of the [official manual of ‘bookdown’](https://bookdown.org/yihui/bookdown/), you will get the idea of how to create your own templates.
-
-Here is some hints from my experience on creating a new template from am existing LaTeX template:
-
--   Find a nice LaTeX template. There are many websites that provide free LaTeX templates. You can download one you like most. Those with good documentations and comments are highly recommended.
-
--   Compile the LaTeX template file to make sure that it can work fine and produce the right pdf file. You could either use command lines or use some software like TexStudio to compile it. You could send to me this template with its full documentation and your pdf file, if you do not want to continue. I would try tailoring it into ‘bookdownplus’ but it is not guaranteed. It depends on my time and mood. Thus I recommend you to be brave and continue the next steps.
-    -   Cut the template into ‘template\_yours.tex’ and ‘index.Rmd’ in the following way:
-    -   The main body of the LaTeX are the part between `\begin{document}` and `\end{document}`. Replace the main body with `$body$`, which will be filled with ‘body.Rmd’. You can use any ’body\*.Rmd’ created by ‘bookdownplus’.
-    -   Use any ‘index.Rmd’ created by ‘bookdownplus’ and modify the name of the LaTex template in ‘index.Rmd’.
--   If the LaTeX template is simple enough, now you may build this template book with ‘bookdown’.
-
--   Usually it won’t work. A good-looking LaTeX template is mostly complicated, especially those in Chinese. Probably you have to modify the preamble, pick out some parts and save them and specify them in ‘index.Rmd’. See the official [manual of ‘bookdown’](https://bookdown.org/yihui/bookdown/yaml-options.html).
-
--   If you can successfully build your book with your new template, congratulations. It would be appreciated if you could send me your ‘index.Rmd’, ‘body.Rmd’, ‘template\_yours.tex’ and other related files. I will add them into ‘bookdownplus’ templates and add your name into the contributor list.
-
-Let’s build a ‘bookdownplus’ template library!
-
-Showcase
---------
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_article.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_article_mdpi.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_article_zh.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_calendar.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_chemistry.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_dnd_dev.jpg) ![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_discussion.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_guitar.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_journal.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_mail.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_nonpar.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_nte_zh.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_poem.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_classic.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_mypku.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_pku.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_ubt.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_thesis_zju.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_yihui_crc.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_yihui_demo.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_yihui_mini.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_yihui_zh.jpg)
-
-![](https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/inst2/showcase/bookdownplus_poster.jpg)
 
 Updates
 -------

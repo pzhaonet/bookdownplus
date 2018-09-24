@@ -18,7 +18,7 @@ With bookdownplus users can
 -   write mails in an elegant layout,
 -   write laboratory journals, or personal diaries,
 -   draw monthly or weekly or conference calendars,
--   insert chemical molecular formulae and equations,
+-   insert chemical molecular formulas and equations,
 -   and guitar chords,
 -   and more wonders are coming soon.
 
@@ -39,8 +39,6 @@ Full documentation can be found in the book [R bookdownplus Textbook](https://bo
 ``` r
 install.packages('bookdown')
 ```
-
-> !---Additionally, if you want to produce a poster, Python must be installed before using, and the path of Python might have to be added to the environmental variables for Windows users. Details can be found in the instruction of [kuleuven-templates](https://github.com/exporl/kuleuven-templates), which is the origin of the ‘poster’ template.
 
 ### Installation
 
@@ -71,7 +69,7 @@ Now a demo dissertation for the University of Bayreuth  is generated in many for
 ```r
 bookdownplus()
 ```
-with multiple pamameters. 
+with multiple parameters. 
 
 For example,
 
@@ -125,7 +123,7 @@ Then all the required output files are in `_book/` folder.
 
 Now it is time to witness the miracles. With the following magic trick you will see what bookdownplus can do.
 
-Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get more than 20 demo books generated from available tempaltes, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
+Chinese users can run the following codes, and go and have a coffee break. When you come back, you will get more than 20 demo books generated from available templates, each in .pdf, .doc, .html, and .epub formats, in `_book/`:
 
 ``` r
 bd()

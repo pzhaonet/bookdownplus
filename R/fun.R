@@ -212,20 +212,23 @@ bookdownplus <- function(template = 'copernicus',
 #' bd(NULL)
 bd <- function(template = NA){
   if(is.null(template)){
-    message('No template in the showcase.')
+    message('Please give a valid template name.')
   } else {
-    x <- template
-    if(is.na(x)) {
-      x <- get_template()
-      x <- x[x$location == 'local', ]
-      x <- x$name
-    }
-    if(.Platform$OS.type == 'unix') x <- x[x %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'thesis_classic', 'thesis_zh', 'pku_zh', 'ubt', 'thesis_zju_zh', 'yihui_crc', 'yihui_demo', 'yihui_mini', 'yihui_zh')]
-    if(!is.na(x[1])) {
-      for(i in x){
-        message(paste0('Generating a demo book from the "', i, '" template...........'))
-        bookdownplus(template = i, more_output = get_output(), render = TRUE, rproj = FALSE)
-        message(paste0('Done with "', i, '"!'))
+    # available local templates
+    x <- get_template()
+    x <- x[x$location == 'local', ]
+    tl <- x$name
+    # filter the templates for unix
+    if(.Platform$OS.type == 'unix') tl <- tl[tl %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'classic', 'thesis_zh', 'pku_zh', 'ubt', 'zju_zh', 'crc', 'demo', 'mini', 'demo_zh')]
+    if(!is.na(template[1])) {
+      for(i in template){
+        if(i %in% tl){
+          message(paste0('Generating a demo book from the "', i, '" template...........'))
+          bookdownplus(template = i, more_output = get_output(), render = TRUE, rproj = FALSE)
+          message(paste0('Done with "', i, '"!'))
+        } else {
+          message(paste(i, 'is not a built-in template. Please use bookdownplus() instead.'))
+        }
       }
     }
   }

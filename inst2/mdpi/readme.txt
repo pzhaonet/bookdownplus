@@ -4,12 +4,11 @@ Later, I met bookdown. I found that I could hardly resist the attraction of book
 
 MDPI provides a [LaTeX template](http://www.mdpi.com/authors/latex) which is free for using. I modified it as 'tex/template_article_mdpi.tex', i.e. something was moved from the original LaTeX template to the yaml of 'index.Rmd'. Users could simply compare them and then get an idea how to convert a LaTeX template into a bookdown template.
 
-Here is a brief description for writing a MDPI manuscript:
+Install R, bookdown, LaTeX, and bookdownplus. Then run the following code in R language to create a book from this template:
 
-- Install R and RStudio.
-- Install R bookdown package and R bookdownplus package.
-- Create a skeleton of the manuscript.
-- Revise the .Rmd files as your own.
-- Build the book.
+```r
+library('bookdownplus')
+bd('mdpi')
+```
 
 More detals could be found [here](https://github.com/pzhaonet/bookdownplus).

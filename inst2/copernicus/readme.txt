@@ -4,12 +4,11 @@ Copernicus journal papers are open-access. A submitted manuscript, if accepted, 
 
 Copernicus provides a [LaTeX template](https://publications.copernicus.org/for_authors/latex_instructions.html) which is free for using. I modified it as 'tex/template_article.tex', i.e. something was moved from the original LaTeX template to the yaml of 'index.Rmd'. Users could simply compare them and then get an idea how to convert a LaTeX template into a bookdown template.
 
-Here is a brief description for re-use:
+Install R, bookdown, LaTeX, and bookdownplus. Then run the following code in R language to create a book from this template:
 
-- Install R and RStudio.
-- Install R bookdown package and R bookdownplus package.
-- Create a skeleton of the manuscript.
-- Revise the .Rmd files as your own.
-- Build the book.
+```r
+library('bookdownplus')
+bd('demo_zh')
+```
 
 More detals could be found [here](https://github.com/pzhaonet/bookdownplus).

@@ -94,7 +94,7 @@ bookdownplus <- function(template = 'copernicus',
                          title ='title',
                          author = 'author',
                          render = FALSE,
-                         rproj = FALSE,
+                         rproj = TRUE,
                          output_name = NA) {
   book_filename <- ifelse(is.na(output_name), template, output_name)
   pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
@@ -196,7 +196,7 @@ bookdownplus <- function(template = 'copernicus',
   ###### created the .Rproj file
   if(rproj) {
     mypath <- paste0(pckpath, 'proj/')
-    file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = 'bookdownplus.Rproj')
+    file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = '-bookdownplus.Rproj')
   }
 
 }
@@ -224,7 +224,7 @@ bd <- function(template = NA){
     if(!is.na(x[1])) {
       for(i in x){
         message(paste0('Generating a demo book from the "', i, '" template...........'))
-        bookdownplus(template = i, more_output = get_output(), render = TRUE)
+        bookdownplus(template = i, more_output = get_output(), render = TRUE, rproj = FALSE)
         message(paste0('Done with "', i, '"!'))
       }
     }

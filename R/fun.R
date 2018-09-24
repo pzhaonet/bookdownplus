@@ -214,20 +214,26 @@ bd <- function(template = NA){
   if(is.null(template)){
     message('Please give a valid template name.')
   } else {
-    # available local templates
+    # available templates
     x <- get_template()
-    x <- x[x$location == 'local', ]
+    # x <- x[x$location == 'local', ]
     tl <- x$name
+    loc <- x$location
     # filter the templates for unix
-    if(.Platform$OS.type == 'unix') tl <- tl[tl %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'classic', 'thesis_zh', 'pku_zh', 'ubt', 'zju_zh', 'crc', 'demo', 'mini', 'demo_zh')]
+    # if(.Platform$OS.type == 'unix') tl <- tl[tl %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'classic', 'thesis_zh', 'pku_zh', 'ubt', 'zju_zh', 'crc', 'demo', 'mini', 'demo_zh')]
     if(!is.na(template[1])) {
       for(i in template){
         if(i %in% tl){
           message(paste0('Generating a demo book from the "', i, '" template...........'))
-          bookdownplus(template = i, more_output = get_output(), render = TRUE, rproj = FALSE)
+          if(loc[tl == i] == 'local'){
+            myoutput <- get_output()
+          } else {
+            myoutput <- NULL
+          }
+          bookdownplus(template = i, more_output = myoutput, render = TRUE, rproj = FALSE)
           message(paste0('Done with "', i, '"!'))
         } else {
-          message(paste(i, 'is not a built-in template. Please use bookdownplus() instead.'))
+          message(paste(i, 'is unavailable. Please run "get_template()" to see available ones.'))
         }
       }
     }

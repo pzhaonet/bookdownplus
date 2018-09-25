@@ -221,6 +221,7 @@ bd <- function(template = NA){
     loc <- x$location
     # filter the templates for unix
     # if(.Platform$OS.type == 'unix') tl <- tl[tl %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'classic', 'thesis_zh', 'pku_zh', 'ubt', 'zju_zh', 'crc', 'demo', 'mini', 'demo_zh')]
+    if(is.na(template[1])) template <- tl
     if(!is.na(template[1])) {
       for(i in template){
         if(i %in% tl){

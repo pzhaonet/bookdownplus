@@ -78,7 +78,7 @@ get_output <- function(dataframe = FALSE){
 #' @param render logical. whether to render automatically
 #' @param rproj logical. whether to created an .Rproj file automatically
 #' @return demo files to build with bookdown
-#' @importFrom utils download.file unzip
+#' @importFrom utils download.file unzip read.csv
 #' @export
 #' @examples
 #' bookdownplus(render = FALSE)
@@ -273,7 +273,6 @@ create <- function(template_name = 'new', bodyfile = 'body.Rmd', indexfile = 'in
 
 #' Prepare a relaxed template folder to contribute to bookdownplus
 #'
-#' @param template_path character. The complete path of the template folder.
 #' @param template_name character. The tempalte name.
 #'
 #' @return Prepare a folder for contribution.

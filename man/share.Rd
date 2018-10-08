@@ -8,8 +8,6 @@ share(template_name = NA)
 }
 \arguments{
 \item{template_name}{character. The tempalte name.}
-
-\item{template_path}{character. The complete path of the template folder.}
 }
 \value{
 Prepare a folder for contribution.

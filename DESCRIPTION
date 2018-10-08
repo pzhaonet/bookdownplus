@@ -1,14 +1,11 @@
 Package: bookdownplus
-Version: 1.5.0
-Date: 2018-09-23
+Version: 1.5.1
+Date: 2018-10-08
 Title: Generate Assorted Books and Documents with R 'bookdown' Package
 Author: Peng Zhao
 Maintainer: Peng Zhao <pzhao@pzhao.net>
 Depends: R (>= 3.1.0)
-Imports:
-    knitr (>= 1.15),
-    bookdown (>= 0.3.17),
-    yaml (>= 2.1.14)
+Imports: bookdown (>= 0.3.17)
 Suggests:
 Description: A collection and selector of R 'bookdown' templates. 'bookdownplus' helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R 'bookdownplus' extends the features of 'bookdown', and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in 'YAML' and 'LaTeX'.
 License: GPL

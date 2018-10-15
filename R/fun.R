@@ -10,7 +10,8 @@ get_template <- function(){
   df_t <- read.csv(path_local, stringsAsFactors = FALSE)
   df_t$location <- 'local'
   # remote templates on github
-  path_remote <- 'https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/upload/-list.csv'
+  # path_remote <- 'https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/upload/-list.csv'
+  path_remote <- 'd:/github/bookdownplus/upload/-list.csv'
   df_r <- try(read.csv(path_remote), silent = T)
   if (class(df_r) != 'try-error') {
     df_r <- read.csv(path_remote, stringsAsFactors = FALSE)
@@ -104,13 +105,21 @@ bookdownplus <- function(template = 'copernicus',
   if(!template %in% template_all$name)
     return(message(paste0(template, ' is unavailable. Please check whether your spelling is correct. Run get_template() to see available templates.')))
 
-  if_remote <- template_all[template_all$name == template, 'location'] == 'remote'
-  if(if_remote) {
+  template_info <- template_all[template_all$name == template, ]
+  if(template_info$location == 'remote') {
     ###### get the remote template
-    remote_file <- paste0('https://github.com/pzhaonet/bookdownplus/raw/master/upload/', template, '/demo.zip')
-    download.file(remote_file, destfile = 'demo.zip')
-    unzip('demo.zip')
-    file.remove('demo.zip')
+    remote_file <- template_info$download
+    dest_file <- gregexpr('[^/]+$', remote_file)
+    dest_file <- substr(remote_file, dest_file[[1]][1], nchar(remote_file))
+    download.file(remote_file, dest_file)
+    file_type <- substr(dest_file, gregexpr('([^\\.]+)$', dest_file)[[1]][1], nchar(dest_file))
+    if(file_type == 'zip') {
+      unzip(dest_file)
+      file.remove(dest_file)
+    } else if(file_type =='gz') {
+      untar(dest_file)
+      file.remove(dest_file)
+    }
   } else {
     ###### get the locale template and prepare
 
@@ -221,8 +230,7 @@ bd <- function(template = NA){
     loc <- x$location
     # filter the templates for unix
     # if(.Platform$OS.type == 'unix') tl <- tl[tl %in% c('mdpi', 'copernicus', 'calendar', 'chemistry_zh', 'chemistry', 'dnd_dev', 'docsens', 'guitar', 'journal', 'mail', 'musix', 'nonpar', 'nte_zh', 'poem', 'rbasics', 'skak', 'classic', 'thesis_zh', 'pku_zh', 'ubt', 'zju_zh', 'crc', 'demo', 'mini', 'demo_zh')]
-    if(is.na(template[1])) template <- tl
-    if(!is.na(template[1])) {
+    if(is.na(template[1])) template <- tl else {
       for(i in template){
         if(i %in% tl){
           message(paste0('Generating a demo book from the "', i, '" template...........'))

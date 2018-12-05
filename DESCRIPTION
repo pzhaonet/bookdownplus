@@ -1,6 +1,6 @@
 Package: bookdownplus
-Version: 1.5.2
-Date: 2018-10-15
+Version: 1.5.2.1
+Date: 2018-12-05
 Title: Generate Assorted Books and Documents with R 'bookdown' Package
 Author: Peng Zhao
 Maintainer: Peng Zhao <pzhao@pzhao.net>
@@ -12,5 +12,5 @@ License: MIT + file LICENSE
 URL: https://github.com/pzhaonet/bookdownplus
 BugReports: https://github.com/pzhaonet/bookdownplus/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 NeedsCompilation: no

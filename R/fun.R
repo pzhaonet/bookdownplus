@@ -10,8 +10,7 @@ get_template <- function(){
   df_t <- read.csv(path_local, stringsAsFactors = FALSE, encoding = 'UTF-8')
   df_t$location <- 'local'
   # remote templates on github
-  # path_remote <- 'https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/upload/-list.csv'
-  path_remote <- 'd:/github/bookdownplus/upload/-list.csv'
+  path_remote <- 'https://raw.githubusercontent.com/pzhaonet/bookdownplus/master/upload/-list.csv'
   df_r <- try(read.csv(path_remote), silent = T)
   if (class(df_r) != 'try-error') {
     df_r <- read.csv(path_remote, stringsAsFactors = FALSE, encoding = 'UTF-8')
@@ -79,7 +78,7 @@ get_output <- function(dataframe = FALSE){
 #' @param render logical. whether to render automatically
 #' @param rproj logical. whether to created an .Rproj file automatically
 #' @return demo files to build with bookdown
-#' @importFrom utils download.file unzip read.csv
+#' @importFrom utils download.file unzip read.csv untar
 #' @export
 #' @examples
 #' bookdownplus(render = FALSE)
@@ -87,8 +86,8 @@ get_output <- function(dataframe = FALSE){
 #' @description
 #' Technically, `bookdownplus` is a collection and selector of R bookdown templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 #' - Before starting, you have to install `bookdown` package, and other software and packages (i.e. 'Pandoc', 'LaTeX', `rmarkdown`, `rticle`, `knitr`, etc.) which `bookdown` depends on. See the [official manual of `bookdown`](https://bookdown.org/yihui/bookdown/) for details.
-#' - Run `bookdownplus()` and specify the template with `template` argument, You will get some files (e.g. `index.Rmd`, `body.Rmd`, `bookdownplus.Rproj`) and folders in your working directory. Although there are many other arguments for `bookdownplus()`, you can simply ignore them if you use `bookdownplus` package for the first time.
-#' - Open `bookdownplus.Rproj` with RStudio. Now press `ctrl+shift+b` to build it. Your will get a book file named `*.pdf` in `_book/` folder.
+#' - Run `bookdownplus()` and specify the template with `template` argument, You will get some files (e.g. `index.Rmd`, `body.Rmd`) and folders in your working directory. Although there are many other arguments for `bookdownplus()`, you can simply ignore them if you use `bookdownplus` package for the first time.
+#' - Build it with bookdown. Your will get a book file named `*.pdf` in `_book/` folder.
 #' - Write your own text in `index.Rmd` and `body.Rmd`, and build your own lovely book.
 bookdownplus <- function(template = 'copernicus',
                          more_output = NULL,

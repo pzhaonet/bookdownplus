@@ -1,4 +1,6 @@
-#' Available templates
+#' Available templates.
+#'
+#' Visit <http://b.pzhao.org> to see a gallery of the templates.
 #'
 #' @return a dataframe displaying available templates.
 #' @export
@@ -82,7 +84,6 @@ get_output <- function(dataframe = FALSE){
 #' @export
 #' @examples
 #' bookdownplus(render = FALSE)
-#' bookdownplus(template = 'article', render = FALSE)
 #' @description
 #' Technically, `bookdownplus` is a collection and selector of R bookdown templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 #' - Before starting, you have to install `bookdown` package, and other software and packages (i.e. 'Pandoc', 'LaTeX', `rmarkdown`, `rticle`, `knitr`, etc.) which `bookdown` depends on. See the [official manual of `bookdown`](https://bookdown.org/yihui/bookdown/) for details.
@@ -93,11 +94,41 @@ bookdownplus <- function(template = 'copernicus',
                          more_output = NULL,
                          title ='title',
                          author = 'author',
-                         render = FALSE,
+                         render = TRUE,
                          rproj = TRUE,
                          output_name = NA) {
+  if(template == 'discussion'){
+    message('The template "discussion" is renamed as "copernicus".')
+    template = 'copernicus'
+  }
+
+  if(template == 'article'){
+    return(message('The template "article" is deprecated. Please use "copernicus" instead, and set "online: copernicus" in index.Rmd.'))
+  }
+
+  if(template == 'thesis_ubt'){
+    message('The template "thesis_ubt" is renamed as "ubt".')
+    template = 'ubt'
+  }
+
+  if(template == 'thesis_mypku'){
+    message('The template "thesis_mypku" is renamed as "thesis_zh".')
+    template = 'thesis_zh'
+  }
+
+  if(template == 'thesis_zju'){
+    message('The template "thesis_zju" is renamed as "zju_zh".')
+    template = 'zju_zh'
+  }
+
   book_filename <- ifelse(is.na(output_name), template, output_name)
   pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
+
+  ###### created the .Rproj file
+  if(rproj) {
+    mypath <- paste0(pckpath, 'proj/')
+    file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = '-bookdownplus.Rproj')
+  }
 
   ###### check whether the template is available
   template_all <- get_template()
@@ -201,11 +232,6 @@ bookdownplus <- function(template = 'copernicus',
     }
   }
 
-  ###### created the .Rproj file
-  if(rproj) {
-    mypath <- paste0(pckpath, 'proj/')
-    file.copy(from = paste0(mypath[dir.exists(mypath)][1], 'bookdownplus'), to = '-bookdownplus.Rproj')
-  }
 
 }
 
@@ -293,4 +319,36 @@ share <- function(template_name = NA){
   dir.create(paste0(template_name, '/showcase'))
   file.create(paste0(template_name, '/put_readme.txt_and_demo.zip_here.txt'))
   file.create(paste0(template_name, '/showcase/put_sample_images_and_cover.png_here.txt'))
+}
+
+#' Simple version of get_template()
+#'
+#' @return a vector of the template names
+#' @export
+#'
+#' @examples template()
+template <- function(){
+  message('template() is to be deprecated. Please use get_template().')
+  get_template()$name
+}
+
+#' Simple version of get_output()
+#'
+#' @return a vector of the output formats
+#' @export
+#'
+#' @examples more_output()
+more_output <- function(){
+  message('more_output() is to be deprecated. Please use get_output().')
+  get_output()[c(1, 2, 4, 3)]
+}
+
+#' A deprecated function
+#'
+#' @return a message.
+#' @export
+#'
+#' @examples mail_font()
+mail_font <- function(){
+  message('mail_font() is deprecated. Please see the details in the index.Rmd file of the "mail" template.')
 }

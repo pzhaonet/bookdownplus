@@ -189,6 +189,7 @@ Enjoy your bookdowning!
 Updates
 -------
 
+- 2018-12-16. **v1.5.4**. Compatible with the book *Learning R* (Zhao and Li, 2018).
 - 2018-09-23. **v1.5.0**. Ready for contributions.
 - 2018-09-22. **v1.4.8**. Open for contributors to upload new templates.
 - 2018-09-21. **v1.4.7**. Codes simplified. One more template.

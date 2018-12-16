@@ -2,7 +2,7 @@
 % Please edit documentation in R/fun.R
 \name{get_template}
 \alias{get_template}
-\title{Available templates}
+\title{Available templates.}
 \usage{
 get_template()
 }
@@ -10,7 +10,7 @@ get_template()
 a dataframe displaying available templates.
 }
 \description{
-Available templates
+Visit \url{http://b.pzhao.org} to see a gallery of the templates.
 }
 \examples{
 get_template()

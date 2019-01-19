@@ -4,9 +4,9 @@
 \alias{bookdownplus}
 \title{Create demo files for building books with R bookdown package.}
 \usage{
-bookdownplus(template = "copernicus", more_output = NULL,
-  title = "title", author = "author", render = TRUE, rproj = TRUE,
-  output_name = NA, to = "./", new = TRUE)
+bookdownplus(template = "copernicus", more_output = NULL, title = "title", 
+    author = "author", render = TRUE, rproj = TRUE, output_name = NA, to = "./", 
+    new = TRUE)
 }
 \arguments{
 \item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Run \code{template()} to see the available templates.}

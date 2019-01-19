@@ -4,8 +4,8 @@
 \alias{create}
 \title{Prepare a strict template skeleton to contribute to bookdownplus}
 \usage{
-create(template_name = "new", bodyfile = "body.Rmd",
-  indexfile = "index.Rmd", texfile = "t.tex")
+create(template_name = "new", bodyfile = "body.Rmd", indexfile = "index.Rmd", 
+    texfile = "t.tex")
 }
 \arguments{
 \item{template_name}{character. tempalte name.}

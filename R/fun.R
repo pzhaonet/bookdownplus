@@ -79,6 +79,7 @@ bookdownplus <- function(template = 'copernicus',
                          new = TRUE) {
   oldwd <- getwd()
   on.exit(setwd(oldwd))
+  if(!dir.exists(to)) dir.create(to)
   setwd(to)
   if(template == 'discussion'){
     message('The template "discussion" is renamed as "copernicus".')

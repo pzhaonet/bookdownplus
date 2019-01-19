@@ -6,7 +6,7 @@
 #' @return copy folders to the wd.
 copyfolder <- function(folder = 'images') {
   if (!dir.exists(folder)) dir.create(folder)
-  pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
+  pckpath <- paste0(system.file(package = 'bookdownplus'), '/')
   mypath <- paste0(pckpath, folder)
   file.copy(from = dir(mypath[dir.exists(mypath)][1], full.names = TRUE), to = folder)
 }

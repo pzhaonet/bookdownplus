@@ -4,7 +4,7 @@
 \alias{bd}
 \title{Show demos}
 \usage{
-bd(template = NA)
+bd(template = NA, to = ".")
 }
 \arguments{
 \item{template}{NA or character, templates to show}

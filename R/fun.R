@@ -8,7 +8,7 @@
 #' @examples get_template()
 get_template <- function(){
   # local tempaltes
-  path_local <- paste0(path.package('bookdownplus'), '/templates/-list.csv')
+  path_local <- paste0(system.file(package = 'bookdownplus'), '/templates/-list.csv')
   df_t <- read.csv(path_local, stringsAsFactors = FALSE, encoding = 'UTF-8')
   df_t$location <- 'local'
   # remote templates on github
@@ -22,28 +22,6 @@ get_template <- function(){
     message('The github repo "pzhaonet/bookdownplus" cannot be connected. Thus only local templates are displayed.')
   }
   return(df_t)
-  ### get the template from the zip file names
-  # pckpath <- paste0(path.package('bookdownplus'), '/template')
-  # zipfiles <- list.files(path = pckpath, pattern = '\\.zip$')
-  # temp <- gsub('.zip', '', zipfiles)
-  # if (dataframe) {
-  #   txt <- NULL
-  #   txtfiles <- paste0(pckpath, '/', temp, '.txt')
-  #   for(i in txtfiles) {
-  #     if(file.exists(i))
-  #       newtxt <- paste0(readLines(i, encoding = 'UTF-8'), collapse = '')
-  #     else {
-  #       newtxt <- NA
-  #       # file.create(i)
-  #     }
-  #     txt <- c(txt, newtxt)
-  #   }
-  #   tempdf <- data.frame(i = 1:length(temp),
-  #                        template = temp,
-  #                        descript = txt)
-  #   return(tempdf)
-  # }
-  # return(temp)
 }
 
 #' Available output formats besides pdf_book
@@ -96,7 +74,12 @@ bookdownplus <- function(template = 'copernicus',
                          author = 'author',
                          render = TRUE,
                          rproj = TRUE,
-                         output_name = NA) {
+                         output_name = NA,
+                         to = './',
+                         new = TRUE) {
+  oldwd <- getwd()
+  on.exit(setwd(oldwd))
+  setwd(to)
   if(template == 'discussion'){
     message('The template "discussion" is renamed as "copernicus".')
     template = 'copernicus'
@@ -122,8 +105,9 @@ bookdownplus <- function(template = 'copernicus',
   }
 
   book_filename <- ifelse(is.na(output_name), template, output_name)
-  pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
+  pckpath <- paste0(system.file(package = 'bookdownplus'), '/')
 
+  if(new){
   ###### created the .Rproj file
   if(rproj) {
     mypath <- paste0(pckpath, 'proj/')
@@ -206,6 +190,7 @@ bookdownplus <- function(template = 'copernicus',
       file.copy('style/mdpi.bst', 'mdpi.bst')
     }
   }
+  }
 
   ###### render the book
   if (render) {
@@ -244,7 +229,7 @@ bookdownplus <- function(template = 'copernicus',
 #'
 #' @examples
 #' bd(NULL)
-bd <- function(template = NA){
+bd <- function(template = NA, to = '.'){
   if(is.null(template)){
     message('Please give a valid template name.')
   } else {
@@ -264,7 +249,7 @@ bd <- function(template = NA){
           } else {
             myoutput <- NULL
           }
-          bookdownplus(template = i, more_output = myoutput, render = TRUE, rproj = FALSE)
+          bookdownplus(template = i, more_output = myoutput, render = TRUE, rproj = FALSE, to = to)
           message(paste0('Done with "', i, '"!'))
         } else {
           message(paste(i, 'is unavailable. Please run "get_template()" to see available ones.'))
@@ -290,7 +275,7 @@ create <- function(template_name = 'new', bodyfile = 'body.Rmd', indexfile = 'in
   folders <- c('rmd', 'style', 'tex')
   files <- paste0(c('body_', 'index_', 'template_'), template_name, c('.Rmd', '.Rmd', '.tex'))
   for(i in folders) if(!dir.exists(i)) dir.create(i)
-  pckpath <- paste0(path.package(package = 'bookdownplus'), '/')
+  pckpath <- paste0(system.file(package = 'bookdownplus'), '/')
   mypath <- paste0(pckpath, 'proj/')
   for (i in c('body.Rmd', 'index.Rmd')) file.copy(from = paste0(mypath[dir.exists(mypath)][1], i), to = i)
   if(file.exists(texfile)) file.copy(texfile, paste0('tex/', files[3])) else message(paste(texfile, 'does not exist.'))

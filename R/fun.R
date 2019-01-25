@@ -57,11 +57,19 @@ get_output <- function(dataframe = FALSE){
 #' @param output_name chracter. the name of the output files. If NA (default), the template name will be used.
 #' @param render logical. whether to render automatically
 #' @param rproj logical. whether to created an .Rproj file automatically
+#' @param to character. The destination directory for the bookdown project
+#' @param new logical. Whether create a new project. If FALSE, only render the existing book.
 #' @return demo files to build with bookdown
 #' @importFrom utils download.file unzip read.csv untar
 #' @export
 #' @examples
+#' \dontrun{
 #' bookdownplus(render = FALSE)
+#' for(i in get_template()[1:20, 1])
+#' bookdownplus(template = i,
+#'              more_output = more_output()[1:3],
+#'                           to = i)
+#' }
 #' @description
 #' Technically, `bookdownplus` is a collection and selector of R bookdown templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 #' - Before starting, you have to install `bookdown` package, and other software and packages (i.e. 'Pandoc', 'LaTeX', `rmarkdown`, `rticle`, `knitr`, etc.) which `bookdown` depends on. See the [official manual of `bookdown`](https://bookdown.org/yihui/bookdown/) for details.
@@ -136,7 +144,7 @@ bookdownplus <- function(template = 'copernicus',
       file.remove(dest_file)
     }
   } else {
-    ###### get the locale template and prepare
+    ###### get the local template and prepare
 
     ###### copy folders and files to the working dir ######
     lapply(X = c('backup', 'bib', 'images'), FUN = copyfolder)
@@ -224,6 +232,7 @@ bookdownplus <- function(template = 'copernicus',
 #' Show demos
 #'
 #' @param template NA or character, templates to show
+#' @param to character. The destination directory for the bookdown project
 #'
 #' @return demo files
 #' @export

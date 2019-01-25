@@ -189,7 +189,8 @@ Enjoy your bookdowning!
 Updates
 -------
 
-- 2018-12-16. **v1.5.4**. Compatible with the book *Learning R* (Zhao and Li, 2018).
+- 2019-01-25. **v1.5.5**. Users can define the destination directory for a new bookdown project.
+- 2018-12-16. **v1.5.4**. Compatible with the book *[Learning R](https://xuer.dapengde.com)* (Zhao and Li, 2018).
 - 2018-09-23. **v1.5.0**. Ready for contributions.
 - 2018-09-22. **v1.4.8**. Open for contributors to upload new templates.
 - 2018-09-21. **v1.4.7**. Codes simplified. One more template.
@@ -218,7 +219,7 @@ Updates
   - Poster themes:
     - More themes added: `ice` and `ocean`.
     - New function `poster_theme()` which lists available poster themes.
-  - ​A bug in thesis_classic fixed.
+    - A bug in thesis_classic fixed.
 - 2017-06-27. **v1.2.1.** Argument `output_name` added. Then 
 - 2017-06-26. **v1.2.0.** Easier, faster, and more functions.
   - Easier and faster:

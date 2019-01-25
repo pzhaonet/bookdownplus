@@ -29,6 +29,10 @@ bookdownplus(template = "copernicus", more_output = NULL, title = "title",
 \item{rproj}{logical. whether to created an .Rproj file automatically}
 
 \item{output_name}{chracter. the name of the output files. If NA (default), the template name will be used.}
+
+\item{to}{character. The destination directory for the bookdown project}
+
+\item{new}{logical. Whether create a new project. If FALSE, only render the existing book.}
 }
 \value{
 demo files to build with bookdown
@@ -43,5 +47,9 @@ Technically, \code{bookdownplus} is a collection and selector of R bookdown temp
 }
 }
 \examples{
+\dontrun{
 bookdownplus(render = FALSE)
+for (i in get_template()[1:20, 1]) bookdownplus(template = i, 
+    more_output = more_output()[1:3], to = i)
+}
 }

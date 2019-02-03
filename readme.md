@@ -251,6 +251,10 @@ Updates
 - 2017-06-14. **v0.0.1.** A bug fixed.
 - 2017-05-15. **v0.0.0.** A very preliminary version.
 
+## To do
+
+- RStudio addin for organizing templates
+
 License
 =======
 

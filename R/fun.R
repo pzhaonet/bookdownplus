@@ -347,3 +347,37 @@ more_output <- function(){
 mail_font <- function(){
   message('mail_font() is deprecated. Please see the details in the index.Rmd file of the "mail" template.')
 }
+
+
+#' Convert a bookdown project into a page down project
+#'
+#' @param book_dir the folder name of the rendered book files
+#' @param proj_path the path of the bookdown project
+#'
+#' @return a pagedown rmd file
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' bd2pd()
+#' }
+bd2pd <- function(proj_path = '.', book_dir = NA){
+  if(is.na(book_dir)) book_dir <- file.path(proj_path, '_book')
+  rmdfiles <- dir(proj_path, pattern = '\\.Rmd$', full.names = TRUE)
+  rmd_merge <- unlist(sapply(rmdfiles, function(x) readLines(x, encoding = 'UTF-8')))
+  rmd_yaml <- rosr:::get_yaml(rmd_merge)
+  rmd_body <- rmd_merge[!rmd_merge %in% rmd_yaml]
+  rmd_yaml_main <- rmd_yaml[grep(c('^title|author|date'), rmd_yaml)]
+  rmd_new <- c('---',
+               rmd_yaml_main,
+               "output:",
+               "  pagedown::html_paged:",
+               "    toc: true",
+               "    self_contained: false",
+               "paged-footnotes: true",
+               '---',
+               rmd_body)
+  filetemp <- file.path(book_dir, '_book_pagedown.Rmd')
+  writeLines(rmd_new, filetemp, useBytes = TRUE)
+  xaringan::inf_mr(filetemp)
+}

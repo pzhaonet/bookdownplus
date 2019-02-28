@@ -367,7 +367,7 @@ bd2pd <- function(proj_path = '.', book_dir = NA){
   rmd_merge <- unlist(sapply(rmdfiles, function(x) readLines(x, encoding = 'UTF-8')))
   rmd_yaml <- rosr:::get_yaml(rmd_merge)
   rmd_body <- rmd_merge[!rmd_merge %in% rmd_yaml]
-  rmd_yaml_main <- rmd_yaml[grep(c('^title|author|date'), rmd_yaml)]
+  rmd_yaml_main <- rmd_yaml[grep(c('^title|author|date|bibliography'), rmd_yaml)]
   rmd_new <- c('---',
                rmd_yaml_main,
                "output:",
@@ -380,4 +380,28 @@ bd2pd <- function(proj_path = '.', book_dir = NA){
   filetemp <- file.path(book_dir, '_book_pagedown.Rmd')
   writeLines(rmd_new, filetemp, useBytes = TRUE)
   xaringan::inf_mr(filetemp)
+}
+
+
+#' Insert an image from a url
+#' @description This function is supposed to be used in R code chunks or inline R code expressions.
+#' - If the output is not pdf, then this function works the samge as `knitr::include_graphics()`.
+#' - If the output is pdf, then the image will be downloaded to the img_dir directory and inserted.
+#' - If the image is in gif format, then it will be converted into png before inserted into pdf.
+#' @param img_url The url of the image
+#' @param img_dir The path of the local image directory
+#'
+#' @return The same as the ` knitr::include_graphics()` function
+#' @export
+include_image <- function(img_url, img_dir = 'images') {
+  file_name <- basename(img_url)
+  img_local <- file.path(img_dir, file_name)
+  if(!file.exists(img_local)) download.file(img_url, img_local, mode = 'wb')
+  if(grepl('\\.gif$', img_local)) {
+    giffile <- magick::image_read(img_local)
+    img_new <- gsub('\\.gif$', '\\.png', img_local)
+    magick::image_write(magick::image_convert(giffile, format = 'png'), img_new)
+    img_local <- img_new
+  }
+  knitr::include_graphics(ifelse(knitr:::is_latex_output(), img_local, img_url))
 }

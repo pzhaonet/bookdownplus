@@ -355,6 +355,7 @@ mail_font <- function(){
 #' @param proj_path the path of the bookdown project
 #'
 #' @return a pagedown rmd file
+#' @importFrom xaringan inf_mr
 #' @export
 #'
 #' @examples
@@ -365,7 +366,13 @@ bd2pd <- function(proj_path = '.', book_dir = NA){
   if(is.na(book_dir)) book_dir <- file.path(proj_path, '_book')
   rmdfiles <- dir(proj_path, pattern = '\\.Rmd$', full.names = TRUE)
   rmd_merge <- unlist(sapply(rmdfiles, function(x) readLines(x, encoding = 'UTF-8')))
-  rmd_yaml <- rosr:::get_yaml(rmd_merge)
+  get_yaml <- function (txt){
+    loc <- grep("^---", txt)
+    if (length(loc) == 0)
+      return(NULL)
+    txt[loc[1]:loc[2]]
+  }
+  rmd_yaml <- get_yaml(rmd_merge)
   rmd_body <- rmd_merge[!rmd_merge %in% rmd_yaml]
   rmd_yaml_main <- rmd_yaml[grep(c('^title|author|date|bibliography'), rmd_yaml)]
   rmd_new <- c('---',
@@ -392,16 +399,23 @@ bd2pd <- function(proj_path = '.', book_dir = NA){
 #' @param img_dir The path of the local image directory
 #'
 #' @return The same as the ` knitr::include_graphics()` function
+#' @importFrom magick image_write
+#' @import knitr
 #' @export
 include_image <- function(img_url, img_dir = 'images') {
-  file_name <- basename(img_url)
-  img_local <- file.path(img_dir, file_name)
-  if(!file.exists(img_local)) download.file(img_url, img_local, mode = 'wb')
-  if(grepl('\\.gif$', img_local)) {
-    giffile <- magick::image_read(img_local)
-    img_new <- gsub('\\.gif$', '\\.png', img_local)
-    magick::image_write(magick::image_convert(giffile, format = 'png'), img_new)
-    img_local <- img_new
+  if(knitr::is_latex_output()){
+    file_name <- basename(img_url)
+    img_local <- file.path(img_dir, file_name)
+    # download
+    if(!file.exists(img_local)) download.file(img_url, img_local, mode = 'wb')
+    if(grepl('\\.gif$', img_local)) {
+      giffile <- magick::image_read(img_local)
+      img_new <- gsub('\\.gif$', '\\.png', img_local)
+      magick::image_write(magick::image_convert(giffile, format = 'png'), img_new)
+      img_local <- img_new
+    }
+    knitr::include_graphics(img_local)
+  } else {
+    knitr::include_graphics(img_url)
   }
-  knitr::include_graphics(ifelse(knitr:::is_latex_output(), img_local, img_url))
 }

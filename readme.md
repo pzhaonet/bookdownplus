@@ -255,6 +255,10 @@ Updates
 
 - RStudio addin for organizing templates
 
+- 上海交通大学学位论文 Bookdown 模板 https://github.com/bubifengyun/SJTUThesis-Rmd
+
+- Wrap LaTeX files based on bookdown for the Deep Learning book notation: https://d.cosx.org/d/419832-bookdown-deep-learning-notation
+
 License
 =======
 

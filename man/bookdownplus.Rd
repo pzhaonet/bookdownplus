@@ -4,9 +4,17 @@
 \alias{bookdownplus}
 \title{Create demo files for building books with R bookdown package.}
 \usage{
-bookdownplus(template = "copernicus", more_output = NULL, title = "title", 
-    author = "author", render = TRUE, rproj = TRUE, output_name = NA, to = "./", 
-    new = TRUE)
+bookdownplus(
+  template = "copernicus",
+  more_output = NULL,
+  title = "title",
+  author = "author",
+  render = TRUE,
+  rproj = TRUE,
+  output_name = NA,
+  to = "./",
+  new = TRUE
+)
 }
 \arguments{
 \item{template}{character. Choose a template for your book or doc. The default template is 'thesis_classic'. Run \code{template()} to see the available templates.}
@@ -40,9 +48,9 @@ demo files to build with bookdown
 \description{
 Technically, \code{bookdownplus} is a collection and selector of R bookdown templates. \code{bookdownplus} helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R \code{bookdownplus} extends the features of \code{bookdown}, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
 \itemize{
-\item Before starting, you have to install \code{bookdown} package, and other software and packages (i.e. 'Pandoc', 'LaTeX', \code{rmarkdown}, \code{rticle}, \code{knitr}, etc.) which \code{bookdown} depends on. See the \href{https://bookdown.org/yihui/bookdown/}{official manual of bookdown} for details.
+\item Before starting, you have to install \code{bookdown} package, and other software and packages (i.e. 'Pandoc', 'LaTeX', \code{rmarkdown}, \code{rticle}, \code{knitr}, etc.) which \code{bookdown} depends on. See the \href{https://bookdown.org/yihui/bookdown/}{official manual of \code{bookdown}} for details.
 \item Run \code{bookdownplus()} and specify the template with \code{template} argument, You will get some files (e.g. \code{index.Rmd}, \code{body.Rmd}) and folders in your working directory. Although there are many other arguments for \code{bookdownplus()}, you can simply ignore them if you use \code{bookdownplus} package for the first time.
-\item Build it with bookdown. Your will get a book file named \code{*.pdf} in \code{_book/} folder.
+\item Build it with bookdown. Your will get a book file named \verb{*.pdf} in \verb{_book/} folder.
 \item Write your own text in \code{index.Rmd} and \code{body.Rmd}, and build your own lovely book.
 }
 }

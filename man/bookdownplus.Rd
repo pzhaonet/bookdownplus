@@ -57,7 +57,8 @@ Technically, \code{bookdownplus} is a collection and selector of R bookdown temp
 \examples{
 \dontrun{
 bookdownplus(render = FALSE)
-for (i in get_template()[1:20, 1]) bookdownplus(template = i, 
-    more_output = more_output()[1:3], to = i)
+for (i in get_template()[1:20, 1]) {
+    # bookdownplus(template = i, more_output = more_output()[1:3], to = i)
+}
 }
 }

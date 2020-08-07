@@ -16,5 +16,5 @@ Prepare a folder for contribution.
 Prepare a relaxed template folder to contribute to bookdownplus
 }
 \examples{
-share()
+# share()
 }

@@ -10,7 +10,7 @@ get_template()
 a dataframe displaying available templates.
 }
 \description{
-Visit \url{http://b.pzhao.org} to see a gallery of the templates.
+Visit \url{https://b.pzhao.org} to see a gallery of the templates.
 }
 \examples{
 get_template()

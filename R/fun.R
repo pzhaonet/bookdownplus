@@ -1,6 +1,6 @@
 #' Available templates.
 #'
-#' Visit <http://b.pzhao.org> to see a gallery of the templates.
+#' Visit <https://b.pzhao.org> to see a gallery of the templates.
 #'
 #' @return a dataframe displaying available templates.
 #' @export
@@ -65,10 +65,11 @@ get_output <- function(dataframe = FALSE){
 #' @examples
 #' \dontrun{
 #' bookdownplus(render = FALSE)
-#' for(i in get_template()[1:20, 1])
-#' bookdownplus(template = i,
-#'              more_output = more_output()[1:3],
-#'                           to = i)
+#' for(i in get_template()[1:20, 1]) {
+#' # bookdownplus(template = i,
+#' #              more_output = more_output()[1:3],
+#' #                            to = i)
+#' }
 #' }
 #' @description
 #' Technically, `bookdownplus` is a collection and selector of R bookdown templates. `bookdownplus` helps you write academic journal articles, guitar books, chemical equations, mails, calendars, and diaries. R `bookdownplus` extends the features of `bookdown`, and simplifies the procedure. Users only have to choose a template, clarify the book title and author name, and then focus on writing the text. No need to struggle in YAML and LaTeX.
@@ -280,7 +281,7 @@ bd <- function(template = NA, to = '.'){
 #' @export
 #'
 #' @examples
-#' create()
+#' # create()
 create <- function(template_name = 'new', bodyfile = 'body.Rmd', indexfile = 'index.Rmd', texfile = 't.tex'){
   folders <- c('rmd', 'style', 'tex')
   files <- paste0(c('body_', 'index_', 'template_'), template_name, c('.Rmd', '.Rmd', '.tex'))
@@ -307,7 +308,7 @@ create <- function(template_name = 'new', bodyfile = 'body.Rmd', indexfile = 'in
 #' @export
 #'
 #' @examples
-#' share()
+#' # share()
 share <- function(template_name = NA){
   if(is.na(template_name)) return(message('Please give a valid tempalte name.'))
   dir.create(template_name)

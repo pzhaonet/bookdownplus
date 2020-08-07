@@ -27,5 +27,5 @@ organzed folders and files.
 Prepare a strict template skeleton to contribute to bookdownplus
 }
 \examples{
-create()
+# create()
 }

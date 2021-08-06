@@ -1,6 +1,6 @@
 Package: bookdownplus
-Version: 1.5.10
-Date: 2020-08-10
+Version: 1.5.11
+Date: 2021-08-06
 Title: Generate Assorted Books and Documents with R 'bookdown' Package
 Author: Peng Zhao
 Maintainer: Peng Zhao <pzhao@pzhao.net>

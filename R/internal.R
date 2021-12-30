@@ -28,9 +28,9 @@ backup <- function(filename, ifbackup = TRUE) {
       if (!dir.exists('backup')) dir.create('backup')
       backupfile <- paste0('backup/', paste(filenamesplit[1:tolength], collapse = '_'), '-', format(Sys.time(), '%Y-%m-%d-%H-%M-%S'), '.', filenamepost)
       file.copy(filename, backupfile)
-      message(paste(filename, 'exsits. Backuped to', backupfile, ':)'))
+      message(paste(filename, 'exists. Backed up to', backupfile, ':)'))
     } #else {
-    #message(paste(filename, 'does not exist. No need to bakcup :)'))
+    #message(paste(filename, 'does not exist. No need to backup :)'))
     #}
   }
 }
